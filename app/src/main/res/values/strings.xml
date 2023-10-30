@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Maxwell</string>
+    <string name="studies_title">Studies</string>
+    <string name="finances_title">Finances</string>
+    <string name="tasks_title">Tasks</string>
+    <string name="settings_menu_item">Settings</string>
+    <string name="settings_title">Settings</string>
+    <string name="username_input_label">Username</string>
+    <string name="username_input_hint">This is how your name will be displayed on the app</string>
+    <string name="personal_data_label">Personal data</string>
+    <string name="data_synchronization_label">Data synchronization</string>
+    <string name="daily_synchronizations_label">Daily synchronizations</string>
+</resources>

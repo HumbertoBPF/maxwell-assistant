@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <!-- Base colors -->
+    <color name="seed">#1A1A1A</color>
+    <color name="md_theme_light_primary">#006874</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#97F0FF</color>
+    <color name="md_theme_light_onPrimaryContainer">#001F24</color>
+    <color name="md_theme_light_secondary">#4A6267</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#CDE7EC</color>
+    <color name="md_theme_light_onSecondaryContainer">#051F23</color>
+    <color name="md_theme_light_tertiary">#525E7D</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer">#DAE2FF</color>
+    <color name="md_theme_light_onTertiaryContainer">#0E1B37</color>
+    <color name="md_theme_light_error">#BA1A1A</color>
+    <color name="md_theme_light_errorContainer">#FFDAD6</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
+    <color name="md_theme_light_onErrorContainer">#410002</color>
+    <color name="md_theme_light_background">#FAFDFD</color>
+    <color name="md_theme_light_onBackground">#191C1D</color>
+    <color name="md_theme_light_surface">#FAFDFD</color>
+    <color name="md_theme_light_onSurface">#191C1D</color>
+    <color name="md_theme_light_surfaceVariant">#DBE4E6</color>
+    <color name="md_theme_light_onSurfaceVariant">#3F484A</color>
+    <color name="md_theme_light_outline">#6F797A</color>
+    <color name="md_theme_light_inverseOnSurface">#EFF1F1</color>
+    <color name="md_theme_light_inverseSurface">#2E3132</color>
+    <color name="md_theme_light_inversePrimary">#4FD8EB</color>
+    <color name="md_theme_light_shadow">#000000</color>
+    <color name="md_theme_light_surfaceTint">#006874</color>
+    <color name="md_theme_light_outlineVariant">#BFC8CA</color>
+    <color name="md_theme_light_scrim">#000000</color>
+
+    <color name="default_text_color">#49454F</color>
+    <color name="task_color">#FF6666</color>
+    <color name="task_color_pressed">#FF4D4D</color>
+    <color name="study_color">#80CCFF</color>
+    <color name="study_color_pressed">#66C2FF</color>
+    <color name="finance_color">#00E673</color>
+    <color name="finance_color_pressed">#00CC66</color>
+</resources>
