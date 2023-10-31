@@ -6,14 +6,21 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
+import com.example.maxwell.data_store.Settings
 import com.example.maxwell.databinding.ActivityMainBinding
 import com.example.maxwell.models.MenuItem
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
+    }
+
+    private val settings by lazy {
+        Settings(this@MainActivity)
     }
 
     private var keep = true
@@ -25,6 +32,14 @@ class MainActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({ keep = false }, 2000)
 
         super.onCreate(savedInstanceState)
+
+        val greetingTextView = binding.greetingTextView
+
+        lifecycleScope.launch {
+            settings.getUsername().collect { username ->
+                greetingTextView.text = "Good morning, $username"
+            }
+        }
 
         configureMenuRecyclerView()
         configureAppbarMenu()

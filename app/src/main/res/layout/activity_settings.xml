@@ -4,64 +4,173 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dp"
     tools:context=".activities.SettingsActivity">
 
-    <TextView
-        android:id="@+id/personal_data_text_view"
-        android:layout_width="0dp"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/personal_data_label"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        />
+        android:background="@color/md_theme_light_primary">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/username_text_input"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/username_input_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/personal_data_text_view"
-        android:layout_marginTop="8dp"
-        app:endIconMode="clear_text"
-        app:helperTextEnabled="true"
-        app:helperText="@string/username_input_hint"
-        style="?attr/textInputFilledStyle">
-
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/appbar_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="1"
-            />
+            android:minHeight="?attr/actionBarSize"
+            app:title="@string/settings_title" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
-        android:id="@+id/data_synchronization_label"
+    <ScrollView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/appbar_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/username_text_input"
-        android:text="@string/data_synchronization_label"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginTop="8dp"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:fillViewport="true"
+        android:layout_margin="8dp">
 
-    <com.google.android.material.materialswitch.MaterialSwitch
-        android:id="@+id/daily_synchronization_switch"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/data_synchronization_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
-        android:text="@string/daily_synchronizations_label"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/personal_data_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/personal_data_label"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/username_text_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/username_input_hint"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/personal_data_text_view"
+                android:layout_marginTop="8dp"
+                app:endIconMode="clear_text"
+                app:helperTextEnabled="true"
+                app:helperText="@string/username_input_helper_text"
+                style="?attr/textInputFilledStyle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/username_text_input_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/data_synchronization_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/username_text_input"
+                android:text="@string/data_synchronization_label"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"
+                />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/daily_synchronization_switch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/data_synchronization_label"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="8dp"
+                android:text="@string/daily_synchronizations_label"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="?attr/textInputFilledStyle"
+                android:id="@+id/synchronization_time_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/daily_synchronization_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="8dp"
+                app:startIconDrawable="@drawable/ic_time"
+                android:hint="@string/synchronization_time_hint"
+                app:helperText="@string/synchronization_time_helper_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/synchronization_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/synchronization_time_input"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="16dp">
+
+                <Button
+                    style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                    android:id="@+id/export_data_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/export_data_button_text"
+                    app:icon="@drawable/ic_export"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/import_data_button"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+
+                <Button
+                    style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                    android:id="@+id/import_data_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/import_data_button_text"
+                    app:icon="@drawable/ic_import"
+                    app:layout_constraintStart_toEndOf="@id/export_data_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginStart="16dp"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Button
+                style="?attr/materialButtonOutlinedStyle"
+                android:id="@+id/save_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/import_data_button_text"
+                android:textColor="@color/save_color"
+                app:strokeColor="@color/save_color"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/synchronization_buttons"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="1.0"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

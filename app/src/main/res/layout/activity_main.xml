@@ -21,9 +21,7 @@
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
             app:title="@string/app_name"
-            app:menu="@menu/activity_main_menu"
-            app:logo="@drawable/ic_logo"
-            app:titleTextColor="@color/white" />
+            app:menu="@menu/activity_main_menu" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -42,7 +40,6 @@
             android:paddingHorizontal="8dp"
             android:paddingTop="8dp"
             android:paddingBottom="16dp"
-            android:text="Good morning, Humberto"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -1,0 +1,32 @@
+package com.example.maxwell.data_store
+
+import android.content.Context
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
+class Settings(private val context: Context) {
+    companion object {
+        const val USERNAME_KEY = "username_key"
+        private const val NAME_PREFERENCES_DATA_STORE = "settings"
+        private val Context.dataStore by preferencesDataStore(name = NAME_PREFERENCES_DATA_STORE)
+    }
+
+    fun getUsername(): Flow<String?> {
+        return context.dataStore.data.map { preferences ->
+            val usernamePreferencesKey = stringPreferencesKey(USERNAME_KEY)
+            val username = preferences[usernamePreferencesKey]
+            username
+        }
+    }
+
+    suspend fun setUsername(username: String) {
+        val usernamePreferencesKey = stringPreferencesKey(USERNAME_KEY)
+
+        context.dataStore.edit { settings ->
+            settings[usernamePreferencesKey] = username
+        }
+    }
+}

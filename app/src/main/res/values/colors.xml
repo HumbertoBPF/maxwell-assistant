@@ -42,4 +42,5 @@
     <color name="study_color_pressed">#66C2FF</color>
     <color name="finance_color">#00E673</color>
     <color name="finance_color_pressed">#00CC66</color>
+    <color name="save_color">#00CC44</color>
 </resources>
