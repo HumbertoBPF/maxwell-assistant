@@ -98,7 +98,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 style="?attr/textInputFilledStyle"
-                android:id="@+id/synchronization_time_input"
+                android:id="@+id/synchronization_time_text_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/daily_synchronization_switch"
@@ -110,6 +110,7 @@
                 app:helperText="@string/synchronization_time_helper_text">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/synchronization_time_text_input_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     />
@@ -120,7 +121,7 @@
                 android:id="@+id/synchronization_buttons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/synchronization_time_input"
+                app:layout_constraintTop_toBottomOf="@id/synchronization_time_text_input"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="16dp">
@@ -159,7 +160,7 @@
                 android:id="@+id/save_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/import_data_button_text"
+                android:text="@string/save_button_text"
                 android:textColor="@color/save_color"
                 app:strokeColor="@color/save_color"
                 app:layout_constraintStart_toStartOf="parent"

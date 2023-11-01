@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.map
 class Settings(private val context: Context) {
     companion object {
         const val USERNAME_KEY = "username_key"
+        const val PREFERENCES_KEY = "preferences_key"
         private const val NAME_PREFERENCES_DATA_STORE = "settings"
         private val Context.dataStore by preferencesDataStore(name = NAME_PREFERENCES_DATA_STORE)
     }
@@ -27,6 +28,26 @@ class Settings(private val context: Context) {
 
         context.dataStore.edit { settings ->
             settings[usernamePreferencesKey] = username
+        }
+    }
+
+    fun getDailySynchronizationTime(): Flow<String?> {
+        return context.dataStore.data.map { preferences ->
+            val dailySynchronizationTimeKey = stringPreferencesKey(PREFERENCES_KEY)
+            val dailySynchronizationTime = preferences[dailySynchronizationTimeKey]
+            dailySynchronizationTime
+        }
+    }
+
+    suspend fun setDailySynchronizationTime(dailySynchronizationTime: String?) {
+        val dailySynchronizationTimeKey = stringPreferencesKey(PREFERENCES_KEY)
+
+        context.dataStore.edit { settings ->
+            if (dailySynchronizationTime == null) {
+                settings.remove(dailySynchronizationTimeKey)
+            } else {
+                settings[dailySynchronizationTimeKey] = dailySynchronizationTime
+            }
         }
     }
 }

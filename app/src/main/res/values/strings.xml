@@ -14,4 +14,6 @@
     <string name="synchronization_time_helper_text">Synchronizations will be tried everyday at this time</string>
     <string name="export_data_button_text">Export data</string>
     <string name="import_data_button_text">Import data</string>
+    <string name="save_button_text">Save</string>
+    <string name="synchronization_time_picker_label">Select synchronization time</string>
 </resources>
