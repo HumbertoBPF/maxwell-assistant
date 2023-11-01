@@ -1,7 +1,6 @@
 package com.example.maxwell.activities
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
@@ -124,7 +123,7 @@ class SettingsActivity : AppCompatActivity() {
         val hour = picker.hour
         val paddedMinute = padWithZeros(picker.minute)
 
-        val synchronizationTime = if (hour > 11) {
+        val synchronizationTime = if (hour > 12) {
             val paddedHour = padWithZeros(hour - 12)
             "${paddedHour}:$paddedMinute PM"
         } else {
@@ -147,7 +146,7 @@ class SettingsActivity : AppCompatActivity() {
             val usernameInput = usernameTextInputEditText.text.toString()
             val synchronizationTime = synchronizationTimeTextInputEditText.text.toString()
 
-            if (validateSynchronizationTimeFormat()) {
+            if (!validateSynchronizationTimeFormat()) {
                 return@setOnClickListener
             }
 
@@ -165,22 +164,28 @@ class SettingsActivity : AppCompatActivity() {
 
         val synchronizationTime = synchronizationTimeTextInputEditText.text.toString()
 
-        val regexTime = Regex("^[0-1][0-9]:\\d{2} [A,P]M$")
+        val regexTime = Regex("^[0-1][0-9]:[0-5]\\d [A,P]M$")
 
         if (regexTime.matches(synchronizationTime)) {
+            val hour = synchronizationTime.split(":")[0].toInt()
+
+            if ((hour == 0) || (hour > 12)) {
+                synchronizationTimeTextInput.isErrorEnabled = true
+                synchronizationTimeTextInput.error =
+                    "The synchronization time must be in the format \"HH:MM AM\" or \"HH:MM PM\""
+                return false
+            }
+
             synchronizationTimeTextInput.isErrorEnabled = false
             synchronizationTimeTextInput.error = ""
         } else {
-            val hour = synchronizationTime.split(":")[0]
-            Log.i("SettingsActivityTag", hour)
-
             synchronizationTimeTextInput.isErrorEnabled = true
             synchronizationTimeTextInput.error =
                 "The synchronization time must be in the format \"HH:MM AM\" or \"HH:MM PM\""
-            return true
+            return false
         }
 
-        return false
+        return true
     }
 
     private fun padWithZeros(number: Int): String {
