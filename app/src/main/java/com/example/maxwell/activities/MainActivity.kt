@@ -8,6 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
+import com.example.maxwell.activities.finances.FinancesActivity
+import com.example.maxwell.activities.studies.StudiesActivity
+import com.example.maxwell.activities.tasks.TasksActivity
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.data_store.Settings
 import com.example.maxwell.databinding.ActivityMainBinding
@@ -37,7 +40,11 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             settings.getUsername().collect { username ->
-                greetingTextView.text = "Good morning, $username"
+                if (username == null) {
+                    greetingTextView.text = "Good morning"
+                } else {
+                    greetingTextView.text = "Good morning, $username"
+                }
             }
         }
 

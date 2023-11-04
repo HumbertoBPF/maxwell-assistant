@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.studies.StudiesActivity">
+    tools:context=".activities.studies.StudyFormActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_layout"
@@ -20,20 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:menu="@menu/activity_list_menu"
-            app:title="@string/studies_title" />
+            app:title="@string/study_form_title" />
 
     </com.google.android.material.appbar.AppBarLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="@string/add_study_fab_content_desc"
-        android:backgroundTint="?attr/colorStudyColorContainer"
-        app:srcCompat="@drawable/ic_add"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

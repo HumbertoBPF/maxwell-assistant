@@ -5,4 +5,22 @@
     <attr name="colorSaveColorContainer" format="color" />
     <attr name="colorOnSaveColorContainer" format="color" />
     <attr name="harmonizeSaveColor" format="boolean" />
+
+    <attr name="colorTaskColor" format="color" />
+    <attr name="colorOnTaskColor" format="color" />
+    <attr name="colorTaskColorContainer" format="color" />
+    <attr name="colorOnTaskColorContainer" format="color" />
+    <attr name="harmonizeTaskColor" format="boolean" />
+
+    <attr name="colorStudyColor" format="color" />
+    <attr name="colorOnStudyColor" format="color" />
+    <attr name="colorStudyColorContainer" format="color" />
+    <attr name="colorOnStudyColorContainer" format="color" />
+    <attr name="harmonizeStudyColor" format="boolean" />
+
+    <attr name="colorFinanceColor" format="color" />
+    <attr name="colorOnFinanceColor" format="color" />
+    <attr name="colorFinanceColorContainer" format="color" />
+    <attr name="colorOnFinanceColorContainer" format="color" />
+    <attr name="harmonizeFinanceColor" format="boolean" />
 </resources>

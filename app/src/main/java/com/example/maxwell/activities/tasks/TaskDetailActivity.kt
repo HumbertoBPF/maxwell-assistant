@@ -1,12 +1,12 @@
-package com.example.maxwell.activities
+package com.example.maxwell.activities.tasks
 
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import com.example.maxwell.R
 
-class FinancesActivity : AppCompatActivity() {
+class TaskDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_finances)
+        setContentView(R.layout.activity_task_detail)
     }
 }

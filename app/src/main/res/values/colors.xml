@@ -37,10 +37,11 @@
 
     <color name="default_text_color">#49454F</color>
     <color name="task_color">#FF6666</color>
-    <color name="task_color_pressed">#FF4D4D</color>
+    <color name="task_color_pressed">#B82E35</color>
     <color name="study_color">#80CCFF</color>
-    <color name="study_color_pressed">#66C2FF</color>
+    <color name="study_color_pressed">#006B99</color>
     <color name="finance_color">#00E673</color>
-    <color name="finance_color_pressed">#00CC66</color>
+    <color name="finance_color_pressed">#00803C</color>
     <color name="save_color">#00CC44</color>
+    <color name="stroke_color">#D9D9D9</color>
 </resources>

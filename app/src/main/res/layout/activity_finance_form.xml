@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.studies.StudiesActivity">
+    tools:context=".activities.finances.FinanceFormActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_layout"
@@ -13,27 +13,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        style="@style/Widget.Maxwell.StudiesAppBarLayout">
+        style="@style/Widget.Maxwell.FinancesAppBarLayout">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/appbar_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:menu="@menu/activity_list_menu"
-            app:title="@string/studies_title" />
+            app:title="@string/finance_form_title" />
 
     </com.google.android.material.appbar.AppBarLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="@string/add_study_fab_content_desc"
-        android:backgroundTint="?attr/colorStudyColorContainer"
-        app:srcCompat="@drawable/ic_add"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

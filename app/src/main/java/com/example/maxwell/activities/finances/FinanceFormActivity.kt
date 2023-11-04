@@ -1,12 +1,12 @@
-package com.example.maxwell.activities
+package com.example.maxwell.activities.finances
 
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import com.example.maxwell.R
 
-class TasksActivity : AppCompatActivity() {
+class FinanceFormActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tasks)
+        setContentView(R.layout.activity_finance_form)
     }
 }

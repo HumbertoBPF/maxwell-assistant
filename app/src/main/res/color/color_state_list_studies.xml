@@ -4,5 +4,5 @@
         android:color="@color/study_color_pressed"/>
     <item android:state_focused="true"
         android:color="@color/study_color_pressed"/>
-    <item android:color="@color/study_color"/>
+    <item android:color="?attr/colorStudyColor"/>
 </selector>

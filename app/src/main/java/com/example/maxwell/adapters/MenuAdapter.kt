@@ -16,8 +16,8 @@ class MenuAdapter(
     private val menuItems: List<MenuItem>
 ): Adapter<MenuAdapter.ViewHolder>() {
     inner class ViewHolder(binding: MenuItemBinding): RecyclerView.ViewHolder(binding.root) {
-        private val icon: ImageView = binding.iconImageView
-        private val name: TextView = binding.nameTextView
+        private val icon = binding.iconImageView
+        private val name = binding.nameTextView
 
         fun bind(menuItem: MenuItem) {
             itemView.setBackgroundResource(menuItem.color)

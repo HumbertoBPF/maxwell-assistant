@@ -34,10 +34,29 @@
         <item name="colorSaveColorContainer">#6eff7b</item>
         <item name="colorOnSaveColorContainer">#002105</item>
         <item name="harmonizeSaveColor">false</item>
+
+        <item name="colorTaskColor">#b02c32</item>
+        <item name="colorOnTaskColor">#ffffff</item>
+        <item name="colorTaskColorContainer">#ffdad8</item>
+        <item name="colorOnTaskColorContainer">#410006</item>
+        <item name="harmonizeTaskColor">false</item>
+
+        <item name="colorStudyColor">#006590</item>
+        <item name="colorOnStudyColor">#ffffff</item>
+        <item name="colorStudyColorContainer">#c8e6ff</item>
+        <item name="colorOnStudyColorContainer">#001e2e</item>
+        <item name="harmonizeStudyColor">false</item>
+
+        <item name="colorFinanceColor">#006d33</item>
+        <item name="colorOnFinanceColor">#ffffff</item>
+        <item name="colorFinanceColorContainer">#63ff94</item>
+        <item name="colorOnFinanceColorContainer">#00210b</item>
+        <item name="harmonizeFinanceColor">false</item>
         <!-- Customize your theme here. -->
         <!-- Font style -->
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="toolbarStyle">@style/Widget.Maxwell.Toolbar</item>
+        <item name="floatingActionButtonStyle">@style/Widget.Maxwell.FloatingActionButton</item>
     </style>
 
     <style name="Theme.Maxwell.Starting" parent="Theme.SplashScreen">
@@ -52,6 +71,22 @@
     <style name="Widget.Maxwell.Toolbar" parent="Widget.Material3.Toolbar">
         <item name="titleTextColor">@color/white</item>
         <item name="logo">@drawable/ic_logo</item>
+    </style>
+
+    <style name="Widget.Maxwell.TasksAppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <item name="android:background">?attr/colorTaskColor</item>
+    </style>
+
+    <style name="Widget.Maxwell.StudiesAppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <item name="android:background">?attr/colorStudyColor</item>
+    </style>
+
+    <style name="Widget.Maxwell.FinancesAppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <item name="android:background">?attr/colorFinanceColor</item>
+    </style>
+
+    <style name="Widget.Maxwell.FloatingActionButton" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="tint">@color/white</item>
     </style>
 
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">

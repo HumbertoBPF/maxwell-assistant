@@ -4,5 +4,5 @@
         android:color="@color/finance_color_pressed"/>
     <item android:state_focused="true"
         android:color="@color/finance_color_pressed"/>
-    <item android:color="@color/finance_color"/>
+    <item android:color="?attr/colorFinanceColor"/>
 </selector>

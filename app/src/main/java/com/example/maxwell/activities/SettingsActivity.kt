@@ -6,6 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
 import com.example.maxwell.data_store.Settings
 import com.example.maxwell.databinding.ActivitySettingsBinding
+import com.example.maxwell.utils.padWithZeros
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat.CLOCK_12H
 import kotlinx.coroutines.launch
@@ -139,12 +140,18 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun configureSaveButton() {
         val usernameTextInputEditText = binding.usernameTextInputEditText
+        val dailySynchronizationSwitch = binding.dailySynchronizationSwitch
         val synchronizationTimeTextInputEditText = binding.synchronizationTimeTextInputEditText
         val saveButton = binding.saveButton
 
         saveButton.setOnClickListener { _ ->
             val usernameInput = usernameTextInputEditText.text.toString()
-            val synchronizationTime = synchronizationTimeTextInputEditText.text.toString()
+            val enableDailySynchronization = dailySynchronizationSwitch.isChecked
+            val synchronizationTime = if (enableDailySynchronization) {
+                synchronizationTimeTextInputEditText.text.toString()
+            } else {
+                null
+            }
 
             if (!validateSynchronizationTimeFormat()) {
                 return@setOnClickListener
@@ -159,40 +166,37 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun validateSynchronizationTimeFormat(): Boolean {
+        val dailySynchronizationSwitch = binding.dailySynchronizationSwitch
         val synchronizationTimeTextInputEditText = binding.synchronizationTimeTextInputEditText
         val synchronizationTimeTextInput = binding.synchronizationTimeTextInput
 
-        val synchronizationTime = synchronizationTimeTextInputEditText.text.toString()
+        if (dailySynchronizationSwitch.isChecked) {
+            val synchronizationTime = synchronizationTimeTextInputEditText.text.toString()
 
-        val regexTime = Regex("^[0-1][0-9]:[0-5]\\d [A,P]M$")
+            val regexTime = Regex("^[0-1][0-9]:[0-5]\\d [A,P]M$")
 
-        if (regexTime.matches(synchronizationTime)) {
-            val hour = synchronizationTime.split(":")[0].toInt()
+            if (regexTime.matches(synchronizationTime)) {
+                val hour = synchronizationTime.split(":")[0].toInt()
 
-            if ((hour == 0) || (hour > 12)) {
+                if ((hour == 0) || (hour > 12)) {
+                    synchronizationTimeTextInput.isErrorEnabled = true
+                    synchronizationTimeTextInput.error =
+                        "The synchronization time must be in the format \"HH:MM AM\" or \"HH:MM PM\""
+                    return false
+                }
+
+                synchronizationTimeTextInput.isErrorEnabled = false
+                synchronizationTimeTextInput.error = ""
+            } else {
                 synchronizationTimeTextInput.isErrorEnabled = true
                 synchronizationTimeTextInput.error =
                     "The synchronization time must be in the format \"HH:MM AM\" or \"HH:MM PM\""
                 return false
             }
 
-            synchronizationTimeTextInput.isErrorEnabled = false
-            synchronizationTimeTextInput.error = ""
-        } else {
-            synchronizationTimeTextInput.isErrorEnabled = true
-            synchronizationTimeTextInput.error =
-                "The synchronization time must be in the format \"HH:MM AM\" or \"HH:MM PM\""
-            return false
+            return true
         }
 
         return true
-    }
-
-    private fun padWithZeros(number: Int): String {
-        if (number < 10) {
-            return "0$number"
-        }
-
-        return "$number"
     }
 }
