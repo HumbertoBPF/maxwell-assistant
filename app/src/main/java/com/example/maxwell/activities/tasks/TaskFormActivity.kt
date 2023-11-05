@@ -10,7 +10,7 @@ import com.example.maxwell.databinding.ActivityTaskFormBinding
 import com.example.maxwell.models.Priority
 import com.example.maxwell.models.Status
 import com.example.maxwell.models.Task
-import com.example.maxwell.utils.padWithZeros
+import com.example.maxwell.utils.formatDateForInput
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputLayout
@@ -19,14 +19,21 @@ import java.math.BigDecimal
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Calendar.DAY_OF_MONTH
-import java.util.Calendar.MONTH
-import java.util.Calendar.YEAR
 import java.util.Locale.US
 
 class TaskFormActivity : AppCompatActivity() {
+    private var task: Task? = null
+
     private val binding by lazy {
         ActivityTaskFormBinding.inflate(layoutInflater)
+    }
+
+    private val id by lazy {
+        intent.getLongExtra("id", 0)
+    }
+
+    private val taskDao by lazy {
+        AppDatabase.instantiate(this@TaskFormActivity).taskDao()
     }
 
     private val converters by lazy {
@@ -36,28 +43,27 @@ class TaskFormActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        configureTitleTextInput()
-        configureDurationTextInput()
-        configureDueDateInput()
-        configurePriorityTextInput()
-        configureStatusTextInput()
-        configureSaveButton()
+        lifecycleScope.launch {
+            taskDao.getTaskById(id).collect {taskFromDb ->
+                task = taskFromDb
+
+                configureTitleTextInput()
+                configureDescriptionTextInput()
+                configureDurationTextInput()
+                configureDueDateInput()
+                configurePriorityTextInput()
+                configureStatusTextInput()
+                configureSaveButton()
+            }
+        }
 
         setContentView(binding.root)
     }
 
-    private fun configureDurationTextInput() {
-        val durationTextInputEditText = binding.durationTextInputEditText
-
-        durationTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                validateDuration()
-            }
-        }
-    }
-
     private fun configureTitleTextInput() {
         val titleTextInputEditText = binding.titleTextInputEditText
+
+        titleTextInputEditText.setText(task?.title)
 
         titleTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
@@ -66,8 +72,33 @@ class TaskFormActivity : AppCompatActivity() {
         }
     }
 
+    private fun configureDescriptionTextInput() {
+        val descriptionTextInputEditText = binding.descriptionTextInputEditText
+
+        descriptionTextInputEditText.setText(task?.description)
+    }
+
+    private fun configureDurationTextInput() {
+        val durationTextInputEditText = binding.durationTextInputEditText
+
+        durationTextInputEditText.setText("${task?.duration}")
+
+        durationTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                validateDuration()
+            }
+        }
+    }
+
     private fun configureDueDateInput() {
         val dueDateTextInputEditText = binding.dueDateTextInputEditText
+
+        val dueDate = task?.dueDate
+
+        dueDate?.let {
+            val formattedDate = formatDateForInput(dueDate)
+            dueDateTextInputEditText.setText(formattedDate)
+        }
 
         dueDateTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -99,20 +130,14 @@ class TaskFormActivity : AppCompatActivity() {
         selection?.let {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = selection
-
-            val day = padWithZeros(calendar.get(DAY_OF_MONTH) + 1)
-            val month = padWithZeros(calendar.get(MONTH) + 1)
-            val year = calendar.get(YEAR)
-
-            dueDateTextInputEditText.setText("$month-$day-$year")
+            dueDateTextInputEditText.setText(formatDateForInput(calendar.time))
         }
     }
 
     private fun configurePriorityTextInput() {
-        val priorityTextInputEditText = binding.priorityTextInputAutoComplete
         val priorityTextInputAutoComplete = binding.priorityTextInputAutoComplete
 
-        priorityTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
+        priorityTextInputAutoComplete.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 validatePriority()
             }
@@ -121,13 +146,14 @@ class TaskFormActivity : AppCompatActivity() {
         val priorityOptions = arrayOf(Priority.LOW.text, Priority.MEDIUM.text, Priority.HIGH.text)
         val priorityAutoComplete = priorityTextInputAutoComplete as? MaterialAutoCompleteTextView
         priorityAutoComplete?.setSimpleItems(priorityOptions)
+
+        priorityAutoComplete?.setText(task?.priority?.text, false)
     }
 
     private fun configureStatusTextInput() {
-        val statusTextInputEditText = binding.statusTextInputAutoComplete
         val statusTextInputAutoComplete = binding.statusTextInputAutoComplete
 
-        statusTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
+        statusTextInputAutoComplete.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 validateStatus()
             }
@@ -136,6 +162,8 @@ class TaskFormActivity : AppCompatActivity() {
         val statusOptions = arrayOf(Status.PENDING.text, Status.IN_PROGRESS.text, Status.DONE.text)
         val statusAutoComplete = statusTextInputAutoComplete as? MaterialAutoCompleteTextView
         statusAutoComplete?.setSimpleItems(statusOptions)
+
+        statusAutoComplete?.setText(task?.status?.text, false)
     }
 
     private fun configureSaveButton() {
@@ -184,6 +212,7 @@ class TaskFormActivity : AppCompatActivity() {
         val status = converters.fromStringToStatus(statusString)
 
         return Task(
+            id = id,
             title = title,
             description = description,
             duration = BigDecimal(duration),

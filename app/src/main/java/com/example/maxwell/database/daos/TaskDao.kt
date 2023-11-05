@@ -1,7 +1,9 @@
 package com.example.maxwell.database.daos
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import com.example.maxwell.models.Task
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +23,9 @@ interface TaskDao {
     @Query("SELECT * FROM task WHERE id=:id")
     fun getTaskById(id: Long): Flow<Task?>
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     suspend fun insert(task: Task)
+
+    @Delete
+    suspend fun delete(task: Task)
 }

@@ -1,23 +1,30 @@
 package com.example.maxwell.activities.tasks
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.maxwell.R
 import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.databinding.ActivityTaskDetailBinding
 import com.example.maxwell.models.Task
-import com.example.maxwell.utils.formatDate
+import com.example.maxwell.utils.formatDatePretty
+import com.example.maxwell.utils.showConfirmDeletionDialog
 import kotlinx.coroutines.launch
 
 class TaskDetailActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityTaskDetailBinding.inflate(layoutInflater)
     }
+
+    private val taskDao by lazy {
+        AppDatabase.instantiate(this@TaskDetailActivity).taskDao()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val taskDao = AppDatabase.instantiate(this@TaskDetailActivity).taskDao()
-        val id = intent.getLongExtra("id", -1)
+        val id = intent.getLongExtra("id", 0)
 
         lifecycleScope.launch {
             taskDao.getTaskById(id).collect {task ->
@@ -25,11 +32,39 @@ class TaskDetailActivity : AppCompatActivity() {
                     finish()
                 } else {
                     bind(task)
+                    configureAppMenu(task)
                 }
             }
         }
 
         setContentView(binding.root)
+    }
+
+    private fun configureAppMenu(task: Task) {
+        val appMenu = binding.appbarMenu
+
+        appMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.delete_item -> {
+                    showConfirmDeletionDialog(this@TaskDetailActivity) { _, _ ->
+                        lifecycleScope.launch {
+                            taskDao.delete(task)
+                            finish()
+                        }
+                    }
+                    true
+                }
+
+                R.id.edit_item -> {
+                    val intent = Intent(this@TaskDetailActivity, TaskFormActivity::class.java)
+                    intent.putExtra("id", task.id)
+                    startActivity(intent)
+                    true
+                }
+
+                else -> false
+            }
+        }
     }
 
     private fun bind(task: Task) {
@@ -47,7 +82,7 @@ class TaskDetailActivity : AppCompatActivity() {
         val dueDate = task.dueDate
 
         dueDate?.let {
-            dueToTextView.text = formatDate(dueDate)
+            dueToTextView.text = formatDatePretty(dueDate)
         }
 
         val priorityIconImageView = binding.priorityIconImageView

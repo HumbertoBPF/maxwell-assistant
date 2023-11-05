@@ -12,7 +12,12 @@ fun padWithZeros(number: Int): String {
     return "$number"
 }
 
-fun formatDate(date: Date): String {
+fun formatDateForInput(date: Date): String {
+    val simpleDateFormat = SimpleDateFormat("MM-dd-yyyy", Locale.US)
+    return simpleDateFormat.format(date)
+}
+
+fun formatDatePretty(date: Date): String {
     val simpleDateFormat = SimpleDateFormat("LLLL dd, yyyy", Locale.US)
     return simpleDateFormat.format(date)
 }

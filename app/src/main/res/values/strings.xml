@@ -50,4 +50,8 @@
     <string name="due_to_label">Due to</string>
     <string name="priority_label">Priority</string>
     <string name="status_label">Status</string>
+    <string name="confirm_deletion_dialog_title">Are you sure?</string>
+    <string name="confirm_deletion_dialog_message">This is a permanent action. If you proceed with the deletion you will not be able to get this item back.</string>
+    <string name="confirm_deletion_dialog_negative_button">No, get me back</string>
+    <string name="confirm_deletion_dialog_positive_button">Yes, I want to delete it</string>
 </resources>
