@@ -2,13 +2,11 @@ package com.example.maxwell.activities.tasks
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.adapters.TaskItemAdapter
 import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.databinding.ActivityTasksBinding
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class TasksActivity : AppCompatActivity() {

@@ -4,5 +4,5 @@
         android:color="@color/stroke_color"/>
     <item android:state_focused="true"
         android:color="@color/stroke_color"/>
-    <item android:color="@color/white"/>
+    <item android:color="?attr/colorSurface"/>
 </selector>

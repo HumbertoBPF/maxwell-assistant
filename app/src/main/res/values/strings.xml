@@ -41,4 +41,13 @@
     <string name="pending_enum_pending">Pending</string>
     <string name="status_enum_in_progress">In progress</string>
     <string name="status_enum_done">Done</string>
+    <string name="edit_menu_item">Edit</string>
+    <string name="delete_menu_item">Delete</string>
+    <string name="task_detail_title">Task detail</string>
+    <string name="text_label">Title</string>
+    <string name="description_label">Description</string>
+    <string name="duration_label">Duration</string>
+    <string name="due_to_label">Due to</string>
+    <string name="priority_label">Priority</string>
+    <string name="status_label">Status</string>
 </resources>

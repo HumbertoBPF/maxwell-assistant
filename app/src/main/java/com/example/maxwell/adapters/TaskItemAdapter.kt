@@ -2,6 +2,7 @@ package com.example.maxwell.adapters
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.example.maxwell.activities.tasks.TaskDetailActivity
 import com.example.maxwell.databinding.TaskItemBinding
 import com.example.maxwell.models.Task
+import com.example.maxwell.utils.formatDate
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -35,9 +37,7 @@ class TaskItemAdapter(
                 dueDateTextView.visibility = GONE
             } else {
                 dueDateTextView.visibility = VISIBLE
-
-                val simpleDateFormat = SimpleDateFormat("LLLL dd, yyyy", Locale.US)
-                dueDateTextView.text = simpleDateFormat.format(dueDate)
+                dueDateTextView.text = formatDate(dueDate)
             }
 
             titleTextView.text = task.title
@@ -69,6 +69,7 @@ class TaskItemAdapter(
 
             taskContainer.setOnClickListener {
                 val intent = Intent(context, TaskDetailActivity::class.java)
+                intent.putExtra("id", task.id)
                 context.startActivity(intent)
             }
         }
