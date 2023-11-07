@@ -7,12 +7,12 @@ import java.util.Date
 
 @Entity
 data class Study (
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val title: String,
     val description: String?,
+    val duration: BigDecimal?,
     val subjectId: Long,
     val links: String?,
     val status: Status?,
     val startingDate: Date?,
-    val duration: BigDecimal?
 )

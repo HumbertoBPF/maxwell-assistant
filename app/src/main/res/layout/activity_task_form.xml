@@ -31,7 +31,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:padding="8dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -39,8 +40,7 @@
             app:layout_constraintTop_toBottomOf="@id/appbar_layout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_margin="8dp">
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/remark_text_view"
@@ -125,7 +125,9 @@
                 android:layout_marginTop="8dp"
                 app:startIconDrawable="@drawable/ic_calendar"
                 app:endIconMode="clear_text"
-                android:hint="@string/due_date_text_input_label">
+                android:hint="@string/due_date_text_input_label"
+                app:helperTextEnabled="true"
+                app:helperText="@string/data_format_instruction">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/due_date_text_input_edit_text"

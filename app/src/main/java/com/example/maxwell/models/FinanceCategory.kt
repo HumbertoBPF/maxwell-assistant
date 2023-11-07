@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 
 @Entity(indices = [Index(value = ["name"], unique = true)])
 data class FinanceCategory(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val name: String
 )

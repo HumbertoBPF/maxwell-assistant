@@ -1,9 +1,9 @@
 package com.example.maxwell.activities.tasks
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
+import com.example.maxwell.activities.FormActivity
 import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.database.Converters
 import com.example.maxwell.databinding.ActivityTaskFormBinding
@@ -11,17 +11,15 @@ import com.example.maxwell.models.Priority
 import com.example.maxwell.models.Status
 import com.example.maxwell.models.Task
 import com.example.maxwell.utils.formatDateForInput
-import com.google.android.material.datepicker.MaterialDatePicker
+import com.example.maxwell.utils.getDatePicker
+import com.example.maxwell.utils.hasValidDateFormat
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
-import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Locale.US
 
-class TaskFormActivity : AppCompatActivity() {
+class TaskFormActivity : FormActivity() {
     private var task: Task? = null
 
     private val binding by lazy {
@@ -47,6 +45,7 @@ class TaskFormActivity : AppCompatActivity() {
             taskDao.getTaskById(id).collect {taskFromDb ->
                 task = taskFromDb
 
+                configureAppBar()
                 configureTitleTextInput()
                 configureDescriptionTextInput()
                 configureDurationTextInput()
@@ -58,6 +57,14 @@ class TaskFormActivity : AppCompatActivity() {
         }
 
         setContentView(binding.root)
+    }
+
+    private fun configureAppBar() {
+        val appbarMenu = binding.appbarMenu
+
+        task?.let {
+            appbarMenu.title = getString(R.string.edit_task_title)
+        }
     }
 
     private fun configureTitleTextInput() {
@@ -81,7 +88,11 @@ class TaskFormActivity : AppCompatActivity() {
     private fun configureDurationTextInput() {
         val durationTextInputEditText = binding.durationTextInputEditText
 
-        durationTextInputEditText.setText("${task?.duration}")
+        val defaultDuration = task?.duration
+
+        defaultDuration?.let {
+            durationTextInputEditText.setText("$defaultDuration")
+        }
 
         durationTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
@@ -110,28 +121,13 @@ class TaskFormActivity : AppCompatActivity() {
     }
 
     private fun showDueDatePicker() {
-        val datePicker =
-            MaterialDatePicker.Builder.datePicker()
-                .setTitleText(getString(R.string.due_date_picker_title))
-                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                .build()
+        val dueDateTextInputEditText = binding.dueDateTextInputEditText
 
-        datePicker.addOnPositiveButtonClickListener {
-            handleDueDateSelection(datePicker)
+        val datePicker = getDatePicker(getString(R.string.due_date_picker_title)) { date ->
+            dueDateTextInputEditText.setText(formatDateForInput(date))
         }
 
         datePicker.show(supportFragmentManager, "datePicker")
-    }
-
-    private fun handleDueDateSelection(datePicker: MaterialDatePicker<Long>) {
-        val dueDateTextInputEditText = binding.dueDateTextInputEditText
-        val selection = datePicker.selection
-
-        selection?.let {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = selection
-            dueDateTextInputEditText.setText(formatDateForInput(calendar.time))
-        }
     }
 
     private fun configurePriorityTextInput() {
@@ -170,9 +166,9 @@ class TaskFormActivity : AppCompatActivity() {
         val saveButton = binding.saveButton
 
         saveButton.setOnClickListener {
-            val task = getTaskFromFormInputs()
+            if (validateAllFields()) {
+                val task = getTaskFromFormInputs()
 
-            task?.let {
                 lifecycleScope.launch {
                     val taskDao = AppDatabase.instantiate(this@TaskFormActivity).taskDao()
                     taskDao.insert(task)
@@ -182,15 +178,7 @@ class TaskFormActivity : AppCompatActivity() {
         }
     }
 
-    private fun getTaskFromFormInputs(): Task? {
-        if (!validateTitle() ||
-            !validateDuration() ||
-            !validateDueDate() ||
-            !validatePriority() ||
-            !validateStatus()) {
-            return null
-        }
-
+    private fun getTaskFromFormInputs(): Task {
         val titleTextInputEditText = binding.titleTextInputEditText
         val descriptionTextInputEditText = binding.descriptionTextInputEditText
         val durationTextInputEditText = binding.durationTextInputEditText
@@ -204,9 +192,9 @@ class TaskFormActivity : AppCompatActivity() {
         val dueDateString = dueDateTextInputEditText.text.toString()
         val priorityString = priorityTextInputAutoComplete.text.toString()
         val statusString = statusTextInputAutoComplete.text.toString()
-        // TODO properly format dates
-        val format = SimpleDateFormat("MM-dd-yyyy", US)
-        val dueDate = format.parse(dueDateString)
+
+        val sdf = SimpleDateFormat("MM-dd-yyyy", US)
+        val dueDate = sdf.parse(dueDateString)
 
         val priority = converters.fromStringToPriority(priorityString)
         val status = converters.fromStringToStatus(statusString)
@@ -221,6 +209,12 @@ class TaskFormActivity : AppCompatActivity() {
             status = status
         )
     }
+
+    private fun validateAllFields() = validateTitle() &&
+                validateDuration() &&
+                validateDueDate() &&
+                validatePriority() &&
+                validateStatus()
 
     private fun validateTitle(): Boolean {
         val titleTextInput = binding.titleTextInput
@@ -253,24 +247,19 @@ class TaskFormActivity : AppCompatActivity() {
     }
 
     private fun validateDueDate(): Boolean {
-        // TODO properly validate dates
         val dueDateTextInput = binding.dueDateTextInput
         val dueDateTextInputEditText = binding.dueDateTextInputEditText
 
         val dueDateString = dueDateTextInputEditText.text.toString()
 
-        val format = SimpleDateFormat("MM-dd-yyyy", US)
-
-        try {
-            format.parse(dueDateString)
-        } catch (e: ParseException) {
-            dueDateTextInput.isErrorEnabled = true
-            dueDateTextInput.error = getString(R.string.due_date_text_input_helper_text)
-            return false
+        if (dueDateString.hasValidDateFormat()) {
+            clearErrors(dueDateTextInput)
+            return true
         }
 
-        clearErrors(dueDateTextInput)
-        return true
+        dueDateTextInput.isErrorEnabled = true
+        dueDateTextInput.error = getString(R.string.data_format_instruction)
+        return false
     }
 
     private fun validatePriority(): Boolean {
@@ -305,15 +294,5 @@ class TaskFormActivity : AppCompatActivity() {
 
         clearErrors(statusTextInput)
         return true
-    }
-
-    private fun markFieldAsRequired(field: TextInputLayout) {
-        field.isErrorEnabled = true
-        field.error = getString(R.string.required_field_error)
-    }
-
-    private fun clearErrors(field: TextInputLayout) {
-        field.isErrorEnabled = false
-        field.error = ""
     }
 }

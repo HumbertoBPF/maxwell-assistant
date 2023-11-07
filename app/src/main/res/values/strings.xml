@@ -31,7 +31,7 @@
     <string name="due_date_text_input_label">Due to*</string>
     <string name="due_date_picker_title">Select the due date</string>
     <string name="mandatory_fields_remark">The fields marked with an asterisk(*) are mandatory</string>
-    <string name="due_date_text_input_helper_text">The due date must be in the format MM-DD-YYYY</string>
+    <string name="data_format_instruction">The due date must be in the format MM-DD-YYYY</string>
     <string name="required_field_error">This field is required</string>
     <string name="task_item_priority_icon_default_content_description">Priority icon</string>
     <string name="task_item_status_icon_default_content_description">Priority icon</string>
@@ -54,4 +54,17 @@
     <string name="confirm_deletion_dialog_message">This is a permanent action. If you proceed with the deletion you will not be able to get this item back.</string>
     <string name="confirm_deletion_dialog_negative_button">No, get me back</string>
     <string name="confirm_deletion_dialog_positive_button">Yes, I want to delete it</string>
+    <string name="edit_task_title">Edit task</string>
+    <string name="subject_text_input_label">Subject*</string>
+    <string name="links_text_input_label">Links</string>
+    <string name="starting_date_text_input_label">Starting date*</string>
+    <string name="study_subject_name_text_input_label">Name</string>
+    <string name="study_subject_dialog_title">Manage study subjects</string>
+    <string name="study_subject_dialog_negative_button">Cancel</string>
+    <string name="study_subject_dialog_positive_button">Add</string>
+    <string name="error_study_subject_name_unavailable">A subject with the provided name has already been created</string>
+    <string name="add_study_subject_icon_content_description">Add study subject icon</string>
+    <string name="add_study_subject_text">Click here to manage study subjects</string>
+    <string name="subjects_available_text_view">Subjects available</string>
+    <string name="add_subject_text_view">Add subject</string>
 </resources>

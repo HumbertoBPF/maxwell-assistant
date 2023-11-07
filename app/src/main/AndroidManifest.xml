@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Maxwell"
         tools:targetApi="31">
         <activity
+            android:name=".activities.FormActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.tasks.TaskDetailActivity"
             android:exported="false" />
         <activity
