@@ -13,10 +13,10 @@ import com.example.maxwell.databinding.TaskItemBinding
 import com.example.maxwell.models.Task
 import com.example.maxwell.utils.formatDatePretty
 
-class TaskItemAdapter(
+class TaskAdapter(
     private val context: Context,
     private val tasks: List<Task>
-): Adapter<TaskItemAdapter.ViewHolder>() {
+): Adapter<TaskAdapter.ViewHolder>() {
     inner class ViewHolder(binding: TaskItemBinding): RecyclerView.ViewHolder(binding.root) {
         private val taskContainer = binding.taskContainer
         private val dueDateTextView = binding.dueDateTextView

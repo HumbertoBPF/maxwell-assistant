@@ -34,7 +34,7 @@
     <string name="data_format_instruction">The due date must be in the format MM-DD-YYYY</string>
     <string name="required_field_error">This field is required</string>
     <string name="task_item_priority_icon_default_content_description">Priority icon</string>
-    <string name="task_item_status_icon_default_content_description">Priority icon</string>
+    <string name="task_item_status_icon_default_content_description">Status icon</string>
     <string name="priority_enum_low_importance">Low importance</string>
     <string name="priority_enum_medium_importance">Medium importance</string>
     <string name="priority_enum_high_importance">High importance</string>
