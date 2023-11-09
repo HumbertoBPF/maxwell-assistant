@@ -44,7 +44,7 @@
     <string name="edit_menu_item">Edit</string>
     <string name="delete_menu_item">Delete</string>
     <string name="task_detail_title">Task detail</string>
-    <string name="text_label">Title</string>
+    <string name="title_label">Title</string>
     <string name="description_label">Description</string>
     <string name="duration_label">Duration</string>
     <string name="due_to_label">Due to</string>
@@ -67,4 +67,9 @@
     <string name="add_study_subject_text">Click here to manage study subjects</string>
     <string name="subjects_available_text_view">Subjects available</string>
     <string name="add_subject_text_view">Add subject</string>
+    <string name="study_detail_title">Study detail</string>
+    <string name="subject_label">Subject</string>
+    <string name="links_label">Links</string>
+    <string name="starting_date_label">Starting date</string>
+    <string name="edit_study_title">Edit study</string>
 </resources>

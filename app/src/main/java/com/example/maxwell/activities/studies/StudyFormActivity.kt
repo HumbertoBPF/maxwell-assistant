@@ -24,8 +24,14 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class StudyFormActivity : FormActivity() {
+    private var study: Study? = null
+
     private val binding by lazy {
         ActivityStudyFormBinding.inflate(layoutInflater)
+    }
+
+    private val id by lazy {
+        intent.getLongExtra("id", 0)
     }
 
     private val studySubjectDao by lazy {
@@ -43,19 +49,38 @@ class StudyFormActivity : FormActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        configureTitleTextInput()
-        configureDurationTextInput()
-        configureSubjectTextInput()
-        configureStudySubjectsManagement()
-        configureStatusTextInput()
-        configureStartingDateInput()
-        configureSaveButton()
+        lifecycleScope.launch {
+            studyDao.getStudyById(id).collect {studyFromDb ->
+                study = studyFromDb
+
+                configureAppBar()
+                configureTitleTextInput()
+                configureDescriptionTextInput()
+                configureDurationTextInput()
+                configureSubjectTextInput()
+                configureStudySubjectsManagement()
+                configureLinksTextInput()
+                configureStatusTextInput()
+                configureStartingDateInput()
+                configureSaveButton()
+            }
+        }
 
         setContentView(binding.root)
     }
 
+    private fun configureAppBar() {
+        val appbarMenu = binding.appbarMenu
+
+        study?.let {
+            appbarMenu.title = getString(R.string.edit_study_title)
+        }
+    }
+
     private fun configureTitleTextInput() {
         val titleTextInputEditText = binding.titleTextInputEditText
+
+        titleTextInputEditText.setText(study?.title)
 
         titleTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
@@ -64,8 +89,20 @@ class StudyFormActivity : FormActivity() {
         }
     }
 
+    private fun configureDescriptionTextInput() {
+        val descriptionTextInputEditText = binding.descriptionTextInputEditText
+
+        descriptionTextInputEditText.setText(study?.description)
+    }
+
     private fun configureDurationTextInput() {
         val durationTextInputEditText = binding.durationTextInputEditText
+
+        val defaultDuration = study?.duration
+
+        defaultDuration?.let {
+            durationTextInputEditText.setText("$defaultDuration")
+        }
 
         durationTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
@@ -89,6 +126,14 @@ class StudyFormActivity : FormActivity() {
                 val studySubjectOptions = studySubjects
                     .map { studySubject -> studySubject.name }.toTypedArray()
                 subjectAutoComplete?.setSimpleItems(studySubjectOptions)
+            }
+        }
+
+        lifecycleScope.launch {
+            val subjectId = study?.subjectId ?: 0
+
+            studySubjectDao.getStudySubjectById(subjectId).collect {studySubject ->
+                subjectAutoComplete?.setText(studySubject?.name)
             }
         }
     }
@@ -164,6 +209,12 @@ class StudyFormActivity : FormActivity() {
         }
     }
 
+    private fun configureLinksTextInput() {
+        val linksTextInputEditText = binding.linksTextInputEditText
+
+        linksTextInputEditText.setText(study?.links)
+    }
+
     private fun configureStatusTextInput() {
         val statusTextInputAutoComplete = binding.statusTextInputAutoComplete
         val statusAutoComplete = statusTextInputAutoComplete as? MaterialAutoCompleteTextView
@@ -176,10 +227,19 @@ class StudyFormActivity : FormActivity() {
 
         val statusOptions = arrayOf(Status.PENDING.text, Status.IN_PROGRESS.text, Status.DONE.text)
         statusAutoComplete?.setSimpleItems(statusOptions)
+
+        statusAutoComplete?.setText(study?.status?.text, false)
     }
 
     private fun configureStartingDateInput() {
         val startingDateTextInputEditText = binding.startingDateTextInputEditText
+
+        val startingDate = study?.startingDate
+
+        startingDate?.let {
+            val formattedDate = formatDateForInput(startingDate)
+            startingDateTextInputEditText.setText(formattedDate)
+        }
 
         startingDateTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -242,6 +302,7 @@ class StudyFormActivity : FormActivity() {
         val startingDate = sdf.parse(startingDateString)
 
         return Study(
+            id = id,
             title = title,
             description = description,
             duration = duration,

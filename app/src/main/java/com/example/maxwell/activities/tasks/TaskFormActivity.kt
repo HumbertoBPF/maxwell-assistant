@@ -132,6 +132,7 @@ class TaskFormActivity : FormActivity() {
 
     private fun configurePriorityTextInput() {
         val priorityTextInputAutoComplete = binding.priorityTextInputAutoComplete
+        val priorityAutoComplete = priorityTextInputAutoComplete as? MaterialAutoCompleteTextView
 
         priorityTextInputAutoComplete.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
@@ -140,7 +141,6 @@ class TaskFormActivity : FormActivity() {
         }
 
         val priorityOptions = arrayOf(Priority.LOW.text, Priority.MEDIUM.text, Priority.HIGH.text)
-        val priorityAutoComplete = priorityTextInputAutoComplete as? MaterialAutoCompleteTextView
         priorityAutoComplete?.setSimpleItems(priorityOptions)
 
         priorityAutoComplete?.setText(task?.priority?.text, false)

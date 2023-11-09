@@ -15,6 +15,9 @@ interface StudySubjectDao {
     @Query("SELECT * FROM StudySubject WHERE name=:name")
     suspend fun getStudySubjectsByName(name: String): StudySubject?
 
+    @Query("SELECT * FROM StudySubject WHERE id=:id")
+    fun getStudySubjectById(id: Long): Flow<StudySubject?>
+
     @Insert
     suspend fun insert(studySubject: StudySubject)
 

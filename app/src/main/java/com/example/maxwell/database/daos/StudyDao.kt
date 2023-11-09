@@ -1,6 +1,7 @@
 package com.example.maxwell.database.daos
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -17,6 +18,12 @@ interface StudyDao {
     """)
     fun getStudies(): Flow<List<Study>>
 
+    @Query("SELECT * FROM Study WHERE id=:id")
+    fun getStudyById(id: Long): Flow<Study?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(study: Study)
+
+    @Delete
+    suspend fun delete(study: Study)
 }

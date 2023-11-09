@@ -50,6 +50,7 @@ class StudyAdapter(
 
             studyContainer.setOnClickListener {
                 val intent = Intent(context, StudyDetailActivity::class.java)
+                intent.putExtra("id", study.id)
                 context.startActivity(intent)
             }
         }
