@@ -31,7 +31,7 @@
     <string name="due_date_text_input_label">Due to*</string>
     <string name="due_date_picker_title">Select the due date</string>
     <string name="mandatory_fields_remark">The fields marked with an asterisk(*) are mandatory</string>
-    <string name="data_format_instruction">The due date must be in the format MM-DD-YYYY</string>
+    <string name="data_format_instruction">The date must be in the format MM-DD-YYYY</string>
     <string name="required_field_error">This field is required</string>
     <string name="task_item_priority_icon_default_content_description">Priority icon</string>
     <string name="task_item_status_icon_default_content_description">Status icon</string>
@@ -58,7 +58,7 @@
     <string name="subject_text_input_label">Subject*</string>
     <string name="links_text_input_label">Links</string>
     <string name="starting_date_text_input_label">Starting date*</string>
-    <string name="study_subject_name_text_input_label">Name</string>
+    <string name="name_text_input_label">Name</string>
     <string name="study_subject_dialog_title">Manage study subjects</string>
     <string name="study_subject_dialog_negative_button">Cancel</string>
     <string name="study_subject_dialog_positive_button">Add</string>
@@ -72,4 +72,20 @@
     <string name="links_label">Links</string>
     <string name="starting_date_label">Starting date</string>
     <string name="edit_study_title">Edit study</string>
+    <string name="category_text_input_label">Category*</string>
+    <string name="value_text_input_label">Value*</string>
+    <string name="brl_radio_button">BRL</string>
+    <string name="euro_radio_button">Euro</string>
+    <string name="type_text_view">Type</string>
+    <string name="currency_text_view">Currency</string>
+    <string name="expense_radio_button">Expense</string>
+    <string name="income_radio_button">Income</string>
+    <string name="date_text_input_layout">Date*</string>
+    <string name="add_finance_category_text">Click here to manage finance categories</string>
+    <string name="categories_available_text_view">Categories available</string>
+    <string name="add_category_text_view">Add category</string>
+    <string name="finance_category_dialog_title">Manage finance categories</string>
+    <string name="error_finance_category_name_unavailable">A category with the provided name has already been created</string>
+    <string name="date_picker_title">Select the date</string>
+    <string name="starting_date_picker_title">Select the starting date</string>
 </resources>

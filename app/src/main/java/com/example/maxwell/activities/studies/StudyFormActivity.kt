@@ -12,10 +12,11 @@ import com.example.maxwell.databinding.DialogStudySubjectFormBinding
 import com.example.maxwell.models.Status
 import com.example.maxwell.models.Study
 import com.example.maxwell.models.StudySubject
+import com.example.maxwell.utils.createChipView
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
 import com.example.maxwell.utils.hasValidDateFormat
-import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import kotlinx.coroutines.launch
@@ -28,6 +29,10 @@ class StudyFormActivity : FormActivity() {
 
     private val binding by lazy {
         ActivityStudyFormBinding.inflate(layoutInflater)
+    }
+
+    private val dialogBinding by lazy {
+        DialogStudySubjectFormBinding.inflate(layoutInflater)
     }
 
     private val id by lazy {
@@ -142,13 +147,11 @@ class StudyFormActivity : FormActivity() {
         val manageStudySubjectConstraintLayout = binding.manageStudySubjectTextView
 
         manageStudySubjectConstraintLayout.setOnClickListener {
-            displayCreateStudySubjectDialog()
+            displayStudySubjectManagementDialog()
         }
     }
 
-    private fun displayCreateStudySubjectDialog() {
-        val dialogBinding = DialogStudySubjectFormBinding.inflate(layoutInflater)
-
+    private fun displayStudySubjectManagementDialog() {
         lifecycleScope.launch {
             val studySubjectsChipGroup = dialogBinding.studySubjectsChipGroup
 
@@ -156,19 +159,7 @@ class StudyFormActivity : FormActivity() {
                 studySubjectsChipGroup.removeAllViews()
 
                 studySubjects.forEach { studySubject ->
-                    val chip = Chip(this@StudyFormActivity)
-                    chip.text = studySubject.name
-                    chip.isChipIconVisible = false
-                    chip.isCloseIconVisible = true
-                    chip.isClickable = true
-                    chip.isCheckable = false
-                    studySubjectsChipGroup.addView(chip)
-                    chip.setOnCloseIconClickListener {
-                        lifecycleScope.launch {
-                            studySubjectDao.delete(studySubject)
-                            studySubjectsChipGroup.removeView(chip)
-                        }
-                    }
+                    createSubjectChipView(studySubject, studySubjectsChipGroup)
                 }
             }
         }
@@ -184,29 +175,55 @@ class StudyFormActivity : FormActivity() {
 
         dialog.getButton(BUTTON_POSITIVE).setOnClickListener {
             lifecycleScope.launch {
-                val nameTextInputLayout = dialogBinding.nameTextInputLayout
-                val nameTextInputEditText = dialogBinding.nameTextInputEditText
+                if (validateSubjectNameTextInput()) {
+                    val nameTextInputEditText = dialogBinding.nameTextInputEditText
+                    val name = nameTextInputEditText.text.toString()
 
-                val name = nameTextInputEditText.text.toString()
-
-                if (name.trim() == "") {
-                    markFieldAsRequired(nameTextInputLayout)
-                    return@launch
-                }
-
-                val nameAvailable = studySubjectDao.getStudySubjectsByName(name) != null
-
-                if (nameAvailable) {
                     val studySubject = StudySubject(name = name)
                     studySubjectDao.insert(studySubject)
                     nameTextInputEditText.setText("")
-                } else {
-                    nameTextInputLayout.isErrorEnabled = true
-                    nameTextInputLayout.error =
-                        getString(R.string.error_study_subject_name_unavailable)
                 }
             }
         }
+    }
+
+    private fun createSubjectChipView(
+        studySubject: StudySubject,
+        studySubjectsChipGroup: ChipGroup
+    ) {
+        val chip = createChipView(this@StudyFormActivity, studySubject.name)
+
+        studySubjectsChipGroup.addView(chip)
+        chip.setOnCloseIconClickListener {
+            lifecycleScope.launch {
+                studySubjectDao.delete(studySubject)
+                studySubjectsChipGroup.removeView(chip)
+            }
+        }
+    }
+
+    private suspend fun validateSubjectNameTextInput(): Boolean {
+        val nameTextInputLayout = dialogBinding.nameTextInputLayout
+        val nameTextInputEditText = dialogBinding.nameTextInputEditText
+
+        val name = nameTextInputEditText.text.toString()
+
+        if (name.trim() == "") {
+            markFieldAsRequired(nameTextInputLayout)
+            return false
+        }
+
+        val nameAvailable = studySubjectDao.getStudySubjectByName(name) != null
+
+        if (!nameAvailable) {
+            nameTextInputLayout.isErrorEnabled = true
+            nameTextInputLayout.error =
+                getString(R.string.error_study_subject_name_unavailable)
+            return false
+        }
+
+        clearErrors(nameTextInputLayout)
+        return true
     }
 
     private fun configureLinksTextInput() {
@@ -253,7 +270,7 @@ class StudyFormActivity : FormActivity() {
     private fun showDueDatePicker() {
         val startingDateTextInputEditText = binding.startingDateTextInputEditText
 
-        val datePicker = getDatePicker("Select the starting date") {date ->
+        val datePicker = getDatePicker(getString(R.string.starting_date_picker_title)) { date ->
             startingDateTextInputEditText.setText(formatDateForInput(date))
         }
 
@@ -269,7 +286,7 @@ class StudyFormActivity : FormActivity() {
                     val subjectTextInputAutoComplete = binding.subjectTextInputAutoComplete
                     val subjectString = subjectTextInputAutoComplete.text.toString()
 
-                    val subject = studySubjectDao.getStudySubjectsByName(subjectString)
+                    val subject = studySubjectDao.getStudySubjectByName(subjectString)
 
                     subject?.let {
                         val study = getStudyFromFormInputs(subject)
@@ -313,11 +330,16 @@ class StudyFormActivity : FormActivity() {
         )
     }
 
-    private fun validateAllFields() = validateTitle() &&
-            validateDuration() &&
-            validateStudySubject() &&
-            validateStatus() &&
-            validateStartingDate()
+    private fun validateAllFields(): Boolean {
+        // It's necessary to use cache variables to force all the validation methods to be called
+        val isTitleValid = validateTitle()
+        val isDurationValid = validateDuration()
+        val isStudySubjectValid = validateStudySubject()
+        val isStatusValid = validateStatus()
+        val isStartingDateValid = validateStartingDate()
+
+        return isTitleValid && isDurationValid && isStudySubjectValid && isStatusValid && isStartingDateValid
+    }
 
     private fun validateTitle(): Boolean {
         val titleTextInputLayout = binding.titleTextInputLayout

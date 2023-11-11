@@ -6,13 +6,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.maxwell.database.daos.FinanceCategoryDao
 import com.example.maxwell.database.daos.FinanceDao
 import com.example.maxwell.database.daos.StudyDao
 import com.example.maxwell.database.daos.StudySubjectDao
 import com.example.maxwell.database.daos.TaskDao
 import com.example.maxwell.models.Finance
 import com.example.maxwell.models.FinanceCategory
-import com.example.maxwell.models.FinanceCategoryWithFinances
 import com.example.maxwell.models.Study
 import com.example.maxwell.models.StudySubject
 import com.example.maxwell.models.Task
@@ -29,6 +29,7 @@ abstract class AppDatabase: RoomDatabase() {
     abstract fun studyDao(): StudyDao
     abstract fun financeDao(): FinanceDao
     abstract fun studySubjectDao(): StudySubjectDao
+    abstract fun financeCategoryDao(): FinanceCategoryDao
 
     companion object {
         // Applying singleton design pattern when returning the AppDatabase instance

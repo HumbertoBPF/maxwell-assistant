@@ -6,28 +6,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/available_subjects_text_view"
+        android:id="@+id/available_categories_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/study_subjects_horizontal_scroll_view"
+        app:layout_constraintBottom_toTopOf="@id/finance_categories_horizontal_scroll_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/subjects_available_text_view"
+        android:text="@string/categories_available_text_view"
         android:textSize="16sp"
         android:textStyle="bold"/>
 
     <HorizontalScrollView
-        android:id="@+id/study_subjects_horizontal_scroll_view"
+        android:id="@+id/finance_categories_horizontal_scroll_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/available_subjects_text_view"
+        app:layout_constraintTop_toBottomOf="@id/available_categories_text_view"
         android:layout_marginTop="8dp">
 
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/study_subjects_chip_group"
+            android:id="@+id/finance_categories_chip_group"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:singleLine="true"/>
@@ -35,13 +35,13 @@
     </HorizontalScrollView>
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/add_subject_text_view"
+        android:id="@+id/add_category_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/study_subjects_horizontal_scroll_view"
+        app:layout_constraintTop_toBottomOf="@id/finance_categories_horizontal_scroll_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/add_subject_text_view"
+        android:text="@string/add_category_text_view"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginTop="8dp"/>
@@ -50,7 +50,7 @@
         android:id="@+id/name_text_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/add_subject_text_view"
+        app:layout_constraintTop_toBottomOf="@id/add_category_text_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

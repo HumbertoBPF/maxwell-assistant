@@ -13,12 +13,17 @@ class FinancesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        configureFab()
+
+        setContentView(binding.root)
+    }
+
+    private fun configureFab() {
         val addFab = binding.addFab
+
         addFab.setOnClickListener {
             val intent = Intent(this@FinancesActivity, FinanceFormActivity::class.java)
             startActivity(intent)
         }
-
-        setContentView(binding.root)
     }
 }

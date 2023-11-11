@@ -210,11 +210,16 @@ class TaskFormActivity : FormActivity() {
         )
     }
 
-    private fun validateAllFields() = validateTitle() &&
-                validateDuration() &&
-                validateDueDate() &&
-                validatePriority() &&
-                validateStatus()
+    private fun validateAllFields(): Boolean {
+        // It's necessary to use cache variables to force all the validation methods to be called
+        val isTitleValid = validateTitle()
+        val isDurationValid = validateDuration()
+        val isDueDateValid = validateDueDate()
+        val isPriorityValid = validatePriority()
+        val isStatusValid = validateStatus()
+
+        return isTitleValid && isDurationValid && isDueDateValid && isPriorityValid && isStatusValid
+    }
 
     private fun validateTitle(): Boolean {
         val titleTextInput = binding.titleTextInput

@@ -7,7 +7,7 @@ import java.util.Date
 
 @Entity
 data class Finance(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val title: String,
     val categoryId: Long,
     val value: BigDecimal?,
