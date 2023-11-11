@@ -39,16 +39,16 @@ class StudyFormActivity : FormActivity() {
         intent.getLongExtra("id", 0)
     }
 
+    private val studyDao by lazy {
+        AppDatabase.instantiate(this@StudyFormActivity).studyDao()
+    }
+
     private val studySubjectDao by lazy {
         AppDatabase.instantiate(this@StudyFormActivity).studySubjectDao()
     }
 
     private val converters by lazy {
         Converters()
-    }
-
-    private val studyDao by lazy {
-        AppDatabase.instantiate(this@StudyFormActivity).studyDao()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,7 +138,7 @@ class StudyFormActivity : FormActivity() {
             val subjectId = study?.subjectId ?: 0
 
             studySubjectDao.getStudySubjectById(subjectId).collect {studySubject ->
-                subjectAutoComplete?.setText(studySubject?.name)
+                subjectAutoComplete?.setText(studySubject?.name, false)
             }
         }
     }

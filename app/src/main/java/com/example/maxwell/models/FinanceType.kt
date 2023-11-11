@@ -1,6 +1,8 @@
 package com.example.maxwell.models
 
-enum class FinanceType(val text: String) {
-    INCOME("Income"),
-    EXPENSE("Expense")
+import com.example.maxwell.R
+
+enum class FinanceType(val text: String, val symbol: String, val color: Int) {
+    INCOME("Income", "+", R.color.income_color),
+    EXPENSE("Expense", "-", R.color.expense_color)
 }

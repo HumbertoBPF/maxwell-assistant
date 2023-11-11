@@ -36,7 +36,7 @@ class StudyDetailActivity : AppCompatActivity() {
                     finish()
                 } else {
                     bind(study)
-                    configureAppMenu(study)
+                    configureAppbarMenu(study)
                 }
             }
         }
@@ -44,7 +44,7 @@ class StudyDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    private fun configureAppMenu(study: Study) {
+    private fun configureAppbarMenu(study: Study) {
         val appMenu = binding.appbarMenu
 
         appMenu.setOnMenuItemClickListener { menuItem ->

@@ -30,8 +30,8 @@ class StudiesActivity : AppCompatActivity() {
     private fun configureRecyclerView() {
         lifecycleScope.launch {
             studyDao.getStudies().collect { studies ->
-                val recyclerView = binding.studiesRecyclerView
-                recyclerView.adapter = StudyAdapter(this@StudiesActivity, studies)
+                val studiesRecyclerView = binding.studiesRecyclerView
+                studiesRecyclerView.adapter = StudyAdapter(this@StudiesActivity, studies)
             }
         }
     }

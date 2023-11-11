@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         val recyclerView = binding.menuRecyclerView
 
         val taskItem = MenuItem(
-            R.color.color_state_list_tasks,
+            R.color.color_state_list_model_item,
             R.drawable.ic_tasks,
             getString(R.string.tasks_title),
             TasksActivity::class.java

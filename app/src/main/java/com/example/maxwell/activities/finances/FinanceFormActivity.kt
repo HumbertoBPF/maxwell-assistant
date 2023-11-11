@@ -26,6 +26,8 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class FinanceFormActivity : FormActivity() {
+    private var finance: Finance? = null
+
     private val binding by lazy {
         ActivityFinanceFormBinding.inflate(layoutInflater)
     }
@@ -34,53 +36,43 @@ class FinanceFormActivity : FormActivity() {
         DialogFinanceCategoryFormBinding.inflate(layoutInflater)
     }
 
-    private val financeCategoryDao by lazy {
-        AppDatabase.instantiate(this@FinanceFormActivity).financeCategoryDao()
+    private val id by lazy {
+        intent.getLongExtra("id", 0)
     }
 
     private val financeDao by lazy {
         AppDatabase.instantiate(this@FinanceFormActivity).financeDao()
     }
 
+    private val financeCategoryDao by lazy {
+        AppDatabase.instantiate(this@FinanceFormActivity).financeCategoryDao()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        configureTitleTextInput()
-        configureCategoryTextInput()
-        configureFinanceCategoriesManagement()
-        configureValueTextInput()
-        configureDateTextInput()
-        configureSaveButton()
+        lifecycleScope.launch {
+            financeDao.getFinanceById(id).collect{financeFromDb ->
+                finance = financeFromDb
+
+                configureTitleTextInput()
+                configureCategoryTextInput()
+                configureFinanceCategoriesManagement()
+                configureValueTextInput()
+                configureCurrencyRadioGroup()
+                configureTypeRadioGroup()
+                configureDateTextInput()
+                configureSaveButton()
+            }
+        }
 
         setContentView(binding.root)
     }
 
-    private fun getFinanceFromInputs(category: FinanceCategory): Finance {
-        val titleTextInputEditText = binding.titleTextInputEditText
-        val valueTextInputEditText = binding.valueTextInputEditText
-        val dateTextInputEditText = binding.dateTextInputEditText
-
-        val title = titleTextInputEditText.text.toString()
-        val value = BigDecimal(valueTextInputEditText.text.toString()).setScale(2, RoundingMode.CEILING)
-        val currency = getCurrencyInput()
-        val type = getTypeInput()
-        val dateString = dateTextInputEditText.text.toString()
-
-        val sdf = SimpleDateFormat("MM-dd-yyyy", Locale.US)
-        val date = sdf.parse(dateString)
-
-        return Finance(
-            title = title,
-            categoryId = category.id,
-            value = value,
-            currency = currency,
-            type = type,
-            date = date
-        )
-    }
-
     private fun configureTitleTextInput() {
         val titleTextInputEditText = binding.titleTextInputEditText
+
+        titleTextInputEditText.setText(finance?.title)
 
         titleTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
@@ -100,6 +92,14 @@ class FinanceFormActivity : FormActivity() {
                 val financeCategoryOptions = financeCategories
                     .map { category -> category.name }.toTypedArray()
                 categoryAutoComplete?.setSimpleItems(financeCategoryOptions)
+            }
+        }
+
+        lifecycleScope.launch {
+            val categoryId = finance?.categoryId ?: 0
+
+            financeCategoryDao.getFinanceCategoryById(categoryId).collect{financeCategory ->
+                categoryAutoComplete?.setText(financeCategory?.name, false)
             }
         }
     }
@@ -189,6 +189,8 @@ class FinanceFormActivity : FormActivity() {
     private fun configureValueTextInput() {
         val valueTextInputEditText = binding.valueTextInputEditText
 
+        valueTextInputEditText.setText(finance?.value.toString())
+
         valueTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 validateValue()
@@ -196,28 +198,39 @@ class FinanceFormActivity : FormActivity() {
         }
     }
 
-    private fun getCurrencyInput(): Currency {
-        val brlRadioButton = binding.brlRadioButton
+    private fun configureCurrencyRadioGroup() {
+        val currency = finance?.currency
 
-        return if (brlRadioButton.isChecked) {
-            Currency.BRL
-        } else {
-            Currency.EUR
+        currency?.let {
+            val brlRadioButton = binding.brlRadioButton
+            val euroRadioButton = binding.euroRadioButton
+
+            brlRadioButton.isChecked = (currency == Currency.BRL)
+            euroRadioButton.isChecked = (currency == Currency.EUR)
         }
     }
 
-    private fun getTypeInput(): FinanceType {
-        val incomeRadioButton = binding.incomeRadioButton
+    private fun configureTypeRadioGroup() {
+        val type = finance?.type
 
-        return if (incomeRadioButton.isChecked) {
-            FinanceType.INCOME
-        } else {
-            FinanceType.EXPENSE
+        type?.let {
+            val incomeRadioButton = binding.incomeRadioButton
+            val expenseRadioButton = binding.expenseRadioButton
+
+            incomeRadioButton.isChecked = (type == FinanceType.INCOME)
+            expenseRadioButton.isChecked = (type == FinanceType.EXPENSE)
         }
     }
 
     private fun configureDateTextInput() {
         val dateTextInputLayout = binding.dateTextInputEditText
+
+        val date = finance?.date
+
+        date?.let {
+            val formattedDate = formatDateForInput(date)
+            dateTextInputLayout.setText(formattedDate)
+        }
 
         dateTextInputLayout.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -246,6 +259,51 @@ class FinanceFormActivity : FormActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun getFinanceFromInputs(category: FinanceCategory): Finance {
+        val titleTextInputEditText = binding.titleTextInputEditText
+        val valueTextInputEditText = binding.valueTextInputEditText
+        val dateTextInputEditText = binding.dateTextInputEditText
+
+        val title = titleTextInputEditText.text.toString()
+        val value = BigDecimal(valueTextInputEditText.text.toString()).setScale(2, RoundingMode.CEILING)
+        val currency = getCurrencyInput()
+        val type = getTypeInput()
+        val dateString = dateTextInputEditText.text.toString()
+
+        val sdf = SimpleDateFormat("MM-dd-yyyy", Locale.US)
+        val date = sdf.parse(dateString)
+
+        return Finance(
+            id = id,
+            title = title,
+            categoryId = category.id,
+            value = value,
+            currency = currency,
+            type = type,
+            date = date
+        )
+    }
+
+    private fun getCurrencyInput(): Currency {
+        val brlRadioButton = binding.brlRadioButton
+
+        return if (brlRadioButton.isChecked) {
+            Currency.BRL
+        } else {
+            Currency.EUR
+        }
+    }
+
+    private fun getTypeInput(): FinanceType {
+        val incomeRadioButton = binding.incomeRadioButton
+
+        return if (incomeRadioButton.isChecked) {
+            FinanceType.INCOME
+        } else {
+            FinanceType.EXPENSE
         }
     }
 

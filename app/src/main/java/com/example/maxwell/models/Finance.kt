@@ -14,4 +14,15 @@ data class Finance(
     val currency: Currency?,
     val type: FinanceType?,
     val date: Date?
-)
+) {
+    fun formatValue(): String {
+        if ((currency != null) && (type != null)) {
+            val currencyFormatter = currency.formatter
+            val formattedValue = currencyFormatter.format(value)
+
+            return "${type.symbol}$formattedValue"
+        }
+
+        return ""
+    }
+}

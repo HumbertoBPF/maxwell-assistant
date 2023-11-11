@@ -16,7 +16,7 @@ interface FinanceCategoryDao {
     suspend fun getFinanceCategoryByName(name: String): FinanceCategory?
 
     @Query("SELECT * FROM FinanceCategory WHERE id=:id")
-    fun getFinanceCategoryById(id: Long): List<FinanceCategory?>
+    fun getFinanceCategoryById(id: Long): Flow<FinanceCategory?>
 
     @Insert
     suspend fun insert(financeCategory: FinanceCategory)
