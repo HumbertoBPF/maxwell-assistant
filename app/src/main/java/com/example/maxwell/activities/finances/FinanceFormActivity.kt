@@ -32,10 +32,6 @@ class FinanceFormActivity : FormActivity() {
         ActivityFinanceFormBinding.inflate(layoutInflater)
     }
 
-    private val dialogBinding by lazy {
-        DialogFinanceCategoryFormBinding.inflate(layoutInflater)
-    }
-
     private val id by lazy {
         intent.getLongExtra("id", 0)
     }
@@ -113,6 +109,8 @@ class FinanceFormActivity : FormActivity() {
     }
 
     private fun displayFinanceCategoryManagementDialog() {
+        val dialogBinding = DialogFinanceCategoryFormBinding.inflate(layoutInflater)
+
         lifecycleScope.launch {
             val financeCategoryChipGroup = dialogBinding.financeCategoriesChipGroup
 
@@ -136,7 +134,7 @@ class FinanceFormActivity : FormActivity() {
 
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
             lifecycleScope.launch {
-                if (validateCategoryNameTextInput()) {
+                if (validateCategoryNameTextInput(dialogBinding)) {
                     val nameTextInputEditText = dialogBinding.nameTextInputEditText
                     val name = nameTextInputEditText.text.toString()
 
@@ -163,9 +161,9 @@ class FinanceFormActivity : FormActivity() {
         }
     }
 
-    private suspend fun validateCategoryNameTextInput(): Boolean {
-        val nameTextInputLayout = dialogBinding.nameTextInputLayout
-        val nameTextInputEditText = dialogBinding.nameTextInputEditText
+    private suspend fun validateCategoryNameTextInput(binding: DialogFinanceCategoryFormBinding): Boolean {
+        val nameTextInputLayout = binding.nameTextInputLayout
+        val nameTextInputEditText = binding.nameTextInputEditText
 
         val name = nameTextInputEditText.text.toString()
 
@@ -189,7 +187,11 @@ class FinanceFormActivity : FormActivity() {
     private fun configureValueTextInput() {
         val valueTextInputEditText = binding.valueTextInputEditText
 
-        valueTextInputEditText.setText(finance?.value.toString())
+        val value = finance?.value
+
+        value?.let {
+            valueTextInputEditText.setText("$value")
+        }
 
         valueTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {

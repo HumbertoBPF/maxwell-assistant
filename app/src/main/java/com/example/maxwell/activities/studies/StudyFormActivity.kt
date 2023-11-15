@@ -31,10 +31,6 @@ class StudyFormActivity : FormActivity() {
         ActivityStudyFormBinding.inflate(layoutInflater)
     }
 
-    private val dialogBinding by lazy {
-        DialogStudySubjectFormBinding.inflate(layoutInflater)
-    }
-
     private val id by lazy {
         intent.getLongExtra("id", 0)
     }
@@ -152,6 +148,8 @@ class StudyFormActivity : FormActivity() {
     }
 
     private fun displayStudySubjectManagementDialog() {
+        val dialogBinding = DialogStudySubjectFormBinding.inflate(layoutInflater)
+
         lifecycleScope.launch {
             val studySubjectsChipGroup = dialogBinding.studySubjectsChipGroup
 
@@ -175,7 +173,7 @@ class StudyFormActivity : FormActivity() {
 
         dialog.getButton(BUTTON_POSITIVE).setOnClickListener {
             lifecycleScope.launch {
-                if (validateSubjectNameTextInput()) {
+                if (validateSubjectNameTextInput(dialogBinding)) {
                     val nameTextInputEditText = dialogBinding.nameTextInputEditText
                     val name = nameTextInputEditText.text.toString()
 
@@ -202,9 +200,9 @@ class StudyFormActivity : FormActivity() {
         }
     }
 
-    private suspend fun validateSubjectNameTextInput(): Boolean {
-        val nameTextInputLayout = dialogBinding.nameTextInputLayout
-        val nameTextInputEditText = dialogBinding.nameTextInputEditText
+    private suspend fun validateSubjectNameTextInput(binding: DialogStudySubjectFormBinding): Boolean {
+        val nameTextInputLayout = binding.nameTextInputLayout
+        val nameTextInputEditText = binding.nameTextInputEditText
 
         val name = nameTextInputEditText.text.toString()
 

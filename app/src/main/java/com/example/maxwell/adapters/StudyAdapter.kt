@@ -14,7 +14,7 @@ import com.example.maxwell.utils.formatDatePretty
 
 class StudyAdapter(
     private val context: Context,
-    private val studies: List<Study>
+    private val studies: MutableList<Study>
 ): RecyclerView.Adapter<StudyAdapter.ViewHolder>(){
     inner class ViewHolder(binding: StudyItemBinding): RecyclerView.ViewHolder(binding.root) {
         private val startingDateTextView = binding.startingDateTextView
@@ -42,9 +42,7 @@ class StudyAdapter(
             val status = study.status
             val statusIconResource = status?.iconResource
 
-            statusIconResource?.let {
-                statusIconTextView.setImageResource(statusIconResource)
-            }
+            statusIconTextView.setImageResource(statusIconResource ?: 0)
 
             statusTextView.text = status?.text
 
@@ -67,5 +65,11 @@ class StudyAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val study = studies[position]
         holder.bind(study)
+    }
+
+    fun changeDataset(newDataset: List<Study>) {
+        studies.clear()
+        studies.addAll(newDataset)
+        notifyDataSetChanged()
     }
 }

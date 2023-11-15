@@ -14,7 +14,7 @@ import com.example.maxwell.utils.formatDatePretty
 
 class FinanceAdapter(
     private val context: Context,
-    private val finances: List<Finance>
+    private val finances: MutableList<Finance>
 ): RecyclerView.Adapter<FinanceAdapter.ViewHolder>(){
     inner class ViewHolder(binding: FinanceItemBinding): RecyclerView.ViewHolder(binding.root) {
         private val dateTextView = binding.dateTextView
@@ -61,5 +61,11 @@ class FinanceAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val finance = finances[position]
         holder.bind(finance)
+    }
+
+    fun changeDataset(newDataset: List<Finance>) {
+        finances.clear()
+        finances.addAll(newDataset)
+        notifyDataSetChanged()
     }
 }

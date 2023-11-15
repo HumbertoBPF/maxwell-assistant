@@ -15,7 +15,7 @@ import com.example.maxwell.utils.formatDatePretty
 
 class TaskAdapter(
     private val context: Context,
-    private val tasks: List<Task>
+    private var tasks: MutableList<Task>
 ): Adapter<TaskAdapter.ViewHolder>() {
     inner class ViewHolder(binding: TaskItemBinding): RecyclerView.ViewHolder(binding.root) {
         private val taskContainer = binding.taskContainer
@@ -45,9 +45,7 @@ class TaskAdapter(
             val priorityStringResource = priority?.stringResource
             val priorityIconResource = priority?.iconResource
 
-            priorityIconResource?.let {
-                priorityIconImageView.setImageResource(priorityIconResource)
-            }
+            priorityIconImageView.setImageResource(priorityIconResource ?: 0)
             priorityStringResource?.let {
                 priorityTextView.text = context.getString(priorityStringResource)
             }
@@ -57,11 +55,9 @@ class TaskAdapter(
             val statusStringResource = status?.stringResource
             val statusIconResource = status?.iconResource
 
-            statusIconResource?.let {
-                statusIconImageView.setImageResource(statusIconResource)
-            }
+            statusIconImageView.setImageResource(statusIconResource ?: 0)
             statusStringResource?.let {
-                statusTextView.text = context.getString(statusStringResource)
+                statusTextView.setText(statusStringResource)
             }
 
             taskContainer.setOnClickListener {
@@ -83,5 +79,11 @@ class TaskAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val task = tasks[position]
         holder.bind(task)
+    }
+
+    fun changeDataset(newDataset: List<Task>) {
+        tasks.clear()
+        tasks.addAll(newDataset)
+        notifyDataSetChanged()
     }
 }
