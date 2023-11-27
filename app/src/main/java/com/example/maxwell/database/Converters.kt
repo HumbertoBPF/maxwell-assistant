@@ -10,12 +10,12 @@ import java.util.Date
 
 class Converters {
     @TypeConverter
-    fun fromDateToString(date: Date): Long {
+    fun fromDateToLong(date: Date): Long {
         return date.time
     }
 
     @TypeConverter
-    fun fromStringToDate(long: Long): Date {
+    fun fromLongToDate(long: Long): Date {
         return Date(long)
     }
 
