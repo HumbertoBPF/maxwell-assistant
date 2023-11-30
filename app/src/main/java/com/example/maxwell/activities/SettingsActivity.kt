@@ -180,8 +180,7 @@ class SettingsActivity : AppCompatActivity() {
 
                 if ((hour == 0) || (hour > 12)) {
                     synchronizationTimeTextInput.isErrorEnabled = true
-                    synchronizationTimeTextInput.error =
-                        "The synchronization time must be in the format \"HH:MM AM\" or \"HH:MM PM\""
+                    synchronizationTimeTextInput.error = getString(R.string.time_format_instruction)
                     return false
                 }
 
@@ -189,8 +188,7 @@ class SettingsActivity : AppCompatActivity() {
                 synchronizationTimeTextInput.error = ""
             } else {
                 synchronizationTimeTextInput.isErrorEnabled = true
-                synchronizationTimeTextInput.error =
-                    "The synchronization time must be in the format \"HH:MM AM\" or \"HH:MM PM\""
+                synchronizationTimeTextInput.error = getString(R.string.time_format_instruction)
                 return false
             }
 

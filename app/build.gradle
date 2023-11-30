@@ -27,10 +27,24 @@ android {
         }
     }
 
+    android.buildFeatures.buildConfig true
+    testBuildType = "uiTest"
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "DATABASE_NAME", "\"maxwell_release.db\"")
+            buildConfigField("String", "NAME_PREFERENCES_DATA_STORE", "\"settings_release\"")
+        }
+        debug {
+            buildConfigField("String", "DATABASE_NAME", "\"maxwell.db\"")
+            buildConfigField("String", "NAME_PREFERENCES_DATA_STORE", "\"settings\"")
+        }
+        uiTest {
+            initWith(buildTypes.debug)
+            buildConfigField("String", "DATABASE_NAME", "\"maxwell_test.db\"")
+            buildConfigField("String", "NAME_PREFERENCES_DATA_STORE", "\"settings_test\"")
         }
     }
     compileOptions {
@@ -62,4 +76,5 @@ dependencies {
     testImplementation 'org.amshove.kluent:kluent-android:1.72'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.1'
 }

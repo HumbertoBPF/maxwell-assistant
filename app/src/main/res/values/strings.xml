@@ -100,4 +100,5 @@
     <string name="search_studies_dialog_title">Search studies</string>
     <string name="all_subjects">All subjects</string>
     <string name="search_finances_dialog_title">Search finances</string>
+    <string name="time_format_instruction">The synchronization time must be in the format \"HH:MM AM\" or \"HH:MM PM\"</string>
 </resources>
