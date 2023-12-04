@@ -2,6 +2,7 @@ package com.example.maxwell.activities.tasks
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.sqlite.db.SimpleSQLiteQuery
@@ -91,7 +92,7 @@ class TasksActivity : AppCompatActivity() {
         val dialogBinding = DialogFilterTasksBinding.inflate(layoutInflater)
 
         bindSearchDialogViews(dialogBinding)
-
+        Log.i("HELLOOO", "Rendering dialog")
         MaterialAlertDialogBuilder(this@TasksActivity)
             .setTitle(R.string.search_tasks_dialog_title)
             .setView(dialogBinding.root)
@@ -100,6 +101,7 @@ class TasksActivity : AppCompatActivity() {
                 filterTasks(dialogBinding)
             }
             .show()
+        Log.i("HELLOOO", "Showing dialog")
     }
 
     private fun bindSearchDialogViews(dialogBinding: DialogFilterTasksBinding) {
@@ -162,7 +164,7 @@ class TasksActivity : AppCompatActivity() {
 
         filter = """
             SELECT original.id, original.title, original.duration, grouped.dueDate, original.priority, original.status FROM 
-            (SELECT * FROM Task WHERE $filter ORDER BY dueDate DESC) AS original 
+            (SELECT * FROM Task WHERE $filter ORDER BY dueDate DESC, id DESC) AS original 
             LEFT JOIN (SELECT * FROM Task WHERE $filter GROUP BY dueDate) AS grouped 
             ON original.id = grouped.id;
         """.trimIndent()

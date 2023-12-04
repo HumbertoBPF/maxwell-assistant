@@ -1,4 +1,4 @@
-package com.example.maxwell
+package com.example.maxwell.tests
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -6,6 +6,8 @@ import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import com.example.maxwell.R
+import com.example.maxwell.utils.UITests
 import com.example.maxwell.utils.atPosition
 import com.example.maxwell.utils.hasLength
 import org.hamcrest.CoreMatchers.allOf
@@ -45,5 +47,7 @@ class MainActivityTests: UITests() {
                     )
                 ))
             )
+
+        onView(withId(R.id.settings_item)).check(matches(isDisplayed()))
     }
 }

@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             settings.getUsername().collect { username ->
-                if (username == null) {
+                if (username == null || username.trim() == "") {
                     greetingTextView.text = "Good morning"
                 } else {
                     greetingTextView.text = "Good morning, $username"

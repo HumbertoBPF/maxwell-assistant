@@ -1,4 +1,4 @@
-package com.example.maxwell
+package com.example.maxwell.tests
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.clearText
@@ -6,7 +6,6 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isNotChecked
@@ -14,6 +13,9 @@ import androidx.test.espresso.matcher.ViewMatchers.isNotEnabled
 import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import com.example.maxwell.R
+import com.example.maxwell.utils.UITests
+import com.example.maxwell.utils.hasError
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -71,7 +73,7 @@ class SettingsActivityTests: UITests() {
 
         onView(withId(R.id.daily_synchronization_switch)).perform(click())
 
-        fillSynchronizationTime(synchronizationTime)
+        fillTimePickerInput(R.id.synchronization_time_text_input_edit_text, synchronizationTime)
 
         onView(withId(R.id.save_button)).perform(click())
 
@@ -98,7 +100,7 @@ class SettingsActivityTests: UITests() {
 
         onView(withId(R.id.daily_synchronization_switch)).perform(click())
 
-        fillSynchronizationTime(synchronizationTime)
+        fillTimePickerInput(R.id.synchronization_time_text_input_edit_text, synchronizationTime)
 
         onView(withId(R.id.save_button)).perform(click())
 
@@ -134,7 +136,7 @@ class SettingsActivityTests: UITests() {
 
         onView(withId(R.id.daily_synchronization_switch)).perform(click())
 
-        fillSynchronizationTime(synchronizationTime)
+        fillTimePickerInput(R.id.synchronization_time_text_input_edit_text, synchronizationTime)
 
         onView(withId(R.id.save_button)).perform(click())
 
@@ -161,12 +163,8 @@ class SettingsActivityTests: UITests() {
 
         onView(withId(R.id.save_button)).perform(click())
 
-        val timeFormatError = context.getString(R.string.time_format_instruction)
-
         onView(withId(R.id.synchronization_time_text_input))
-            .check(matches(
-                hasDescendant(withText(timeFormatError))
-            ))
+            .check(matches(hasError(R.string.time_format_instruction)))
     }
 
     @Test
@@ -177,41 +175,25 @@ class SettingsActivityTests: UITests() {
 
         onView(withId(R.id.daily_synchronization_switch)).perform(click())
 
-        fillSynchronizationTime(invalidTime)
+        fillTimePickerInput(R.id.synchronization_time_text_input_edit_text, invalidTime)
 
         onView(withId(R.id.save_button)).perform(click())
 
-        val timeFormatError = context.getString(R.string.time_format_instruction)
-
         onView(withId(R.id.synchronization_time_text_input))
-            .check(matches(
-                hasDescendant(withText(timeFormatError))
-            ))
-    }
-
-    private fun fillSynchronizationTime(synchronizationTime: String) {
-        onView(withId(R.id.synchronization_time_text_input_edit_text)).perform(click())
-
-        onView(withId(com.google.android.material.R.id.material_timepicker_cancel_button))
-            .perform(click())
-
-        onView(withId(R.id.synchronization_time_text_input_edit_text))
-            .perform(
-                typeText(synchronizationTime), closeSoftKeyboard()
-            )
+            .check(matches(hasError(R.string.time_format_instruction)))
     }
 
     private fun assertUsernameSetting(expectedValue: String) {
         val usernameSetting = runBlocking {
             settings.getUsername().first()
         }
-        assertEquals(usernameSetting, expectedValue)
+        assertEquals(expectedValue, usernameSetting)
     }
 
     private fun assertSynchronizationTimeSetting(expectedValue: String?) {
         val synchronizationTimeSetting = runBlocking {
             settings.getDailySynchronizationTime().first()
         }
-        assertEquals(synchronizationTimeSetting, expectedValue)
+        assertEquals(expectedValue, synchronizationTimeSetting)
     }
 }
