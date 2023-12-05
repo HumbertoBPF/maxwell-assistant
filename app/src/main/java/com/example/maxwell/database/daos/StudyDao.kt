@@ -27,7 +27,7 @@ interface StudyDao {
     fun getStudyById(id: Long): Flow<Study?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(study: Study)
+    suspend fun insert(vararg study: Study)
 
     @Delete
     suspend fun delete(study: Study)

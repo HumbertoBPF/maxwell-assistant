@@ -40,11 +40,15 @@ class StudyAdapter(
             descriptionTextView.text = study.description
 
             val status = study.status
+
             val statusIconResource = status?.iconResource
+            val statusStringResource = status?.stringResource
 
             statusIconTextView.setImageResource(statusIconResource ?: 0)
 
-            statusTextView.text = status?.text
+            statusStringResource?.let {
+                statusTextView.setText(statusStringResource)
+            }
 
             studyContainer.setOnClickListener {
                 val intent = Intent(context, StudyDetailActivity::class.java)

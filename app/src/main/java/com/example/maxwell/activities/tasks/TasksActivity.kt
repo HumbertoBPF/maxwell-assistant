@@ -164,7 +164,7 @@ class TasksActivity : AppCompatActivity() {
 
         filter = """
             SELECT original.id, original.title, original.duration, grouped.dueDate, original.priority, original.status FROM 
-            (SELECT * FROM Task WHERE $filter ORDER BY dueDate DESC, id DESC) AS original 
+            (SELECT * FROM Task WHERE $filter ORDER BY dueDate DESC) AS original 
             LEFT JOIN (SELECT * FROM Task WHERE $filter GROUP BY dueDate) AS grouped 
             ON original.id = grouped.id;
         """.trimIndent()

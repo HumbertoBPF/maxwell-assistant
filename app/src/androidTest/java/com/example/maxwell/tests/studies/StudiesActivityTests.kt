@@ -1,4 +1,4 @@
-package com.example.maxwell.tests.tasks
+package com.example.maxwell.tests.studies
 
 import android.view.View
 import androidx.test.espresso.Espresso.onView
@@ -11,49 +11,53 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
-import com.example.maxwell.models.Task
+import com.example.maxwell.models.Study
 import com.example.maxwell.utils.UITests
 import com.example.maxwell.utils.atPosition
-import com.example.maxwell.utils.getTasksForTests
+import com.example.maxwell.utils.getStudiesForTests
+import com.example.maxwell.utils.getStudySubjectsForTests
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matcher
 import org.junit.Before
 import org.junit.Test
 
-class TasksActivityTests: UITests() {
-    private val taskDao = db.taskDao()
+class StudiesActivityTests: UITests() {
+    private val studySubjectDao = db.studySubjectDao()
+    private val studyDao = db.studyDao()
 
-    private val tasks = getTasksForTests()
+    private val studySubjects = getStudySubjectsForTests()
+    private val studies = getStudiesForTests()
 
     @Before
     override fun setUp() {
         super.setUp()
         runBlocking {
-            taskDao.insert(*tasks)
+            studySubjectDao.insert(*studySubjects)
+            studyDao.insert(*studies)
         }
     }
 
     @Test
-    fun shouldDisplayTasks() {
+    fun shouldDisplayStudies() {
         onView(withId(R.id.menu_recycler_view))
             .perform(
-                actionOnItemAtPosition<MenuAdapter.ViewHolder>(0, click())
+                actionOnItemAtPosition<MenuAdapter.ViewHolder>(1, click())
             )
 
-        onView(withId(R.id.tasks_recycler_view))
+        onView(withId(R.id.studies_recycler_view))
             .check(matches(
-                taskAtPosition(0, tasks[0])
+                studyAtPosition(0, studies[1])
             ))
 
-        onView(withId(R.id.tasks_recycler_view))
+        onView(withId(R.id.studies_recycler_view))
             .check(matches(
-                taskAtPosition(1, tasks[1])
+                studyAtPosition(1, studies[2])
             ))
 
-        onView(withId(R.id.tasks_recycler_view))
+        onView(withId(R.id.studies_recycler_view))
             .check(matches(
-                taskAtPosition(2, tasks[2])
+                studyAtPosition(2, studies[0])
             ))
 
         onView(withId(R.id.add_fab)).check(matches(isDisplayed()))
@@ -61,12 +65,12 @@ class TasksActivityTests: UITests() {
         onView(withId(R.id.ic_filter)).check(matches(isDisplayed()))
     }
 
-    private fun taskAtPosition(position: Int, task: Task): Matcher<in View> {
+    private fun studyAtPosition(position: Int, study: Study): Matcher<in View> {
         val titleMatcher = hasDescendant(
             allOf(
                 isDisplayed(),
                 withId(R.id.title_text_view),
-                withText(task.title)
+                withText(study.title)
             )
         )
 
@@ -74,21 +78,11 @@ class TasksActivityTests: UITests() {
             allOf(
                 isDisplayed(),
                 withId(R.id.duration_text_view),
-                withText("${task.duration} h")
+                withText("${study.duration} h")
             )
         )
 
-        val priorityText = context.getString(task.priority?.stringResource ?: -1)
-
-        val priorityMatcher = hasDescendant(
-            allOf(
-                isDisplayed(),
-                withId(R.id.priority_text_view),
-                withText(priorityText)
-            )
-        )
-
-        val statusText = context.getString(task.status?.stringResource ?: -1)
+        val statusText = context.getString(study.status?.stringResource ?: -1)
 
         val statusMatcher = hasDescendant(
             allOf(
@@ -98,13 +92,12 @@ class TasksActivityTests: UITests() {
             )
         )
 
-        val taskMatcher = allOf(
+        val studyMatcher = allOf(
             titleMatcher,
             durationMatcher,
-            priorityMatcher,
             statusMatcher
         )
 
-        return atPosition(position, taskMatcher)
+        return atPosition(position, studyMatcher)
     }
 }

@@ -15,7 +15,7 @@ interface TaskDao {
     @Query(
         """
         SELECT original.id, original.title, original.duration, grouped.dueDate, original.priority, original.status FROM 
-        (SELECT * FROM Task ORDER BY dueDate DESC, id DESC) AS original 
+        (SELECT * FROM Task ORDER BY dueDate DESC) AS original 
         LEFT JOIN (SELECT * FROM Task GROUP BY dueDate) AS grouped
         ON original.id = grouped.id
         """

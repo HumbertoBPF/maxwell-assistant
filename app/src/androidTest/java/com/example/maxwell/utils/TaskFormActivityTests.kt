@@ -1,13 +1,16 @@
 package com.example.maxwell.utils
 
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.matcher.RootMatchers
+import androidx.test.espresso.action.ViewActions.clearText
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
+import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
 import androidx.test.espresso.matcher.ViewMatchers
 import com.example.maxwell.R
 import com.example.maxwell.models.Priority
 import com.example.maxwell.models.Status
-import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.`is`
 
 open class TaskFormActivityTests: UITests() {
     protected val taskDao = db.taskDao()
@@ -20,23 +23,23 @@ open class TaskFormActivityTests: UITests() {
     ) {
         Espresso.onView(ViewMatchers.withId(R.id.title_text_input_edit_text))
             .perform(
-                ViewActions.clearText(),
-                ViewActions.typeText(title),
-                ViewActions.closeSoftKeyboard()
+                clearText(),
+                typeText(title),
+                closeSoftKeyboard()
             )
 
         Espresso.onView(ViewMatchers.withId(R.id.description_text_input_edit_text))
             .perform(
-                ViewActions.clearText(),
-                ViewActions.typeText(description),
-                ViewActions.closeSoftKeyboard()
+                clearText(),
+                typeText(description),
+                closeSoftKeyboard()
             )
 
         Espresso.onView(ViewMatchers.withId(R.id.duration_text_input_edit_text))
             .perform(
-                ViewActions.clearText(),
-                ViewActions.typeText(duration),
-                ViewActions.closeSoftKeyboard()
+                clearText(),
+                typeText(duration),
+                closeSoftKeyboard()
             )
 
         fillDatePickerInput(R.id.due_date_text_input_edit_text, dueDate)
@@ -59,11 +62,11 @@ open class TaskFormActivityTests: UITests() {
         )
 
         Espresso.onView(ViewMatchers.withId(R.id.status_text_input_auto_complete))
-            .perform(ViewActions.click())
+            .perform(click())
 
-        Espresso.onData(CoreMatchers.`is`(status.text))
-            .inRoot(RootMatchers.isPlatformPopup())
-            .perform(ViewActions.click())
+        Espresso.onData(`is`(status.text))
+            .inRoot(isPlatformPopup())
+            .perform(click())
     }
 
     protected fun fillTaskForm(
@@ -81,11 +84,11 @@ open class TaskFormActivityTests: UITests() {
         )
 
         Espresso.onView(ViewMatchers.withId(R.id.status_text_input_auto_complete))
-            .perform(ViewActions.click())
+            .perform(click())
 
-        Espresso.onData(CoreMatchers.`is`(status.text))
-            .inRoot(RootMatchers.isPlatformPopup())
-            .perform(ViewActions.click())
+        Espresso.onData(`is`(status.text))
+            .inRoot(isPlatformPopup())
+            .perform(click())
     }
 
     protected fun fillTaskForm(
@@ -103,10 +106,10 @@ open class TaskFormActivityTests: UITests() {
         )
 
         Espresso.onView(ViewMatchers.withId(R.id.priority_text_input_auto_complete))
-            .perform(ViewActions.click())
+            .perform(click())
 
-        Espresso.onData(CoreMatchers.`is`(priority.text))
-            .inRoot(RootMatchers.isPlatformPopup())
-            .perform(ViewActions.click())
+        Espresso.onData(`is`(priority.text))
+            .inRoot(isPlatformPopup())
+            .perform(click())
     }
 }

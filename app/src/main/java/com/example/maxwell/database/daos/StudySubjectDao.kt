@@ -19,7 +19,7 @@ interface StudySubjectDao {
     fun getStudySubjectById(id: Long): Flow<StudySubject?>
 
     @Insert
-    suspend fun insert(studySubject: StudySubject)
+    suspend fun insert(vararg studySubject: StudySubject)
 
     @Delete
     suspend fun delete(studySubject: StudySubject)

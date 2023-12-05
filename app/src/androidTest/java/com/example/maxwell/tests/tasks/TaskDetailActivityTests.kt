@@ -49,9 +49,7 @@ class TaskDetailActivityTests: UITests() {
 
         onView(withId(R.id.delete_item)).perform(click())
 
-        val confirmButtonText = context.getString(R.string.confirm_deletion_dialog_positive_button)
-
-        onView(withText(confirmButtonText)).perform(click())
+        onView(withText(R.string.confirm_deletion_dialog_positive_button)).perform(click())
 
         val task = runBlocking {
             taskDao.getTaskById(selectedTask.id).first()
