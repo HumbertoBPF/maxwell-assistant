@@ -80,7 +80,7 @@
     <string name="currency_text_view">Currency</string>
     <string name="expense_radio_button">Expense</string>
     <string name="income_radio_button">Income</string>
-    <string name="date_text_input_layout">Date*</string>
+    <string name="date_text_input_label">Date*</string>
     <string name="add_finance_category_text">Click here to manage finance categories</string>
     <string name="categories_available_text_view">Categories available</string>
     <string name="add_category_text_view">Add category</string>

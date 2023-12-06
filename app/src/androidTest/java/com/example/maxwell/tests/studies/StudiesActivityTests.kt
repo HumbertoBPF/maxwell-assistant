@@ -12,7 +12,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.models.Study
-import com.example.maxwell.utils.UITests
+import com.example.maxwell.utils.activities.base.StudyTests
 import com.example.maxwell.utils.atPosition
 import com.example.maxwell.utils.getStudiesForTests
 import com.example.maxwell.utils.getStudySubjectsForTests
@@ -22,10 +22,7 @@ import org.hamcrest.Matcher
 import org.junit.Before
 import org.junit.Test
 
-class StudiesActivityTests: UITests() {
-    private val studySubjectDao = db.studySubjectDao()
-    private val studyDao = db.studyDao()
-
+class StudiesActivityTests: StudyTests() {
     private val studySubjects = getStudySubjectsForTests()
     private val studies = getStudiesForTests()
 

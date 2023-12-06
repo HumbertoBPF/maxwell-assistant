@@ -12,7 +12,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.models.Task
-import com.example.maxwell.utils.UITests
+import com.example.maxwell.utils.activities.base.TaskTests
 import com.example.maxwell.utils.atPosition
 import com.example.maxwell.utils.getTasksForTests
 import kotlinx.coroutines.runBlocking
@@ -21,9 +21,7 @@ import org.hamcrest.Matcher
 import org.junit.Before
 import org.junit.Test
 
-class TasksActivityTests: UITests() {
-    private val taskDao = db.taskDao()
-
+class TasksActivityTests: TaskTests() {
     private val tasks = getTasksForTests()
 
     @Before

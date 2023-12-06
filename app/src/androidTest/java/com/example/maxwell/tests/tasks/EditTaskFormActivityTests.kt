@@ -12,7 +12,7 @@ import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.models.Priority
 import com.example.maxwell.models.Status
-import com.example.maxwell.utils.TaskFormActivityTests
+import com.example.maxwell.utils.activities.forms.TaskFormActivityTests
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.getTasksForTests

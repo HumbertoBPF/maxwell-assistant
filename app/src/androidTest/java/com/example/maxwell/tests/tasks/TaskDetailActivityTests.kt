@@ -9,7 +9,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
-import com.example.maxwell.utils.UITests
+import com.example.maxwell.utils.activities.base.TaskTests
 import com.example.maxwell.utils.formatDatePretty
 import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.getTasksForTests
@@ -20,8 +20,7 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
-class TaskDetailActivityTests: UITests() {
-    private val taskDao = db.taskDao()
+class TaskDetailActivityTests: TaskTests() {
     private val tasks = getTasksForTests()
     private val selectedTask = getRandomElement(tasks)
 

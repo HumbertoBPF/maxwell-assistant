@@ -1,22 +1,20 @@
-package com.example.maxwell.utils
+package com.example.maxwell.utils.activities.forms
 
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.clearText
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.typeText
-import androidx.test.espresso.matcher.RootMatchers
+import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
 import androidx.test.espresso.matcher.ViewMatchers
 import com.example.maxwell.R
 import com.example.maxwell.models.Status
 import com.example.maxwell.models.StudySubject
-import org.hamcrest.CoreMatchers
+import com.example.maxwell.utils.activities.base.StudyTests
+import org.hamcrest.CoreMatchers.`is`
 
-open class StudyFormActivityTests: UITests() {
-    protected val studyDao = db.studyDao()
-    protected val studySubjectDao = db.studySubjectDao()
-
+open class StudyFormActivityTests: StudyTests() {
     protected fun fillStudyForm(
         title: String,
         description: String,
@@ -35,18 +33,18 @@ open class StudyFormActivityTests: UITests() {
         )
 
         onView(ViewMatchers.withId(R.id.subject_text_input_auto_complete))
-            .perform(ViewActions.click())
+            .perform(click())
 
-        onData(CoreMatchers.`is`(subject.name))
-            .inRoot(RootMatchers.isPlatformPopup())
-            .perform(ViewActions.click())
+        onData(`is`(subject.name))
+            .inRoot(isPlatformPopup())
+            .perform(click())
 
         onView(ViewMatchers.withId(R.id.status_text_input_auto_complete))
-            .perform(ViewActions.click())
+            .perform(click())
 
-        onData(CoreMatchers.`is`(status.text))
-            .inRoot(RootMatchers.isPlatformPopup())
-            .perform(ViewActions.click())
+        onData(`is`(status.text))
+            .inRoot(isPlatformPopup())
+            .perform(click())
     }
 
     protected fun fillStudyForm(
@@ -66,11 +64,11 @@ open class StudyFormActivityTests: UITests() {
         )
 
         onView(ViewMatchers.withId(R.id.status_text_input_auto_complete))
-            .perform(ViewActions.click())
+            .perform(click())
 
-        onData(CoreMatchers.`is`(status.text))
-            .inRoot(RootMatchers.isPlatformPopup())
-            .perform(ViewActions.click())
+        onData(`is`(status.text))
+            .inRoot(isPlatformPopup())
+            .perform(click())
     }
 
     protected fun fillStudyForm(
@@ -90,11 +88,11 @@ open class StudyFormActivityTests: UITests() {
         )
 
         onView(ViewMatchers.withId(R.id.subject_text_input_auto_complete))
-            .perform(ViewActions.click())
+            .perform(click())
 
-        onData(CoreMatchers.`is`(subject.name))
-            .inRoot(RootMatchers.isPlatformPopup())
-            .perform(ViewActions.click())
+        onData(`is`(subject.name))
+            .inRoot(isPlatformPopup())
+            .perform(click())
     }
 
     private fun fillStudyForm(

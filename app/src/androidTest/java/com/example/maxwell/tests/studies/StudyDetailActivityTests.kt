@@ -9,7 +9,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
-import com.example.maxwell.utils.UITests
+import com.example.maxwell.utils.activities.base.StudyTests
 import com.example.maxwell.utils.formatDatePretty
 import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.getStudiesForTests
@@ -20,12 +20,8 @@ import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
-import java.lang.NullPointerException
 
-class StudyDetailActivityTests: UITests() {
-    private val studyDao = db.studyDao()
-    private val studySubjectDao = db.studySubjectDao()
-
+class StudyDetailActivityTests: StudyTests() {
     private val studies = getStudiesForTests()
     private val studySubjects = getStudySubjectsForTests()
 

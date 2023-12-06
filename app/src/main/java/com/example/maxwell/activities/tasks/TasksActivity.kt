@@ -92,7 +92,7 @@ class TasksActivity : AppCompatActivity() {
         val dialogBinding = DialogFilterTasksBinding.inflate(layoutInflater)
 
         bindSearchDialogViews(dialogBinding)
-        Log.i("HELLOOO", "Rendering dialog")
+
         MaterialAlertDialogBuilder(this@TasksActivity)
             .setTitle(R.string.search_tasks_dialog_title)
             .setView(dialogBinding.root)
@@ -101,7 +101,6 @@ class TasksActivity : AppCompatActivity() {
                 filterTasks(dialogBinding)
             }
             .show()
-        Log.i("HELLOOO", "Showing dialog")
     }
 
     private fun bindSearchDialogViews(dialogBinding: DialogFilterTasksBinding) {

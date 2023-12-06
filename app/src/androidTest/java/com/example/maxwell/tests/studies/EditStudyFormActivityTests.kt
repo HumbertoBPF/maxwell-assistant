@@ -11,7 +11,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.models.Status
-import com.example.maxwell.utils.StudyFormActivityTests
+import com.example.maxwell.utils.activities.forms.StudyFormActivityTests
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.getStudiesForTests

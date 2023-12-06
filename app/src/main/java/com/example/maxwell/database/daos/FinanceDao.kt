@@ -27,7 +27,7 @@ interface FinanceDao {
     fun getFinanceById(id: Long): Flow<Finance?>
 
     @Insert(onConflict = REPLACE)
-    suspend fun insert(finance: Finance)
+    suspend fun insert(vararg finance: Finance)
 
     @Delete
     suspend fun delete(finance: Finance)

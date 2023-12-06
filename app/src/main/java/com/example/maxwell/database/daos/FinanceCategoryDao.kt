@@ -19,7 +19,7 @@ interface FinanceCategoryDao {
     fun getFinanceCategoryById(id: Long): Flow<FinanceCategory?>
 
     @Insert
-    suspend fun insert(financeCategory: FinanceCategory)
+    suspend fun insert(vararg financeCategory: FinanceCategory)
 
     @Delete
     suspend fun delete(financeCategory: FinanceCategory)

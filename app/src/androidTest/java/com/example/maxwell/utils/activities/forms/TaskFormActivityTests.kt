@@ -1,4 +1,4 @@
-package com.example.maxwell.utils
+package com.example.maxwell.utils.activities.forms
 
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions.clearText
@@ -10,11 +10,10 @@ import androidx.test.espresso.matcher.ViewMatchers
 import com.example.maxwell.R
 import com.example.maxwell.models.Priority
 import com.example.maxwell.models.Status
+import com.example.maxwell.utils.activities.base.TaskTests
 import org.hamcrest.CoreMatchers.`is`
 
-open class TaskFormActivityTests: UITests() {
-    protected val taskDao = db.taskDao()
-
+open class TaskFormActivityTests: TaskTests() {
     protected fun fillTaskForm(
         title: String,
         description: String,

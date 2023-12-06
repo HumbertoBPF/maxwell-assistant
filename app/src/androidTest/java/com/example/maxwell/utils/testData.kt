@@ -1,5 +1,9 @@
 package com.example.maxwell.utils
 
+import com.example.maxwell.models.Currency
+import com.example.maxwell.models.Finance
+import com.example.maxwell.models.FinanceCategory
+import com.example.maxwell.models.FinanceType
 import com.example.maxwell.models.Priority
 import com.example.maxwell.models.Status
 import com.example.maxwell.models.Study
@@ -85,4 +89,49 @@ fun getStudiesForTests(): Array<Study> = arrayOf(
         status = Status.DONE,
         startingDate = getCalendar(year = 2023, month = DECEMBER, day = 5).time
     ),
+)
+
+fun getFinanceCategoriesForTests(): Array<FinanceCategory> = arrayOf(
+    FinanceCategory(
+        id = 1,
+        name = "Finance category 1"
+    ),
+    FinanceCategory(
+        id = 2,
+        name = "Finance category 2"
+    ),
+    FinanceCategory(
+        id = 3,
+        name = "Finance category 3"
+    )
+)
+
+fun getFinancesForTests(): Array<Finance> = arrayOf(
+    Finance(
+        id = 1,
+        title = "First finance",
+        categoryId = 1,
+        value = BigDecimal("10.50"),
+        currency = Currency.EUR,
+        type = FinanceType.EXPENSE,
+        date = getCalendar(year = 2023, month = DECEMBER, day = 5).time
+    ),
+    Finance(
+        id = 2,
+        title = "Second finance",
+        categoryId =  2,
+        value = BigDecimal("100.00"),
+        currency = Currency.BRL,
+        type = FinanceType.INCOME,
+        date = getCalendar(year = 2023, month = DECEMBER, day = 5).time
+    ),
+    Finance(
+        id = 3,
+        title = "Third finance",
+        categoryId = 3,
+        value = BigDecimal("50.99"),
+        currency = Currency.BRL,
+        type = FinanceType.EXPENSE,
+        date = getCalendar(year = 2023, month = DECEMBER, day = 6).time
+    )
 )

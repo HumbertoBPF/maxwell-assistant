@@ -200,7 +200,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/type_radio_group"
                 android:layout_marginTop="8dp"
-                android:hint="@string/date_text_input_layout"
+                android:hint="@string/date_text_input_label"
                 app:startIconDrawable="@drawable/ic_calendar"
                 app:endIconMode="clear_text">
 
