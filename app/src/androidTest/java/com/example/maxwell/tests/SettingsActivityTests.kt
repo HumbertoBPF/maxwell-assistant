@@ -14,7 +14,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
-import com.example.maxwell.utils.UITests
+import com.example.maxwell.utils.activities.base.UITests
 import com.example.maxwell.utils.hasError
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first

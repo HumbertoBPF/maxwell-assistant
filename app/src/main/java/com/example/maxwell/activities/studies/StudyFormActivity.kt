@@ -211,7 +211,7 @@ class StudyFormActivity : FormActivity() {
             return false
         }
 
-        val nameAvailable = studySubjectDao.getStudySubjectByName(name) != null
+        val nameAvailable = studySubjectDao.getStudySubjectByName(name) == null
 
         if (!nameAvailable) {
             nameTextInputLayout.isErrorEnabled = true
