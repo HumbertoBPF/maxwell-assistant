@@ -8,6 +8,7 @@ import com.example.maxwell.R
 import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.databinding.ActivityStudyDetailBinding
 import com.example.maxwell.models.Study
+import com.example.maxwell.repository.StudySubjectRepository
 import com.example.maxwell.utils.formatDatePretty
 import com.example.maxwell.utils.showConfirmDeletionDialog
 import kotlinx.coroutines.launch
@@ -21,8 +22,8 @@ class StudyDetailActivity : AppCompatActivity() {
         AppDatabase.instantiate(this@StudyDetailActivity).studyDao()
     }
 
-    private val subjectDao by lazy {
-        AppDatabase.instantiate(this@StudyDetailActivity).studySubjectDao()
+    private val studySubjectRepository by lazy {
+        StudySubjectRepository(this@StudyDetailActivity)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +88,7 @@ class StudyDetailActivity : AppCompatActivity() {
         durationTextView.text = "${study.duration} h"
 
         lifecycleScope.launch {
-            subjectDao.getStudySubjectById(study.subjectId).collect { studySubject ->
+            studySubjectRepository.getStudySubjectById(study.subjectId) { studySubject ->
                 val subjectTextView = binding.subjectTextView
                 subjectTextView.text = studySubject?.name
             }

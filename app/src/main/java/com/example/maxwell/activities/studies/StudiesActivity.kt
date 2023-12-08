@@ -13,6 +13,7 @@ import com.example.maxwell.databinding.ActivityStudiesBinding
 import com.example.maxwell.databinding.DialogFilterStudiesBinding
 import com.example.maxwell.models.Status
 import com.example.maxwell.models.StudySubject
+import com.example.maxwell.repository.StudySubjectRepository
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
 import com.example.maxwell.utils.hasValidDateFormat
@@ -32,8 +33,8 @@ class StudiesActivity : AppCompatActivity() {
         AppDatabase.instantiate(this@StudiesActivity).studyDao()
     }
 
-    private val studySubjectDao by lazy {
-        AppDatabase.instantiate(this@StudiesActivity).studySubjectDao()
+    private val studySubjectRepository by lazy {
+        StudySubjectRepository(this@StudiesActivity)
     }
 
     private val adapter by lazy {
@@ -111,7 +112,7 @@ class StudiesActivity : AppCompatActivity() {
         titleTextInputEditText.setText(title)
 
         lifecycleScope.launch {
-            studySubjectDao.getStudySubjects().collect { studySubjects ->
+            studySubjectRepository.getStudySubjects { studySubjects ->
                 val subjectTextInputAutoComplete =
                     dialogBinding.subjectTextInputAutoComplete as? MaterialAutoCompleteTextView
                 val studySubjectOptionsFromDb =
@@ -164,7 +165,7 @@ class StudiesActivity : AppCompatActivity() {
             val studySubjectName = subjectTextInputAutoComplete.text.toString()
 
             lifecycleScope.launch {
-                studySubject = studySubjectDao.getStudySubjectByName(studySubjectName)
+                studySubject = studySubjectRepository.getStudySubjectByName(studySubjectName)
 
                 val query = getFilteringQuery(dialogBinding)
 
