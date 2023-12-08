@@ -21,7 +21,7 @@ import com.example.maxwell.models.Task
 @Database(
     entities = [Task::class, Study::class, Finance::class, FinanceCategory::class, StudySubject::class],
     version = 2,
-    autoMigrations = [AutoMigration (from = 1, to = 2), ],
+    autoMigrations = [AutoMigration (from = 1, to = 2)],
     exportSchema = true,
     )
 @TypeConverters(Converters::class)

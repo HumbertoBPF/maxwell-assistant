@@ -21,6 +21,7 @@ import com.example.maxwell.utils.hasError
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -82,24 +83,22 @@ class StudySubjectManagementDialogTests: StudyTests() {
         onView(withId(R.id.name_text_input_edit_text))
             .perform(typeText(newStudySubjectName), closeSoftKeyboard())
 
-        onView(withText(R.string.study_subject_dialog_positive_button))
-            .perform(click())
+        onView(withText(R.string.study_subject_dialog_positive_button)).perform(click())
+        // Checking if the created study subject was added to the list displayed on the dialog
+        onView(withText(newStudySubjectName)).perform(scrollTo())
 
+        onView(withId(R.id.study_subjects_chip_group))
+            .check(matches(
+                hasDescendant(
+                    allOf(isDisplayed(), withText(newStudySubjectName))
+                )
+            ))
         // Checking if a new study subject was created in the database
         val newStudySubject = runBlocking {
             studySubjectDao.getStudySubjectByName(newStudySubjectName)
         }
 
         assertEquals(newStudySubjectName, newStudySubject?.name)
-        // Checking if the created study subject was added to the list displayed on the dialog
-        onView(withText(newStudySubject?.name)).perform(scrollTo())
-
-        onView(withId(R.id.study_subjects_chip_group))
-            .check(matches(
-                hasDescendant(
-                    allOf(isDisplayed(), withText(newStudySubject?.name))
-                )
-            ))
     }
 
     @Test
@@ -130,6 +129,13 @@ class StudySubjectManagementDialogTests: StudyTests() {
 
         onView(withText(randomStudySubject.name))
             .perform(scrollTo(), closeChip())
+
+        onView(withId(R.id.study_subjects_chip_group))
+            .check(matches(not(
+                hasDescendant(
+                    allOf(isDisplayed(), withText(randomStudySubject.name))
+                )
+            )))
 
         val studySubject = runBlocking {
             studySubjectDao.getStudySubjectById(randomStudySubject.id).first()

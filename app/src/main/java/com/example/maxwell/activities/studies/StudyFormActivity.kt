@@ -12,6 +12,7 @@ import com.example.maxwell.databinding.DialogStudySubjectFormBinding
 import com.example.maxwell.models.Status
 import com.example.maxwell.models.Study
 import com.example.maxwell.models.StudySubject
+import com.example.maxwell.repository.StudySubjectRepository
 import com.example.maxwell.utils.createChipView
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
@@ -39,8 +40,8 @@ class StudyFormActivity : FormActivity() {
         AppDatabase.instantiate(this@StudyFormActivity).studyDao()
     }
 
-    private val studySubjectDao by lazy {
-        AppDatabase.instantiate(this@StudyFormActivity).studySubjectDao()
+    private val studySubjectRepository by lazy {
+        StudySubjectRepository(this@StudyFormActivity)
     }
 
     private val converters by lazy {
@@ -123,7 +124,7 @@ class StudyFormActivity : FormActivity() {
         }
 
         lifecycleScope.launch {
-            studySubjectDao.getStudySubjects().collect { studySubjects ->
+            studySubjectRepository.getStudySubjects { studySubjects ->
                 val studySubjectOptions = studySubjects
                     .map { studySubject -> studySubject.name }.toTypedArray()
                 subjectAutoComplete?.setSimpleItems(studySubjectOptions)
@@ -133,7 +134,7 @@ class StudyFormActivity : FormActivity() {
         lifecycleScope.launch {
             val subjectId = study?.subjectId ?: 0
 
-            studySubjectDao.getStudySubjectById(subjectId).collect {studySubject ->
+            studySubjectRepository.getStudySubjectById(subjectId) { studySubject ->
                 subjectAutoComplete?.setText(studySubject?.name, false)
             }
         }
@@ -153,7 +154,7 @@ class StudyFormActivity : FormActivity() {
         lifecycleScope.launch {
             val studySubjectsChipGroup = dialogBinding.studySubjectsChipGroup
 
-            studySubjectDao.getStudySubjects().collect {studySubjects ->
+            studySubjectRepository.getStudySubjects { studySubjects ->
                 studySubjectsChipGroup.removeAllViews()
 
                 studySubjects.forEach { studySubject ->
@@ -178,7 +179,7 @@ class StudyFormActivity : FormActivity() {
                     val name = nameTextInputEditText.text.toString()
 
                     val studySubject = StudySubject(name = name)
-                    studySubjectDao.insert(studySubject)
+                    studySubjectRepository.insert(studySubject)
                     nameTextInputEditText.setText("")
                 }
             }
@@ -194,7 +195,7 @@ class StudyFormActivity : FormActivity() {
         studySubjectsChipGroup.addView(chip)
         chip.setOnCloseIconClickListener {
             lifecycleScope.launch {
-                studySubjectDao.delete(studySubject)
+                studySubjectRepository.delete(studySubject)
                 studySubjectsChipGroup.removeView(chip)
             }
         }
@@ -211,7 +212,7 @@ class StudyFormActivity : FormActivity() {
             return false
         }
 
-        val nameAvailable = studySubjectDao.getStudySubjectByName(name) == null
+        val nameAvailable = studySubjectRepository.getStudySubjectByName(name) == null
 
         if (!nameAvailable) {
             nameTextInputLayout.isErrorEnabled = true
@@ -284,7 +285,7 @@ class StudyFormActivity : FormActivity() {
                     val subjectTextInputAutoComplete = binding.subjectTextInputAutoComplete
                     val subjectString = subjectTextInputAutoComplete.text.toString()
 
-                    val subject = studySubjectDao.getStudySubjectByName(subjectString)
+                    val subject = studySubjectRepository.getStudySubjectByName(subjectString)
 
                     subject?.let {
                         val study = getStudyFromFormInputs(subject)

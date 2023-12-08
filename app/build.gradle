@@ -59,6 +59,7 @@ android {
 dependencies {
     def lifecycle_version = "2.6.2"
     def room_version = "2.5.2"
+    def espresso_version = "3.5.1"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -70,11 +71,12 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
+    implementation "androidx.test.espresso:espresso-idling-resource:$espresso_version"
     ksp "androidx.room:room-compiler:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.amshove.kluent:kluent-android:1.72'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.1'
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "org.amshove.kluent:kluent-android:1.72"
+    androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
 }
