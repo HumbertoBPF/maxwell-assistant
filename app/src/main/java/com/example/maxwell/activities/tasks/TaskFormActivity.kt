@@ -4,12 +4,12 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
 import com.example.maxwell.activities.FormActivity
-import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.database.Converters
 import com.example.maxwell.databinding.ActivityTaskFormBinding
 import com.example.maxwell.models.Priority
 import com.example.maxwell.models.Status
 import com.example.maxwell.models.Task
+import com.example.maxwell.repository.TaskRepository
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
 import com.example.maxwell.utils.hasValidDateFormat
@@ -30,8 +30,8 @@ class TaskFormActivity : FormActivity() {
         intent.getLongExtra("id", 0)
     }
 
-    private val taskDao by lazy {
-        AppDatabase.instantiate(this@TaskFormActivity).taskDao()
+    private val taskRepository by lazy {
+        TaskRepository(this@TaskFormActivity)
     }
 
     private val converters by lazy {
@@ -42,7 +42,7 @@ class TaskFormActivity : FormActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            taskDao.getTaskById(id).collect {taskFromDb ->
+            taskRepository.getTaskById(id) {taskFromDb ->
                 task = taskFromDb
 
                 configureAppBar()
@@ -170,8 +170,7 @@ class TaskFormActivity : FormActivity() {
                 val task = getTaskFromFormInputs()
 
                 lifecycleScope.launch {
-                    val taskDao = AppDatabase.instantiate(this@TaskFormActivity).taskDao()
-                    taskDao.insert(task)
+                    taskRepository.insert(task)
                     finish()
                 }
             }

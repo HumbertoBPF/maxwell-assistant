@@ -5,9 +5,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
-import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.databinding.ActivityTaskDetailBinding
 import com.example.maxwell.models.Task
+import com.example.maxwell.repository.TaskRepository
 import com.example.maxwell.utils.formatDatePretty
 import com.example.maxwell.utils.showConfirmDeletionDialog
 import kotlinx.coroutines.launch
@@ -17,8 +17,8 @@ class TaskDetailActivity : AppCompatActivity() {
         ActivityTaskDetailBinding.inflate(layoutInflater)
     }
 
-    private val taskDao by lazy {
-        AppDatabase.instantiate(this@TaskDetailActivity).taskDao()
+    private val taskRepository by lazy {
+        TaskRepository(this@TaskDetailActivity)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +27,7 @@ class TaskDetailActivity : AppCompatActivity() {
         val id = intent.getLongExtra("id", 0)
 
         lifecycleScope.launch {
-            taskDao.getTaskById(id).collect {task ->
+            taskRepository.getTaskById(id) {task ->
                 if (task == null) {
                     finish()
                 } else {
@@ -48,7 +48,7 @@ class TaskDetailActivity : AppCompatActivity() {
                 R.id.delete_item -> {
                     showConfirmDeletionDialog(this@TaskDetailActivity) { _, _ ->
                         lifecycleScope.launch {
-                            taskDao.delete(task)
+                            taskRepository.delete(task)
                             finish()
                         }
                     }

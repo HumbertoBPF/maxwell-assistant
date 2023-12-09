@@ -2,18 +2,17 @@ package com.example.maxwell.activities.tasks
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.maxwell.R
 import com.example.maxwell.adapters.TaskAdapter
-import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.database.Converters
 import com.example.maxwell.databinding.ActivityTasksBinding
 import com.example.maxwell.databinding.DialogFilterTasksBinding
 import com.example.maxwell.models.Priority
 import com.example.maxwell.models.Status
+import com.example.maxwell.repository.TaskRepository
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
 import com.example.maxwell.utils.hasValidDateFormat
@@ -29,8 +28,8 @@ class TasksActivity : AppCompatActivity() {
         ActivityTasksBinding.inflate(layoutInflater)
     }
 
-    private val taskDao by lazy {
-        AppDatabase.instantiate(this@TasksActivity).taskDao()
+    private val taskRepository by lazy {
+        TaskRepository(this@TasksActivity)
     }
 
     private val adapter by lazy {
@@ -67,7 +66,7 @@ class TasksActivity : AppCompatActivity() {
 
     private fun configureRecyclerView() {
         lifecycleScope.launch {
-            taskDao.getTasks().collect { tasks ->
+            taskRepository.getTasks { tasks ->
                 val tasksRecyclerView = binding.tasksRecyclerView
                 adapter.changeDataset(tasks)
                 tasksRecyclerView.adapter = adapter
@@ -147,7 +146,7 @@ class TasksActivity : AppCompatActivity() {
             val query = getFilteringQuery(dialogBinding)
 
             lifecycleScope.launch {
-                val filteredTasks = taskDao.filterTasks(query)
+                val filteredTasks = taskRepository.filterTasks(query)
                 adapter.changeDataset(filteredTasks)
             }
         }
