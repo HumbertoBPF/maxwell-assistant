@@ -67,7 +67,7 @@ class FinancesActivityTests: FinanceTests() {
     }
 
     @Test
-    fun shouldDisplayFilterFinanceDialog() {
+    fun shouldDisplayFilterFinancesDialog() {
         navigateToTheFinancesActivity()
 
         onView(withId(R.id.ic_filter)).perform(click())
@@ -119,7 +119,9 @@ class FinancesActivityTests: FinanceTests() {
         onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(1)))
 
         onView(withId(R.id.finances_recycler_view))
-            .check(matches(financeAtPosition(0, randomFinance)))
+            .check(matches(
+                financeAtPosition(0, randomFinance)
+            ))
     }
 
     @Test
@@ -135,10 +137,14 @@ class FinancesActivityTests: FinanceTests() {
         onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(2)))
 
         onView(withId(R.id.finances_recycler_view))
-            .check(matches(financeAtPosition(0, finances[2])))
+            .check(matches(
+                financeAtPosition(0, finances[2])
+            ))
 
         onView(withId(R.id.finances_recycler_view))
-            .check(matches(financeAtPosition(1, finances[1])))
+            .check(matches(
+                financeAtPosition(1, finances[1])
+            ))
     }
 
     @Test
@@ -154,10 +160,14 @@ class FinancesActivityTests: FinanceTests() {
         onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(2)))
 
         onView(withId(R.id.finances_recycler_view))
-            .check(matches(financeAtPosition(0, finances[2])))
+            .check(matches(
+                financeAtPosition(0, finances[2])
+            ))
 
         onView(withId(R.id.finances_recycler_view))
-            .check(matches(financeAtPosition(1, finances[0])))
+            .check(matches(
+                financeAtPosition(1, finances[0])
+            ))
     }
 
     @Test
@@ -173,10 +183,14 @@ class FinancesActivityTests: FinanceTests() {
         onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(2)))
 
         onView(withId(R.id.finances_recycler_view))
-            .check(matches(financeAtPosition(0, finances[0])))
+            .check(matches(
+                financeAtPosition(0, finances[0])
+            ))
 
         onView(withId(R.id.finances_recycler_view))
-            .check(matches(financeAtPosition(1, finances[1])))
+            .check(matches(
+                financeAtPosition(1, finances[1])
+            ))
     }
 
     @Test
