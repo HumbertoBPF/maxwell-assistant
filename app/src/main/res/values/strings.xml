@@ -85,6 +85,8 @@
     <string name="categories_available_text_view">Categories available</string>
     <string name="add_category_text_view">Add category</string>
     <string name="finance_category_dialog_title">Manage finance categories</string>
+    <string name="finance_category_dialog_negative_button">Cancel</string>
+    <string name="finance_category_dialog_positive_button">Add</string>
     <string name="error_finance_category_name_unavailable">A category with the provided name has already been created</string>
     <string name="date_picker_title">Select the date</string>
     <string name="starting_date_picker_title">Select the starting date</string>

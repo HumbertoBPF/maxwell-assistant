@@ -112,8 +112,7 @@ class StudySubjectManagementDialogTests: StudyTests() {
         onView(withId(R.id.name_text_input_edit_text))
             .perform(typeText(randomStudySubject.name), closeSoftKeyboard())
 
-        onView(withText(R.string.study_subject_dialog_positive_button))
-            .perform(click())
+        onView(withText(R.string.study_subject_dialog_positive_button)).perform(click())
 
         onView(withId(R.id.name_text_input_layout))
             .check(matches(hasError(R.string.error_study_subject_name_unavailable)))

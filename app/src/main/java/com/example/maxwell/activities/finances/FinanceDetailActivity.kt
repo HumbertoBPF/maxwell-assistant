@@ -5,9 +5,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
-import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.databinding.ActivityFinanceDetailBinding
 import com.example.maxwell.models.Finance
+import com.example.maxwell.repository.FinanceCategoryRepository
 import com.example.maxwell.repository.FinanceRepository
 import com.example.maxwell.utils.formatDatePretty
 import com.example.maxwell.utils.showConfirmDeletionDialog
@@ -26,8 +26,8 @@ class FinanceDetailActivity : AppCompatActivity() {
         FinanceRepository(this@FinanceDetailActivity)
     }
 
-    private val financeCategoryDao by lazy {
-        AppDatabase.instantiate(this@FinanceDetailActivity).financeCategoryDao()
+    private val financeCategoryRepository by lazy {
+        FinanceCategoryRepository(this@FinanceDetailActivity)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,7 +79,7 @@ class FinanceDetailActivity : AppCompatActivity() {
         titleTextView.text = finance.title
 
         lifecycleScope.launch {
-            financeCategoryDao.getFinanceCategoryById(id).collect{financeCategory ->
+            financeCategoryRepository.getFinanceCategoryById(id) { financeCategory ->
                 val categoryTextView = binding.categoryTextView
                 categoryTextView.text = financeCategory?.name
             }

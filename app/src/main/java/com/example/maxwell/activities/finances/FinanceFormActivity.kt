@@ -5,13 +5,13 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
 import com.example.maxwell.activities.FormActivity
-import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.databinding.ActivityFinanceFormBinding
 import com.example.maxwell.databinding.DialogFinanceCategoryFormBinding
 import com.example.maxwell.models.Currency
 import com.example.maxwell.models.Finance
 import com.example.maxwell.models.FinanceCategory
 import com.example.maxwell.models.FinanceType
+import com.example.maxwell.repository.FinanceCategoryRepository
 import com.example.maxwell.repository.FinanceRepository
 import com.example.maxwell.utils.createChipView
 import com.example.maxwell.utils.formatDateForInput
@@ -41,8 +41,8 @@ class FinanceFormActivity : FormActivity() {
         FinanceRepository(this@FinanceFormActivity)
     }
 
-    private val financeCategoryDao by lazy {
-        AppDatabase.instantiate(this@FinanceFormActivity).financeCategoryDao()
+    private val financeCategoryRepository by lazy {
+        FinanceCategoryRepository(this@FinanceFormActivity)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,7 +85,7 @@ class FinanceFormActivity : FormActivity() {
         val categoryAutoComplete = categoryInputTextAutoComplete as? MaterialAutoCompleteTextView
 
         lifecycleScope.launch {
-            financeCategoryDao.getFinanceCategories().collect { financeCategories ->
+            financeCategoryRepository.getFinanceCategories { financeCategories ->
                 val financeCategoryOptions = financeCategories
                     .map { category -> category.name }.toTypedArray()
                 categoryAutoComplete?.setSimpleItems(financeCategoryOptions)
@@ -95,7 +95,7 @@ class FinanceFormActivity : FormActivity() {
         lifecycleScope.launch {
             val categoryId = finance?.categoryId ?: 0
 
-            financeCategoryDao.getFinanceCategoryById(categoryId).collect{financeCategory ->
+            financeCategoryRepository.getFinanceCategoryById(categoryId) { financeCategory ->
                 categoryAutoComplete?.setText(financeCategory?.name, false)
             }
         }
@@ -115,7 +115,7 @@ class FinanceFormActivity : FormActivity() {
         lifecycleScope.launch {
             val financeCategoryChipGroup = dialogBinding.financeCategoriesChipGroup
 
-            financeCategoryDao.getFinanceCategories().collect {financeCategories ->
+            financeCategoryRepository.getFinanceCategories {financeCategories ->
                 financeCategoryChipGroup.removeAllViews()
 
                 financeCategories.forEach { financeCategory ->
@@ -127,10 +127,10 @@ class FinanceFormActivity : FormActivity() {
         val dialog = MaterialAlertDialogBuilder(this@FinanceFormActivity)
             .setTitle(getString(R.string.finance_category_dialog_title))
             .setView(dialogBinding.root)
-            .setNegativeButton(R.string.study_subject_dialog_negative_button) { dialog, _ ->
+            .setNegativeButton(R.string.finance_category_dialog_negative_button) { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton(R.string.study_subject_dialog_positive_button) { _, _ -> }
+            .setPositiveButton(R.string.finance_category_dialog_positive_button) { _, _ -> }
             .show()
 
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
@@ -140,7 +140,7 @@ class FinanceFormActivity : FormActivity() {
                     val name = nameTextInputEditText.text.toString()
 
                     val financeCategory = FinanceCategory(name = name)
-                    financeCategoryDao.insert(financeCategory)
+                    financeCategoryRepository.insert(financeCategory)
                     nameTextInputEditText.setText("")
                 }
             }
@@ -156,7 +156,7 @@ class FinanceFormActivity : FormActivity() {
         financeCategoryChipGroup.addView(chip)
         chip.setOnCloseIconClickListener {
             lifecycleScope.launch {
-                financeCategoryDao.delete(financeCategory)
+                financeCategoryRepository.delete(financeCategory)
             }
             financeCategoryChipGroup.removeView(chip)
         }
@@ -173,7 +173,7 @@ class FinanceFormActivity : FormActivity() {
             return false
         }
 
-        val nameAvailable = financeCategoryDao.getFinanceCategoryByName(name) == null
+        val nameAvailable = financeCategoryRepository.getFinanceCategoryByName(name) == null
 
         if (!nameAvailable) {
             nameTextInputLayout.isErrorEnabled = true
@@ -253,7 +253,7 @@ class FinanceFormActivity : FormActivity() {
                     val categoryTextInputAutoComplete = binding.categoryTextInputAutoComplete
                     val categoryString = categoryTextInputAutoComplete.text.toString()
 
-                    val category = financeCategoryDao.getFinanceCategoryByName(categoryString)
+                    val category = financeCategoryRepository.getFinanceCategoryByName(categoryString)
 
                     category?.let {
                         val finance = getFinanceFromInputs(category)
