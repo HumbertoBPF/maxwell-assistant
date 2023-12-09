@@ -7,12 +7,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.maxwell.R
 import com.example.maxwell.adapters.StudyAdapter
-import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.database.Converters
 import com.example.maxwell.databinding.ActivityStudiesBinding
 import com.example.maxwell.databinding.DialogFilterStudiesBinding
 import com.example.maxwell.models.Status
 import com.example.maxwell.models.StudySubject
+import com.example.maxwell.repository.StudyRepository
 import com.example.maxwell.repository.StudySubjectRepository
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
@@ -29,8 +29,8 @@ class StudiesActivity : AppCompatActivity() {
         ActivityStudiesBinding.inflate(layoutInflater)
     }
 
-    private val studyDao by lazy {
-        AppDatabase.instantiate(this@StudiesActivity).studyDao()
+    private val studyRepository by lazy {
+        StudyRepository(this@StudiesActivity)
     }
 
     private val studySubjectRepository by lazy {
@@ -62,7 +62,7 @@ class StudiesActivity : AppCompatActivity() {
 
     private fun configureRecyclerView() {
         lifecycleScope.launch {
-            studyDao.getStudies().collect { studies ->
+            studyRepository.getStudies { studies ->
                 val studiesRecyclerView = binding.studiesRecyclerView
                 adapter.changeDataset(studies)
                 studiesRecyclerView.adapter = adapter
@@ -170,7 +170,7 @@ class StudiesActivity : AppCompatActivity() {
                 val query = getFilteringQuery(dialogBinding)
 
                 lifecycleScope.launch {
-                    val filteredStudies = studyDao.filterStudies(query)
+                    val filteredStudies = studyRepository.filterStudies(query)
                     adapter.changeDataset(filteredStudies)
                 }
             }

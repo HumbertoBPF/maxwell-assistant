@@ -5,13 +5,13 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
 import com.example.maxwell.activities.FormActivity
-import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.database.Converters
 import com.example.maxwell.databinding.ActivityStudyFormBinding
 import com.example.maxwell.databinding.DialogStudySubjectFormBinding
 import com.example.maxwell.models.Status
 import com.example.maxwell.models.Study
 import com.example.maxwell.models.StudySubject
+import com.example.maxwell.repository.StudyRepository
 import com.example.maxwell.repository.StudySubjectRepository
 import com.example.maxwell.utils.createChipView
 import com.example.maxwell.utils.formatDateForInput
@@ -36,8 +36,8 @@ class StudyFormActivity : FormActivity() {
         intent.getLongExtra("id", 0)
     }
 
-    private val studyDao by lazy {
-        AppDatabase.instantiate(this@StudyFormActivity).studyDao()
+    private val studyRepository by lazy {
+        StudyRepository(this@StudyFormActivity)
     }
 
     private val studySubjectRepository by lazy {
@@ -52,7 +52,7 @@ class StudyFormActivity : FormActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            studyDao.getStudyById(id).collect {studyFromDb ->
+            studyRepository.getStudyById(id) { studyFromDb ->
                 study = studyFromDb
 
                 configureAppBar()
@@ -289,7 +289,7 @@ class StudyFormActivity : FormActivity() {
 
                     subject?.let {
                         val study = getStudyFromFormInputs(subject)
-                        studyDao.insert(study)
+                        studyRepository.insert(study)
                         finish()
                     }
                 }

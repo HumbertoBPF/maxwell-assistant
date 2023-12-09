@@ -5,9 +5,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
-import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.databinding.ActivityStudyDetailBinding
 import com.example.maxwell.models.Study
+import com.example.maxwell.repository.StudyRepository
 import com.example.maxwell.repository.StudySubjectRepository
 import com.example.maxwell.utils.formatDatePretty
 import com.example.maxwell.utils.showConfirmDeletionDialog
@@ -18,8 +18,8 @@ class StudyDetailActivity : AppCompatActivity() {
         ActivityStudyDetailBinding.inflate(layoutInflater)
     }
 
-    private val studyDao by lazy {
-        AppDatabase.instantiate(this@StudyDetailActivity).studyDao()
+    private val studyRepository by lazy {
+        StudyRepository(this@StudyDetailActivity)
     }
 
     private val studySubjectRepository by lazy {
@@ -32,7 +32,7 @@ class StudyDetailActivity : AppCompatActivity() {
         val id = intent.getLongExtra("id", 0)
 
         lifecycleScope.launch {
-            studyDao.getStudyById(id).collect {study ->
+            studyRepository.getStudyById(id) { study ->
                 if (study == null) {
                     finish()
                 } else {
@@ -53,7 +53,7 @@ class StudyDetailActivity : AppCompatActivity() {
                 R.id.delete_item -> {
                     showConfirmDeletionDialog(this@StudyDetailActivity) { _, _ ->
                         lifecycleScope.launch {
-                            studyDao.delete(study)
+                            studyRepository.delete(study)
                             finish()
                         }
                     }
