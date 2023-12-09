@@ -12,6 +12,7 @@ import com.example.maxwell.models.Currency
 import com.example.maxwell.models.Finance
 import com.example.maxwell.models.FinanceCategory
 import com.example.maxwell.models.FinanceType
+import com.example.maxwell.repository.FinanceRepository
 import com.example.maxwell.utils.createChipView
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
@@ -36,8 +37,8 @@ class FinanceFormActivity : FormActivity() {
         intent.getLongExtra("id", 0)
     }
 
-    private val financeDao by lazy {
-        AppDatabase.instantiate(this@FinanceFormActivity).financeDao()
+    private val financeRepository by lazy {
+        FinanceRepository(this@FinanceFormActivity)
     }
 
     private val financeCategoryDao by lazy {
@@ -48,7 +49,7 @@ class FinanceFormActivity : FormActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            financeDao.getFinanceById(id).collect{financeFromDb ->
+            financeRepository.getFinanceById(id) {financeFromDb ->
                 finance = financeFromDb
 
                 configureTitleTextInput()
@@ -256,7 +257,7 @@ class FinanceFormActivity : FormActivity() {
 
                     category?.let {
                         val finance = getFinanceFromInputs(category)
-                        financeDao.insert(finance)
+                        financeRepository.insert(finance)
                         finish()
                     }
                 }

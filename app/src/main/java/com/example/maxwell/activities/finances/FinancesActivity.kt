@@ -7,11 +7,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.maxwell.R
 import com.example.maxwell.adapters.FinanceAdapter
-import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.databinding.ActivityFinancesBinding
 import com.example.maxwell.databinding.DialogFilterFinancesBinding
 import com.example.maxwell.models.Currency
 import com.example.maxwell.models.FinanceType
+import com.example.maxwell.repository.FinanceRepository
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
 import com.example.maxwell.utils.hasValidDateFormat
@@ -26,8 +26,8 @@ class FinancesActivity : AppCompatActivity() {
         ActivityFinancesBinding.inflate(layoutInflater)
     }
 
-    private val financeDao by lazy {
-        AppDatabase.instantiate(this@FinancesActivity).financeDao()
+    private val financeRepository by lazy {
+        FinanceRepository(this@FinancesActivity)
     }
 
     private val adapter by lazy {
@@ -56,7 +56,7 @@ class FinancesActivity : AppCompatActivity() {
 
     private fun configureRecyclerView() {
         lifecycleScope.launch {
-            financeDao.getFinances().collect { finances ->
+            financeRepository.getFinances { finances ->
                 val financesRecyclerView = binding.financesRecyclerView
                 adapter.changeDataset(finances)
                 financesRecyclerView.adapter = adapter
@@ -141,7 +141,7 @@ class FinancesActivity : AppCompatActivity() {
             val query = getFilteringQuery(dialogBinding)
 
             lifecycleScope.launch {
-                val filteredFinances = financeDao.filterFinances(query)
+                val filteredFinances = financeRepository.filterFinances(query)
                 adapter.changeDataset(filteredFinances)
             }
         }

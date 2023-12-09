@@ -8,6 +8,7 @@ import com.example.maxwell.R
 import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.databinding.ActivityFinanceDetailBinding
 import com.example.maxwell.models.Finance
+import com.example.maxwell.repository.FinanceRepository
 import com.example.maxwell.utils.formatDatePretty
 import com.example.maxwell.utils.showConfirmDeletionDialog
 import kotlinx.coroutines.launch
@@ -21,8 +22,8 @@ class FinanceDetailActivity : AppCompatActivity() {
         intent.getLongExtra("id", 0)
     }
 
-    private val financeDao by lazy {
-        AppDatabase.instantiate(this@FinanceDetailActivity).financeDao()
+    private val financeRepository by lazy {
+        FinanceRepository(this@FinanceDetailActivity)
     }
 
     private val financeCategoryDao by lazy {
@@ -33,7 +34,7 @@ class FinanceDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            financeDao.getFinanceById(id).collect {finance ->
+            financeRepository.getFinanceById(id) {finance ->
                 if (finance == null) {
                     finish()
                 } else {
@@ -54,7 +55,7 @@ class FinanceDetailActivity : AppCompatActivity() {
                 R.id.delete_item -> {
                     showConfirmDeletionDialog(this@FinanceDetailActivity) { _, _ ->
                         lifecycleScope.launch {
-                            financeDao.delete(finance)
+                            financeRepository.delete(finance)
                             finish()
                         }
                     }
