@@ -147,8 +147,7 @@ class StudiesActivity : AppCompatActivity() {
 
         startingDateTextInputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                val datePicker =
-                    getDatePicker(getString(R.string.starting_date_picker_title)) { date ->
+                val datePicker = getDatePicker(getString(R.string.starting_date_picker_title)) { date ->
                         startingDateTextInputEditText.setText(formatDateForInput(date))
                     }
 

@@ -50,7 +50,7 @@ class StudiesActivityTests: StudyTests() {
     fun shouldDisplayStudies() {
         navigateToTheStudiesActivity()
 
-        onView(withId(R.id.menu_recycler_view)).check(matches(hasLength(3)))
+        onView(withId(R.id.studies_recycler_view)).check(matches(hasLength(3)))
 
         onView(withId(R.id.studies_recycler_view))
             .check(matches(
