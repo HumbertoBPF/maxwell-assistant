@@ -10,12 +10,12 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.utils.activities.base.TaskTests
-import com.example.maxwell.utils.formatDatePretty
 import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.getTasksForTests
+import com.example.maxwell.utils.hasLength
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
@@ -39,7 +39,7 @@ class TaskDetailActivityTests: TaskTests() {
         onView(withId(R.id.edit_item)).check(matches(isDisplayed()))
         onView(withId(R.id.delete_item)).check(matches(isDisplayed()))
 
-        assertTaskDetails()
+        assertTaskDetails(selectedTask)
     }
 
     @Test
@@ -49,6 +49,18 @@ class TaskDetailActivityTests: TaskTests() {
         onView(withId(R.id.delete_item)).perform(click())
 
         onView(withText(R.string.confirm_deletion_dialog_positive_button)).perform(click())
+
+        onView(withId(R.id.tasks_recycler_view)).check(matches(hasLength(2)))
+
+        onView(withId(R.id.tasks_recycler_view))
+            .check(matches(not(
+                taskAtPosition(0, selectedTask)
+            )))
+
+        onView(withId(R.id.tasks_recycler_view))
+            .check(matches(not(
+                taskAtPosition(1, selectedTask)
+            )))
 
         val task = runBlocking {
             taskDao.getTaskById(selectedTask.id).first()
@@ -64,62 +76,5 @@ class TaskDetailActivityTests: TaskTests() {
             )
 
         onView(withText(selectedTask.title)).perform(click())
-    }
-
-    private fun assertTaskDetails() {
-        onView(withId(R.id.title_text_view))
-            .check(
-                matches(
-                    allOf(isDisplayed(), withText(selectedTask.title))
-                )
-            )
-
-        onView(withId(R.id.description_text_view))
-            .check(
-                matches(
-                    allOf(isDisplayed(), withText(selectedTask.description))
-                )
-            )
-
-        onView(withId(R.id.duration_text_view))
-            .check(
-                matches(
-                    allOf(isDisplayed(), withText("${selectedTask.duration} h"))
-                )
-            )
-
-        onView(withId(R.id.due_to_text_view))
-            .check(
-                matches(
-                    allOf(
-                        isDisplayed(),
-                        withText(
-                            formatDatePretty(
-                                selectedTask.dueDate
-                                    ?: throw NullPointerException("Date cannot be null in this test")
-                            )
-                        )
-                    )
-                )
-            )
-
-        onView(withId(R.id.priority_text_view))
-            .check(
-                matches(
-                    allOf(
-                        isDisplayed(),
-                        withText(selectedTask.priority?.stringResource ?: -1))
-                )
-            )
-
-
-        onView(withId(R.id.status_text_view))
-            .check(
-                matches(
-                    allOf(
-                        isDisplayed(),
-                        withText(selectedTask.status?.stringResource ?: -1))
-                )
-            )
     }
 }

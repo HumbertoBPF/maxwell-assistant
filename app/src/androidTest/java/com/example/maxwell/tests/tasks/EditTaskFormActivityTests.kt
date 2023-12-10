@@ -12,11 +12,13 @@ import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.models.Priority
 import com.example.maxwell.models.Status
+import com.example.maxwell.models.Task
 import com.example.maxwell.utils.activities.forms.TaskFormActivityTests
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.getTasksForTests
 import com.example.maxwell.utils.hasError
+import com.example.maxwell.utils.parseDate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
@@ -24,8 +26,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class EditTaskFormActivityTests: TaskFormActivityTests() {
     private val tasks = getTasksForTests()
@@ -129,6 +129,17 @@ class EditTaskFormActivityTests: TaskFormActivityTests() {
 
         onView(withId(R.id.save_button)).perform(click())
 
+        assertTaskDetails(
+            Task(
+                title = title,
+                description = description,
+                duration = BigDecimal(duration),
+                dueDate = parseDate(dueDate),
+                priority = priority,
+                status = status
+            )
+        )
+
         val updatedTask = runBlocking {
             taskDao.getTaskById(selectedTask.id).first()
         }
@@ -136,10 +147,7 @@ class EditTaskFormActivityTests: TaskFormActivityTests() {
         assertEquals(title, updatedTask?.title)
         assertEquals(description, updatedTask?.description)
         assertEquals(BigDecimal(duration), updatedTask?.duration)
-
-        val sdf = SimpleDateFormat("MM-dd-yyyy", Locale.US)
-        assertEquals(sdf.parse(dueDate), updatedTask?.dueDate)
-
+        assertEquals(parseDate(dueDate), updatedTask?.dueDate)
         assertEquals(priority, updatedTask?.priority)
         assertEquals(status, updatedTask?.status)
     }

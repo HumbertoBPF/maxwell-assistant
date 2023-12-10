@@ -14,18 +14,20 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.models.Currency
+import com.example.maxwell.models.Finance
 import com.example.maxwell.models.FinanceType
 import com.example.maxwell.utils.activities.forms.FinanceFormActivityTests
 import com.example.maxwell.utils.getFinanceCategoriesForTests
 import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.hasError
+import com.example.maxwell.utils.hasLength
+import com.example.maxwell.utils.parseDate
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
-import java.text.SimpleDateFormat
 
 class AddFinanceFormActivityTests: FinanceFormActivityTests() {
     private val financeCategories = getFinanceCategoriesForTests()
@@ -136,6 +138,23 @@ class AddFinanceFormActivityTests: FinanceFormActivityTests() {
 
         onView(withId(R.id.save_button)).perform(click())
 
+        onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(1)))
+
+        onView(withId(R.id.finances_recycler_view))
+            .check(matches(
+                financeAtPosition(
+                    0,
+                    Finance(
+                        title = title,
+                        categoryId = category.id,
+                        value = BigDecimal(value),
+                        currency = currency,
+                        type = financeType,
+                        date = parseDate(date)
+                    )
+                )
+            ))
+
         val finances = runBlocking {
             financeDao.filterFinances(SimpleSQLiteQuery("SELECT * FROM Finance;"))
         }
@@ -149,10 +168,7 @@ class AddFinanceFormActivityTests: FinanceFormActivityTests() {
         assertEquals(BigDecimal(value), newFinance.value)
         assertEquals(currency, newFinance.currency)
         assertEquals(financeType, newFinance.type)
-
-        val sdf = SimpleDateFormat("MM-dd-yyyy")
-
-        assertEquals(sdf.parse(date), newFinance.date)
+        assertEquals(parseDate(date), newFinance.date)
     }
 
     @Test

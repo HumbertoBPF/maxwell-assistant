@@ -1,6 +1,5 @@
 package com.example.maxwell.tests.studies
 
-import android.view.View
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -9,16 +8,13 @@ import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
-import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
-import com.example.maxwell.models.Study
 import com.example.maxwell.utils.activities.base.StudyTests
-import com.example.maxwell.utils.atPosition
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.getStudiesForTests
@@ -28,10 +24,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.Matcher
 import org.junit.Before
 import org.junit.Test
-import java.lang.NullPointerException
 
 class StudiesActivityTests: StudyTests() {
     private val studySubjects = getStudySubjectsForTests()
@@ -238,42 +232,6 @@ class StudiesActivityTests: StudyTests() {
             .check(matches(
                 studyAtPosition(0, randomStudy)
             ))
-    }
-
-    private fun studyAtPosition(position: Int, study: Study): Matcher<in View> {
-        val titleMatcher = hasDescendant(
-            allOf(
-                isDisplayed(),
-                withId(R.id.title_text_view),
-                withText(study.title)
-            )
-        )
-
-        val durationMatcher = hasDescendant(
-            allOf(
-                isDisplayed(),
-                withId(R.id.duration_text_view),
-                withText("${study.duration} h")
-            )
-        )
-
-        val statusText = context.getString(study.status?.stringResource ?: -1)
-
-        val statusMatcher = hasDescendant(
-            allOf(
-                isDisplayed(),
-                withId(R.id.status_text_view),
-                withText(statusText)
-            )
-        )
-
-        val studyMatcher = allOf(
-            titleMatcher,
-            durationMatcher,
-            statusMatcher
-        )
-
-        return atPosition(position, studyMatcher)
     }
 
     private fun navigateToTheStudiesActivity() {

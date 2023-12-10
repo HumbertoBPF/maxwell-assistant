@@ -12,6 +12,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.models.Currency
+import com.example.maxwell.models.Finance
 import com.example.maxwell.models.FinanceType
 import com.example.maxwell.utils.activities.forms.FinanceFormActivityTests
 import com.example.maxwell.utils.formatDateForInput
@@ -19,6 +20,7 @@ import com.example.maxwell.utils.getFinanceCategoriesForTests
 import com.example.maxwell.utils.getFinancesForTests
 import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.hasError
+import com.example.maxwell.utils.parseDate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
@@ -26,7 +28,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
-import java.text.SimpleDateFormat
 
 class EditFinanceFormActivityTests: FinanceFormActivityTests() {
     private val financeCategories = getFinanceCategoriesForTests()
@@ -133,6 +134,17 @@ class EditFinanceFormActivityTests: FinanceFormActivityTests() {
 
         onView(withId(R.id.save_button)).perform(click())
 
+        assertFinanceDetail(
+            Finance(
+                title = title,
+                categoryId = category.id,
+                value = BigDecimal(value),
+                currency = currency,
+                type = financeType,
+                date = parseDate(date)
+            )
+        )
+
         val updatedFinance = runBlocking {
             financeDao.getFinanceById(selectedFinance.id).first()
         }
@@ -142,10 +154,7 @@ class EditFinanceFormActivityTests: FinanceFormActivityTests() {
         assertEquals(BigDecimal(value), updatedFinance?.value)
         assertEquals(currency, updatedFinance?.currency)
         assertEquals(financeType, updatedFinance?.type)
-
-        val sdf = SimpleDateFormat("MM-dd-yyyy")
-
-        assertEquals(sdf.parse(date), updatedFinance?.date)
+        assertEquals(parseDate(date), updatedFinance?.date)
     }
 
     @Test

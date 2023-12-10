@@ -79,7 +79,7 @@ class FinanceDetailActivity : AppCompatActivity() {
         titleTextView.text = finance.title
 
         lifecycleScope.launch {
-            financeCategoryRepository.getFinanceCategoryById(id) { financeCategory ->
+            financeCategoryRepository.getFinanceCategoryById(finance.categoryId) { financeCategory ->
                 val categoryTextView = binding.categoryTextView
                 categoryTextView.text = financeCategory?.name
             }

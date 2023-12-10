@@ -12,18 +12,19 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.models.Status
+import com.example.maxwell.models.Study
 import com.example.maxwell.utils.activities.forms.StudyFormActivityTests
 import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.getStudySubjectsForTests
 import com.example.maxwell.utils.hasError
+import com.example.maxwell.utils.hasLength
+import com.example.maxwell.utils.parseDate
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class AddStudyFormActivityTests: StudyFormActivityTests() {
     private val studySubjects = getStudySubjectsForTests()
@@ -105,6 +106,24 @@ class AddStudyFormActivityTests: StudyFormActivityTests() {
 
         onView(withId(R.id.save_button)).perform(click())
 
+        onView(withId(R.id.studies_recycler_view)).check(matches(hasLength(1)))
+
+        onView(withId(R.id.studies_recycler_view))
+            .check(matches(
+                studyAtPosition(
+                    0,
+                    Study(
+                        title = title,
+                        description = description,
+                        duration = BigDecimal(duration),
+                        links = links,
+                        startingDate = parseDate(startingDate),
+                        subjectId = subject.id,
+                        status = status
+                    )
+                )
+            ))
+
         val studies = runBlocking {
             studyDao.filterStudies(SimpleSQLiteQuery("SELECT * FROM Study;"))
         }
@@ -119,8 +138,7 @@ class AddStudyFormActivityTests: StudyFormActivityTests() {
         assertEquals(subject.id, newStudy.subjectId)
         assertEquals(links, newStudy.links)
         assertEquals(status, newStudy.status)
-        val sdf = SimpleDateFormat("MM-dd-yyyy", Locale.US)
-        assertEquals(sdf.parse(startingDate), newStudy.startingDate)
+        assertEquals(parseDate(startingDate), newStudy.startingDate)
     }
 
     @Test

@@ -11,12 +11,14 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.models.Status
+import com.example.maxwell.models.Study
 import com.example.maxwell.utils.activities.forms.StudyFormActivityTests
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.getStudiesForTests
 import com.example.maxwell.utils.getStudySubjectsForTests
 import com.example.maxwell.utils.hasError
+import com.example.maxwell.utils.parseDate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
@@ -24,7 +26,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
-import java.text.SimpleDateFormat
 
 class EditStudyFormActivityTests: StudyFormActivityTests() {
     private val studies = getStudiesForTests()
@@ -146,6 +147,18 @@ class EditStudyFormActivityTests: StudyFormActivityTests() {
 
         onView(withId(R.id.save_button)).perform(click())
 
+        assertStudyDetails(
+            Study(
+                title = title,
+                description = description,
+                duration = BigDecimal(duration),
+                links = links,
+                startingDate = parseDate(startingDate),
+                status = status,
+                subjectId = subject.id
+            )
+        )
+
         val updatedStudy = runBlocking {
             studyDao.getStudyById(selectedStudy.id).first()
         }
@@ -154,10 +167,7 @@ class EditStudyFormActivityTests: StudyFormActivityTests() {
         assertEquals(description, updatedStudy?.description)
         assertEquals(BigDecimal(duration), updatedStudy?.duration)
         assertEquals(links, updatedStudy?.links)
-
-        val sdf = SimpleDateFormat("MM-dd-yyyy")
-        assertEquals(sdf.parse(startingDate), updatedStudy?.startingDate)
-
+        assertEquals(parseDate(startingDate), updatedStudy?.startingDate)
         assertEquals(status, updatedStudy?.status)
         assertEquals(subject.id, updatedStudy?.subjectId)
     }

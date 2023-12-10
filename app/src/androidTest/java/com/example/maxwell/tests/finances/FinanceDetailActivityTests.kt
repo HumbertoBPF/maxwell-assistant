@@ -4,20 +4,19 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
-import androidx.test.espresso.matcher.ViewMatchers.hasTextColor
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.utils.activities.base.FinanceTests
-import com.example.maxwell.utils.formatDatePretty
 import com.example.maxwell.utils.getFinanceCategoriesForTests
 import com.example.maxwell.utils.getFinancesForTests
 import com.example.maxwell.utils.getRandomElement
+import com.example.maxwell.utils.hasLength
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
@@ -44,7 +43,7 @@ class FinanceDetailActivityTests: FinanceTests() {
         onView(withId(R.id.edit_item)).check(matches(isDisplayed()))
         onView(withId(R.id.delete_item)).check(matches(isDisplayed()))
 
-        assertFinanceDetail()
+        assertFinanceDetail(selectedFinance)
     }
 
     @Test
@@ -55,63 +54,21 @@ class FinanceDetailActivityTests: FinanceTests() {
 
         onView(withText(R.string.confirm_deletion_dialog_positive_button)).perform(click())
 
+        onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(2)))
+
+        onView(withId(R.id.finances_recycler_view)).check(matches(not(
+            financeAtPosition(0, selectedFinance)
+        )))
+
+        onView(withId(R.id.finances_recycler_view)).check(matches(not(
+            financeAtPosition(1, selectedFinance)
+        )))
+
         val finance = runBlocking {
             financeDao.getFinanceById(selectedFinance.id).first()
         }
 
         assertNull(finance)
-    }
-
-    private fun assertFinanceDetail() {
-        onView(withId(R.id.title_text_view))
-            .check(
-                matches(
-                    allOf(
-                        isDisplayed(),
-                        withText(selectedFinance.title)
-                    )
-                )
-            )
-
-        val category = runBlocking {
-            financeCategoryDao.getFinanceCategoryById(selectedFinance.categoryId).first()
-        }
-
-        onView(withId(R.id.category_text_view))
-            .check(
-                matches(
-                    allOf(
-                        isDisplayed(),
-                        withText(category?.name)
-                    )
-                )
-            )
-
-        val financeTypeColor = selectedFinance.type?.color ?: -1
-
-        onView(withId(R.id.value_text_view))
-            .check(
-                matches(
-                    allOf(
-                        isDisplayed(),
-                        withText(selectedFinance.formatValue()),
-                        hasTextColor(financeTypeColor)
-                    )
-                )
-            )
-
-        val expectedDate =
-            selectedFinance.date ?: throw NullPointerException("The date should not be null")
-
-        onView(withId(R.id.date_text_view))
-            .check(
-                matches(
-                    allOf(
-                        isDisplayed(),
-                        withText(formatDatePretty(expectedDate))
-                    )
-                )
-            )
     }
 
     private fun navigateToTheFinanceDetailActivity() {

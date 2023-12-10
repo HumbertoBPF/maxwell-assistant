@@ -13,14 +13,18 @@ import com.example.maxwell.R
 import com.example.maxwell.adapters.MenuAdapter
 import com.example.maxwell.models.Priority
 import com.example.maxwell.models.Status
+import com.example.maxwell.models.Task
 import com.example.maxwell.utils.activities.forms.TaskFormActivityTests
 import com.example.maxwell.utils.getCalendar
 import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.hasError
+import com.example.maxwell.utils.hasLength
+import com.example.maxwell.utils.parseDate
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigDecimal
 import java.util.Calendar.DECEMBER
 
 class AddTaskFormActivityTests: TaskFormActivityTests() {
@@ -85,6 +89,23 @@ class AddTaskFormActivityTests: TaskFormActivityTests() {
         )
 
         onView(withId(R.id.save_button)).perform(click())
+
+        onView(withId(R.id.tasks_recycler_view)).check(matches(hasLength(1)))
+
+        onView(withId(R.id.tasks_recycler_view))
+            .check(matches(
+                taskAtPosition(
+                    0,
+                    Task(
+                        title = title,
+                        description = description,
+                        duration = BigDecimal(duration),
+                        dueDate = parseDate(dueDate),
+                        priority = priority,
+                        status = status
+                    )
+                )
+            ))
 
         val tasks = runBlocking {
             taskDao.filterTasks(SimpleSQLiteQuery("SELECT * FROM Task;"))
