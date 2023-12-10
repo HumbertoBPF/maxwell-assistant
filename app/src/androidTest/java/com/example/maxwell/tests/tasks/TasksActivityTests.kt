@@ -42,17 +42,12 @@ class TasksActivityTests: TaskTests() {
 
         onView(withId(R.id.tasks_recycler_view))
             .check(matches(
-                taskAtPosition(0, tasks[0])
-            ))
-
-        onView(withId(R.id.tasks_recycler_view))
-            .check(matches(
-                taskAtPosition(1, tasks[1])
-            ))
-
-        onView(withId(R.id.tasks_recycler_view))
-            .check(matches(
-                taskAtPosition(2, tasks[2])
+                allOf(
+                    hasLength(3),
+                    taskAtPosition(0, tasks[0]),
+                    taskAtPosition(1, tasks[1]),
+                    taskAtPosition(2, tasks[2])
+                )
             ))
 
         onView(withId(R.id.add_fab)).check(matches(isDisplayed()))
@@ -100,11 +95,12 @@ class TasksActivityTests: TaskTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.tasks_recycler_view)).check(matches(hasLength(1)))
-
         onView(withId(R.id.tasks_recycler_view))
             .check(matches(
-                taskAtPosition(0, randomTask)
+                allOf(
+                    hasLength(1),
+                    taskAtPosition(0, randomTask)
+                )
             ))
     }
 
@@ -118,16 +114,13 @@ class TasksActivityTests: TaskTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.tasks_recycler_view)).check(matches(hasLength(2)))
-
         onView(withId(R.id.tasks_recycler_view))
             .check(matches(
-                taskAtPosition(0, tasks[0])
-            ))
-
-        onView(withId(R.id.tasks_recycler_view))
-            .check(matches(
-                taskAtPosition(1, tasks[1])
+                allOf(
+                    hasLength(2),
+                    taskAtPosition(0, tasks[0]),
+                    taskAtPosition(1, tasks[1])
+                )
             ))
     }
 
@@ -147,11 +140,12 @@ class TasksActivityTests: TaskTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.tasks_recycler_view)).check(matches(hasLength(1)))
-
         onView(withId(R.id.tasks_recycler_view))
             .check(matches(
-                taskAtPosition(0, randomTask)
+                allOf(
+                    hasLength(1),
+                    taskAtPosition(0, randomTask)
+                )
             ))
     }
 
@@ -171,11 +165,12 @@ class TasksActivityTests: TaskTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.tasks_recycler_view)).check(matches(hasLength(1)))
-
         onView(withId(R.id.tasks_recycler_view))
             .check(matches(
-                taskAtPosition(0, randomTask)
+                allOf(
+                    hasLength(1),
+                    taskAtPosition(0, randomTask)
+                )
             ))
     }
 
@@ -207,11 +202,12 @@ class TasksActivityTests: TaskTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.tasks_recycler_view)).check(matches(hasLength(1)))
-
         onView(withId(R.id.tasks_recycler_view))
             .check(matches(
-                taskAtPosition(0, randomTask)
+                allOf(
+                    hasLength(1),
+                    taskAtPosition(0, randomTask)
+                )
             ))
     }
 

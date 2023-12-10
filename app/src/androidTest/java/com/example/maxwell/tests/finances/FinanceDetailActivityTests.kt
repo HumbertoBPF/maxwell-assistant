@@ -16,6 +16,7 @@ import com.example.maxwell.utils.getRandomElement
 import com.example.maxwell.utils.hasLength
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -54,15 +55,14 @@ class FinanceDetailActivityTests: FinanceTests() {
 
         onView(withText(R.string.confirm_deletion_dialog_positive_button)).perform(click())
 
-        onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(2)))
-
-        onView(withId(R.id.finances_recycler_view)).check(matches(not(
-            financeAtPosition(0, selectedFinance)
-        )))
-
-        onView(withId(R.id.finances_recycler_view)).check(matches(not(
-            financeAtPosition(1, selectedFinance)
-        )))
+        onView(withId(R.id.finances_recycler_view))
+            .check(matches(
+                allOf(
+                    hasLength(2),
+                    not(financeAtPosition(0, selectedFinance)),
+                    not(financeAtPosition(1, selectedFinance))
+                )
+            ))
 
         val finance = runBlocking {
             financeDao.getFinanceById(selectedFinance.id).first()

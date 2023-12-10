@@ -44,21 +44,14 @@ class StudiesActivityTests: StudyTests() {
     fun shouldDisplayStudies() {
         navigateToTheStudiesActivity()
 
-        onView(withId(R.id.studies_recycler_view)).check(matches(hasLength(3)))
-
         onView(withId(R.id.studies_recycler_view))
             .check(matches(
-                studyAtPosition(0, studies[1])
-            ))
-
-        onView(withId(R.id.studies_recycler_view))
-            .check(matches(
-                studyAtPosition(1, studies[2])
-            ))
-
-        onView(withId(R.id.studies_recycler_view))
-            .check(matches(
-                studyAtPosition(2, studies[0])
+                allOf(
+                    hasLength(3),
+                    studyAtPosition(0, studies[1]),
+                    studyAtPosition(1, studies[2]),
+                    studyAtPosition(2, studies[0])
+                )
             ))
 
         onView(withId(R.id.add_fab)).check(matches(isDisplayed()))
@@ -106,11 +99,12 @@ class StudiesActivityTests: StudyTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.studies_recycler_view)).check(matches(hasLength(1)))
-
         onView(withId(R.id.studies_recycler_view))
             .check(matches(
-                studyAtPosition(0, randomStudy)
+                allOf(
+                    hasLength(1),
+                    studyAtPosition(0, randomStudy)
+                )
             ))
     }
 
@@ -134,11 +128,12 @@ class StudiesActivityTests: StudyTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.studies_recycler_view)).check(matches(hasLength(1)))
-
         onView(withId(R.id.studies_recycler_view))
             .check(matches(
-                studyAtPosition(0, randomStudy)
+                allOf(
+                    hasLength(1),
+                    studyAtPosition(0, randomStudy)
+                )
             ))
     }
 
@@ -158,11 +153,12 @@ class StudiesActivityTests: StudyTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.studies_recycler_view)).check(matches(hasLength(1)))
-
         onView(withId(R.id.studies_recycler_view))
             .check(matches(
-                studyAtPosition(0, randomStudy)
+                allOf(
+                    hasLength(1),
+                    studyAtPosition(0, randomStudy)
+                )
             ))
     }
 
@@ -176,16 +172,13 @@ class StudiesActivityTests: StudyTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.studies_recycler_view)).check(matches(hasLength(2)))
-
         onView(withId(R.id.studies_recycler_view))
             .check(matches(
-                studyAtPosition(0, studies[1])
-            ))
-
-        onView(withId(R.id.studies_recycler_view))
-            .check(matches(
-                studyAtPosition(1, studies[2])
+                allOf(
+                    hasLength(2),
+                    studyAtPosition(0, studies[1]),
+                    studyAtPosition(1, studies[2])
+                )
             ))
     }
 
@@ -226,11 +219,12 @@ class StudiesActivityTests: StudyTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.studies_recycler_view)).check(matches(hasLength(1)))
-
         onView(withId(R.id.studies_recycler_view))
             .check(matches(
-                studyAtPosition(0, randomStudy)
+                allOf(
+                    hasLength(1),
+                    studyAtPosition(0, randomStudy)
+                )
             ))
     }
 

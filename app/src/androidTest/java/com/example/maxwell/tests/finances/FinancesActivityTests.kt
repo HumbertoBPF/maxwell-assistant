@@ -43,16 +43,15 @@ class FinancesActivityTests: FinanceTests() {
     fun shouldDisplayFinances() {
         navigateToTheFinancesActivity()
 
-        onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(3)))
-
         onView(withId(R.id.finances_recycler_view))
-            .check(matches(financeAtPosition(0, finances[2])))
-
-        onView(withId(R.id.finances_recycler_view))
-            .check(matches(financeAtPosition(1, finances[0])))
-
-        onView(withId(R.id.finances_recycler_view))
-            .check(matches(financeAtPosition(2, finances[1])))
+            .check(matches(
+                allOf(
+                    hasLength(3),
+                    financeAtPosition(0, finances[2]),
+                    financeAtPosition(1, finances[0]),
+                    financeAtPosition(2, finances[1])
+                )
+            ))
 
         onView(withId(R.id.add_fab)).check(matches(isDisplayed()))
 
@@ -109,11 +108,12 @@ class FinancesActivityTests: FinanceTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(1)))
-
         onView(withId(R.id.finances_recycler_view))
             .check(matches(
-                financeAtPosition(0, randomFinance)
+                allOf(
+                    hasLength(1),
+                    financeAtPosition(0, randomFinance)
+                )
             ))
     }
 
@@ -131,12 +131,11 @@ class FinancesActivityTests: FinanceTests() {
 
         onView(withId(R.id.finances_recycler_view))
             .check(matches(
-                financeAtPosition(0, finances[2])
-            ))
-
-        onView(withId(R.id.finances_recycler_view))
-            .check(matches(
-                financeAtPosition(1, finances[1])
+                allOf(
+                    hasLength(2),
+                    financeAtPosition(0, finances[2]),
+                    financeAtPosition(1, finances[1])
+                )
             ))
     }
 
@@ -150,16 +149,13 @@ class FinancesActivityTests: FinanceTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(2)))
-
         onView(withId(R.id.finances_recycler_view))
             .check(matches(
-                financeAtPosition(0, finances[2])
-            ))
-
-        onView(withId(R.id.finances_recycler_view))
-            .check(matches(
-                financeAtPosition(1, finances[0])
+                allOf(
+                    hasLength(2),
+                    financeAtPosition(0, finances[2]),
+                    financeAtPosition(1, finances[0])
+                )
             ))
     }
 
@@ -173,16 +169,13 @@ class FinancesActivityTests: FinanceTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(2)))
-
         onView(withId(R.id.finances_recycler_view))
             .check(matches(
-                financeAtPosition(0, finances[0])
-            ))
-
-        onView(withId(R.id.finances_recycler_view))
-            .check(matches(
-                financeAtPosition(1, finances[1])
+                allOf(
+                    hasLength(2),
+                    financeAtPosition(0, finances[0]),
+                    financeAtPosition(1, finances[1])
+                )
             ))
     }
 
@@ -219,10 +212,13 @@ class FinancesActivityTests: FinanceTests() {
 
         onView(withText(R.string.search_button)).perform(click())
 
-        onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(1)))
-
         onView(withId(R.id.finances_recycler_view))
-            .check(matches(financeAtPosition(0, randomFinance)))
+            .check(matches(
+                allOf(
+                    hasLength(1),
+                    financeAtPosition(0, randomFinance)
+                )
+            ))
     }
 
     private fun navigateToTheFinancesActivity() {

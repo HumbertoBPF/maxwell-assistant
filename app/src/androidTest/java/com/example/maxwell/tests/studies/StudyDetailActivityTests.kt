@@ -16,6 +16,7 @@ import com.example.maxwell.utils.getStudySubjectsForTests
 import com.example.maxwell.utils.hasLength
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -54,17 +55,14 @@ class StudyDetailActivityTests: StudyTests() {
 
         onView(withText(R.string.confirm_deletion_dialog_positive_button)).perform(click())
 
-        onView(withId(R.id.studies_recycler_view)).check(matches(hasLength(2)))
-
         onView(withId(R.id.studies_recycler_view))
-            .check(matches(not(
-                studyAtPosition(0, selectedStudy)
-            )))
-
-        onView(withId(R.id.studies_recycler_view))
-            .check(matches(not(
-                studyAtPosition(1, selectedStudy)
-            )))
+            .check(matches(
+                allOf(
+                    hasLength(2),
+                    not(studyAtPosition(0, selectedStudy)),
+                    not(studyAtPosition(1, selectedStudy))
+                )
+            ))
 
         val study = runBlocking {
             studyDao.getStudyById(selectedStudy.id).first()

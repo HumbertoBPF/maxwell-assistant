@@ -15,6 +15,7 @@ import com.example.maxwell.utils.getTasksForTests
 import com.example.maxwell.utils.hasLength
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -50,17 +51,14 @@ class TaskDetailActivityTests: TaskTests() {
 
         onView(withText(R.string.confirm_deletion_dialog_positive_button)).perform(click())
 
-        onView(withId(R.id.tasks_recycler_view)).check(matches(hasLength(2)))
-
         onView(withId(R.id.tasks_recycler_view))
-            .check(matches(not(
-                taskAtPosition(0, selectedTask)
-            )))
-
-        onView(withId(R.id.tasks_recycler_view))
-            .check(matches(not(
-                taskAtPosition(1, selectedTask)
-            )))
+            .check(matches(
+                allOf(
+                    hasLength(2),
+                    not(taskAtPosition(0, selectedTask)),
+                    not(taskAtPosition(1, selectedTask))
+                )
+            ))
 
         val task = runBlocking {
             taskDao.getTaskById(selectedTask.id).first()

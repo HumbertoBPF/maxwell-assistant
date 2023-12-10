@@ -138,19 +138,20 @@ class AddFinanceFormActivityTests: FinanceFormActivityTests() {
 
         onView(withId(R.id.save_button)).perform(click())
 
-        onView(withId(R.id.finances_recycler_view)).check(matches(hasLength(1)))
-
         onView(withId(R.id.finances_recycler_view))
             .check(matches(
-                financeAtPosition(
-                    0,
-                    Finance(
-                        title = title,
-                        categoryId = category.id,
-                        value = BigDecimal(value),
-                        currency = currency,
-                        type = financeType,
-                        date = parseDate(date)
+                allOf(
+                    hasLength(1),
+                    financeAtPosition(
+                        0,
+                        Finance(
+                            title = title,
+                            categoryId = category.id,
+                            value = BigDecimal(value),
+                            currency = currency,
+                            type = financeType,
+                            date = parseDate(date)
+                        )
                     )
                 )
             ))

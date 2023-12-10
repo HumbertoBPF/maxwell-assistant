@@ -106,20 +106,21 @@ class AddStudyFormActivityTests: StudyFormActivityTests() {
 
         onView(withId(R.id.save_button)).perform(click())
 
-        onView(withId(R.id.studies_recycler_view)).check(matches(hasLength(1)))
-
         onView(withId(R.id.studies_recycler_view))
             .check(matches(
-                studyAtPosition(
-                    0,
-                    Study(
-                        title = title,
-                        description = description,
-                        duration = BigDecimal(duration),
-                        links = links,
-                        startingDate = parseDate(startingDate),
-                        subjectId = subject.id,
-                        status = status
+                allOf(
+                    hasLength(1),
+                    studyAtPosition(
+                        0,
+                        Study(
+                            title = title,
+                            description = description,
+                            duration = BigDecimal(duration),
+                            links = links,
+                            startingDate = parseDate(startingDate),
+                            subjectId = subject.id,
+                            status = status
+                        )
                     )
                 )
             ))

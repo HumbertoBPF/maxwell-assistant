@@ -90,10 +90,9 @@ class AddTaskFormActivityTests: TaskFormActivityTests() {
 
         onView(withId(R.id.save_button)).perform(click())
 
-        onView(withId(R.id.tasks_recycler_view)).check(matches(hasLength(1)))
-
-        onView(withId(R.id.tasks_recycler_view))
-            .check(matches(
+        onView(withId(R.id.tasks_recycler_view)).check(matches(
+            allOf(
+                hasLength(1),
                 taskAtPosition(
                     0,
                     Task(
@@ -105,7 +104,8 @@ class AddTaskFormActivityTests: TaskFormActivityTests() {
                         status = status
                     )
                 )
-            ))
+            )
+        ))
 
         val tasks = runBlocking {
             taskDao.filterTasks(SimpleSQLiteQuery("SELECT * FROM Task;"))
