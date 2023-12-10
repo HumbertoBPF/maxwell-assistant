@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.maxwell.R
 import com.example.maxwell.adapters.StudyAdapter
 import com.example.maxwell.database.Converters
@@ -163,93 +162,29 @@ class StudiesActivity : AppCompatActivity() {
             val studySubjectName = subjectTextInputAutoComplete.text.toString()
 
             lifecycleScope.launch {
+                val titleTextInputEditText = dialogBinding.titleTextInputEditText
+                title = titleTextInputEditText.text.toString()
+
+                val statusTextInputAutoComplete = dialogBinding.statusTextInputAutoComplete
+                val statusString = statusTextInputAutoComplete.text.toString()
+                status = converters.fromStringToStatus(statusString)
+
+                val startingDateTextInputEditText = dialogBinding.startingDateTextInputEditText
+                val startingDateString = startingDateTextInputEditText.text.toString()
+                startingDate = if (startingDateString.trim() != "") {
+                    parseDate(startingDateString)
+                } else {
+                    null
+                }
+
                 studySubject = studySubjectRepository.getStudySubjectByName(studySubjectName)
 
-                val query = getFilteringQuery(dialogBinding)
-
                 lifecycleScope.launch {
-                    val filteredStudies = studyRepository.filterStudies(query)
+                    val filteredStudies = studyRepository.filterStudies(title, status, startingDate, studySubject)
                     adapter.changeDataset(filteredStudies)
                 }
             }
         }
-    }
-
-    private fun getFilteringQuery(dialogBinding: DialogFilterStudiesBinding): SimpleSQLiteQuery {
-        var filter = getBaseFilteringQuery(dialogBinding)
-        val args = mutableListOf<Any>(title)
-
-        filter = addStatusFilter(dialogBinding, filter, args)
-        filter = addStartingDateFilter(dialogBinding, filter, args)
-        filter = addStudySubjectFilter(filter, args)
-
-        filter = """
-            SELECT original.id, original.title, original.duration, original.description, original.subjectId, original.links, original.status, grouped.startingDate FROM 
-            (SELECT * FROM Study WHERE $filter ORDER BY startingDate DESC) AS original 
-            LEFT JOIN (SELECT * FROM Study WHERE $filter GROUP BY startingDate) AS grouped
-            ON original.id = grouped.id;
-        """.trimIndent()
-        args.addAll(args)
-
-        return SimpleSQLiteQuery(filter, args.toTypedArray())
-    }
-
-    private fun getBaseFilteringQuery(dialogBinding: DialogFilterStudiesBinding): String {
-        val titleTextInputEditText = dialogBinding.titleTextInputEditText
-        title = titleTextInputEditText.text.toString()
-        return "title LIKE '%' || ? || '%'"
-    }
-
-    private fun addStatusFilter(
-        dialogBinding: DialogFilterStudiesBinding,
-        filter: String,
-        args: MutableList<Any>
-    ): String {
-        val statusTextInputAutoComplete = dialogBinding.statusTextInputAutoComplete
-        val statusString = statusTextInputAutoComplete.text.toString()
-
-        status = converters.fromStringToStatus(statusString)
-
-        status?.let { status ->
-            args.add(status.text)
-            return "$filter AND status = ?"
-        }
-
-        return filter
-    }
-
-    private fun addStartingDateFilter(
-        dialogBinding: DialogFilterStudiesBinding,
-        filter: String,
-        args: MutableList<Any>
-    ): String {
-        val startingDateTextInputEditText = dialogBinding.startingDateTextInputEditText
-        val startingDateString = startingDateTextInputEditText.text.toString()
-
-        startingDate = null
-
-        if (startingDateString.trim() != "") {
-            startingDate = parseDate(startingDateString)
-
-            startingDate?.let { startingDate ->
-                args.add(startingDate.time)
-                return "$filter AND startingDate = ?"
-            }
-        }
-
-        return filter
-    }
-
-    private fun addStudySubjectFilter(
-        filter: String,
-        args: MutableList<Any>
-    ): String {
-        studySubject?.let { studySubject ->
-            args.add(studySubject.id)
-            return "$filter AND subjectId = ?"
-        }
-
-        return filter
     }
 
     private fun validateStartingDateFilter(dialogBinding: DialogFilterStudiesBinding): Boolean {

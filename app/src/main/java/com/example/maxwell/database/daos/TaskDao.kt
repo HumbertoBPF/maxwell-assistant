@@ -11,7 +11,6 @@ import androidx.sqlite.db.SupportSQLiteQuery
 import com.example.maxwell.models.Priority
 import com.example.maxwell.models.Status
 import com.example.maxwell.models.Task
-import com.example.maxwell.utils.IdlingResource
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
@@ -45,22 +44,6 @@ abstract class TaskDao {
         priority: Priority?,
         status: Status?
     ): List<Task> {
-        IdlingResource.increment()
-
-        val query = getFilteringQuery(title, dueDate, priority, status)
-        val tasks = filterTasks(query)
-
-        IdlingResource.decrement()
-
-        return tasks
-    }
-
-    private fun getFilteringQuery(
-        title: String,
-        dueDate: Date?,
-        priority: Priority?,
-        status: Status?,
-    ): SimpleSQLiteQuery {
         var filter = "title LIKE '%' || ? || '%'"
         val args = mutableListOf<Any>(title)
 
@@ -76,7 +59,9 @@ abstract class TaskDao {
         """.trimIndent()
         args.addAll(args)
 
-        return SimpleSQLiteQuery(filter, args.toTypedArray())
+        val query = SimpleSQLiteQuery(filter, args.toTypedArray())
+
+        return filterTasks(query)
     }
 
     private fun addDueDateFilter(
