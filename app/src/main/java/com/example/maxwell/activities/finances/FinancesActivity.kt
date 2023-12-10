@@ -15,11 +15,10 @@ import com.example.maxwell.repository.FinanceRepository
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
 import com.example.maxwell.utils.hasValidDateFormat
+import com.example.maxwell.utils.parseDate
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 class FinancesActivity : AppCompatActivity() {
     private val binding by lazy {
@@ -239,8 +238,7 @@ class FinancesActivity : AppCompatActivity() {
         date = null
 
         if (dateString.trim() != "") {
-            val sdf = SimpleDateFormat("MM-dd-yyyy", Locale.US)
-            date = sdf.parse(dateString)
+            date = parseDate(dateString)
 
             date?.let { date ->
                 args.add(date.time)

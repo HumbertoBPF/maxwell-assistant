@@ -13,11 +13,10 @@ import com.example.maxwell.repository.TaskRepository
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
 import com.example.maxwell.utils.hasValidDateFormat
+import com.example.maxwell.utils.parseDate
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.text.SimpleDateFormat
-import java.util.Locale.US
 
 class TaskFormActivity : FormActivity() {
     private var task: Task? = null
@@ -192,9 +191,6 @@ class TaskFormActivity : FormActivity() {
         val priorityString = priorityTextInputAutoComplete.text.toString()
         val statusString = statusTextInputAutoComplete.text.toString()
 
-        val sdf = SimpleDateFormat("MM-dd-yyyy", US)
-        val dueDate = sdf.parse(dueDateString)
-
         val priority = converters.fromStringToPriority(priorityString)
         val status = converters.fromStringToStatus(statusString)
 
@@ -203,7 +199,7 @@ class TaskFormActivity : FormActivity() {
             title = title,
             description = description,
             duration = BigDecimal(duration),
-            dueDate = dueDate,
+            dueDate = parseDate(dueDateString),
             priority = priority,
             status = status
         )

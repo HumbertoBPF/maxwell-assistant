@@ -1,14 +1,18 @@
 package com.example.maxwell.repository
 
 import android.content.Context
-import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.maxwell.database.AppDatabase
+import com.example.maxwell.models.Priority
+import com.example.maxwell.models.Status
 import com.example.maxwell.models.Task
 import com.example.maxwell.utils.IdlingResource
 import kotlinx.coroutines.flow.onEach
+import java.util.Date
 
 class TaskRepository(context: Context) {
-    private val dao = AppDatabase.instantiate(context).taskDao()
+    private val dao by lazy {
+        AppDatabase.instantiate(context).taskDao()
+    }
 
     suspend fun getTasks(onPostExecute: (List<Task>) -> Unit) {
         dao.getTasks().onEach {
@@ -19,9 +23,14 @@ class TaskRepository(context: Context) {
         }
     }
 
-    suspend fun filterTasks(query: SimpleSQLiteQuery): List<Task> {
+    suspend fun filterTasks(
+        title: String,
+        dueDate: Date?,
+        priority: Priority?,
+        status: Status?
+    ): List<Task> {
         IdlingResource.increment()
-        val tasks = dao.filterTasks(query)
+        val tasks = dao.filterTasks(title, dueDate, priority, status)
         IdlingResource.decrement()
         return tasks
     }

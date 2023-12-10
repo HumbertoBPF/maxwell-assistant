@@ -17,13 +17,12 @@ import com.example.maxwell.utils.createChipView
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
 import com.example.maxwell.utils.hasValidDateFormat
+import com.example.maxwell.utils.parseDate
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class StudyFormActivity : FormActivity() {
     private var study: Study? = null
@@ -314,9 +313,6 @@ class StudyFormActivity : FormActivity() {
 
         val status = converters.fromStringToStatus(statusString)
 
-        val sdf = SimpleDateFormat("MM-dd-yyyy", Locale.US)
-        val startingDate = sdf.parse(startingDateString)
-
         return Study(
             id = id,
             title = title,
@@ -325,7 +321,7 @@ class StudyFormActivity : FormActivity() {
             subjectId = subject.id,
             links = links,
             status = status,
-            startingDate = startingDate
+            startingDate = parseDate(startingDateString)
         )
     }
 

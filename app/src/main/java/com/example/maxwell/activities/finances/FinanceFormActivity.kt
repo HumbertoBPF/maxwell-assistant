@@ -17,14 +17,13 @@ import com.example.maxwell.utils.createChipView
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
 import com.example.maxwell.utils.hasValidDateFormat
+import com.example.maxwell.utils.parseDate
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class FinanceFormActivity : FormActivity() {
     private var finance: Finance? = null
@@ -276,9 +275,6 @@ class FinanceFormActivity : FormActivity() {
         val type = getTypeInput()
         val dateString = dateTextInputEditText.text.toString()
 
-        val sdf = SimpleDateFormat("MM-dd-yyyy", Locale.US)
-        val date = sdf.parse(dateString)
-
         return Finance(
             id = id,
             title = title,
@@ -286,7 +282,7 @@ class FinanceFormActivity : FormActivity() {
             value = value,
             currency = currency,
             type = type,
-            date = date
+            date = parseDate(dateString)
         )
     }
 

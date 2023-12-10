@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.maxwell.R
 import com.example.maxwell.adapters.TaskAdapter
 import com.example.maxwell.database.Converters
@@ -16,12 +15,11 @@ import com.example.maxwell.repository.TaskRepository
 import com.example.maxwell.utils.formatDateForInput
 import com.example.maxwell.utils.getDatePicker
 import com.example.maxwell.utils.hasValidDateFormat
+import com.example.maxwell.utils.parseDate
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 class TasksActivity : AppCompatActivity() {
     private val binding by lazy {
@@ -143,97 +141,30 @@ class TasksActivity : AppCompatActivity() {
 
     private fun filterTasks(dialogBinding: DialogFilterTasksBinding) {
         if (validateDueDateFilter(dialogBinding)) {
-            val query = getFilteringQuery(dialogBinding)
+            val titleTextInputEditText = dialogBinding.titleTextInputEditText
+            title = titleTextInputEditText.text.toString()
+
+            val dueToTextInputEditText = dialogBinding.dueToTextInputEditText
+            val dueDateString = dueToTextInputEditText.text.toString()
+            dueDate = if (dueDateString.trim() != "") {
+                parseDate(dueDateString)
+            } else {
+                null
+            }
+
+            val priorityTextInputAutoComplete = dialogBinding.priorityTextInputAutoComplete
+            val priorityString = priorityTextInputAutoComplete.text.toString()
+            priority = converters.fromStringToPriority(priorityString)
+
+            val statusTextInputAutoComplete = dialogBinding.statusTextInputAutoComplete
+            val statusString = statusTextInputAutoComplete.text.toString()
+            status = converters.fromStringToStatus(statusString)
 
             lifecycleScope.launch {
-                val filteredTasks = taskRepository.filterTasks(query)
+                val filteredTasks = taskRepository.filterTasks(title, dueDate, priority, status)
                 adapter.changeDataset(filteredTasks)
             }
         }
-    }
-
-    private fun getFilteringQuery(dialogBinding: DialogFilterTasksBinding): SimpleSQLiteQuery {
-        var filter = getBaseFilter(dialogBinding)
-        val args = mutableListOf<Any>(title)
-
-        filter = addDueDateFilter(dialogBinding, filter, args)
-        filter = addPriorityFilter(dialogBinding, filter, args)
-        filter = addStatusFilter(dialogBinding, filter, args)
-
-        filter = """
-            SELECT original.id, original.title, original.duration, grouped.dueDate, original.priority, original.status FROM 
-            (SELECT * FROM Task WHERE $filter ORDER BY dueDate DESC) AS original 
-            LEFT JOIN (SELECT * FROM Task WHERE $filter GROUP BY dueDate) AS grouped 
-            ON original.id = grouped.id;
-        """.trimIndent()
-        args.addAll(args)
-
-        return SimpleSQLiteQuery(filter, args.toTypedArray())
-    }
-
-    private fun getBaseFilter(dialogBinding: DialogFilterTasksBinding): String {
-        val titleTextInputEditText = dialogBinding.titleTextInputEditText
-        title = titleTextInputEditText.text.toString()
-        return "title LIKE '%' || ? || '%'"
-    }
-
-    private fun addDueDateFilter(
-        dialogBinding: DialogFilterTasksBinding,
-        filter: String,
-        args: MutableList<Any>
-    ): String {
-        val dueToTextInputEditText = dialogBinding.dueToTextInputEditText
-        val dueDateString = dueToTextInputEditText.text.toString()
-
-        dueDate = null
-
-        if (dueDateString.trim() != "") {
-            val sdf = SimpleDateFormat("MM-dd-yyyy", Locale.US)
-            dueDate = sdf.parse(dueDateString)
-
-            dueDate?.let { dueDate ->
-                args.add(dueDate.time)
-                return "$filter AND dueDate = ?"
-            }
-        }
-
-        return filter
-    }
-
-    private fun addPriorityFilter(
-        dialogBinding: DialogFilterTasksBinding,
-        filter: String,
-        args: MutableList<Any>
-    ): String {
-        val priorityTextInputAutoComplete = dialogBinding.priorityTextInputAutoComplete
-        val priorityString = priorityTextInputAutoComplete.text.toString()
-
-        priority = converters.fromStringToPriority(priorityString)
-
-        priority?.let { priority ->
-            args.add(priority.text)
-            return "$filter AND priority = ?"
-        }
-
-        return filter
-    }
-
-    private fun addStatusFilter(
-        dialogBinding: DialogFilterTasksBinding,
-        filter: String,
-        args: MutableList<Any>
-    ): String {
-        val statusTextInputAutoComplete = dialogBinding.statusTextInputAutoComplete
-        val statusString = statusTextInputAutoComplete.text.toString()
-
-        status = converters.fromStringToStatus(statusString)
-
-        status?.let { status ->
-            args.add(status.text)
-            return "$filter AND status = ?"
-        }
-
-        return filter
     }
 
     private fun validateDueDateFilter(dialogBinding: DialogFilterTasksBinding): Boolean {
