@@ -180,7 +180,12 @@ class StudiesActivity : AppCompatActivity() {
                 studySubject = studySubjectRepository.getStudySubjectByName(studySubjectName)
 
                 lifecycleScope.launch {
-                    val filteredStudies = studyRepository.filterStudies(title, status, startingDate, studySubject)
+                    val filteredStudies = studyRepository.filterStudies(
+                        title = title,
+                        status = status,
+                        startingDate = startingDate,
+                        studySubject = studySubject
+                    )
                     adapter.changeDataset(filteredStudies)
                 }
             }

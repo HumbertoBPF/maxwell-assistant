@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.maxwell.R
 import com.example.maxwell.adapters.FinanceAdapter
 import com.example.maxwell.databinding.ActivityFinancesBinding
@@ -137,116 +136,60 @@ class FinancesActivity : AppCompatActivity() {
 
     private fun filterFinances(dialogBinding: DialogFilterFinancesBinding) {
         if (validateDateFilter(dialogBinding)) {
-            val query = getFilteringQuery(dialogBinding)
+            val titleTextInputEditText = dialogBinding.titleTextInputEditText
+            title = titleTextInputEditText.text.toString()
 
-            lifecycleScope.launch {
-                val filteredFinances = financeRepository.filterFinances(query)
-                adapter.changeDataset(filteredFinances)
-            }
-        }
-    }
+            val excludeCurrencies = mutableListOf<Currency>()
 
-    private fun getFilteringQuery(dialogBinding: DialogFilterFinancesBinding): SimpleSQLiteQuery {
-        var filter = getBaseFilteringQuery(dialogBinding)
-        val args = mutableListOf<Any>(title)
+            val brlCheckbox = dialogBinding.brlCheckbox
+            val euroCheckbox = dialogBinding.euroCheckbox
 
-        filter = addCurrencyFilter(dialogBinding, filter, args)
-        filter = addTypeFilter(dialogBinding, filter, args)
-        filter = addDateFilter(dialogBinding, filter, args)
+            isBrlOptionChecked = brlCheckbox.isChecked
+            isEuroOptionChecked = euroCheckbox.isChecked
 
-        filter = """
-            SELECT original.id, original.title, original.categoryId, original.value, original.currency, original.type, grouped.date FROM 
-            (SELECT * FROM Finance WHERE $filter ORDER BY date DESC) AS original 
-            LEFT JOIN (SELECT * FROM Finance WHERE $filter GROUP BY date) AS grouped
-            ON original.id = grouped.id;
-        """.trimIndent()
-        args.addAll(args)
-
-        return SimpleSQLiteQuery(filter, args.toTypedArray())
-    }
-
-    private fun getBaseFilteringQuery(dialogBinding: DialogFilterFinancesBinding): String {
-        val titleTextInputEditText = dialogBinding.titleTextInputEditText
-        title = titleTextInputEditText.text.toString()
-        return "title LIKE '%' || ? || '%'"
-    }
-
-    private fun addCurrencyFilter(
-        dialogBinding: DialogFilterFinancesBinding,
-        filter: String,
-        args: MutableList<Any>
-    ): String {
-        var queryWithFilter = filter
-
-        val brlCheckbox = dialogBinding.brlCheckbox
-        val euroCheckbox = dialogBinding.euroCheckbox
-
-        isBrlOptionChecked = brlCheckbox.isChecked
-        isEuroOptionChecked = euroCheckbox.isChecked
-
-        if (!isBrlOptionChecked || !isEuroOptionChecked) {
             if (!isBrlOptionChecked) {
-                queryWithFilter += " AND currency != ?"
-                args.add(Currency.BRL.text)
+                excludeCurrencies.add(Currency.BRL)
             }
 
             if (!isEuroOptionChecked) {
-                queryWithFilter += " AND currency != ?"
-                args.add(Currency.EUR.text)
+                excludeCurrencies.add(Currency.EUR)
             }
-        }
 
-        return queryWithFilter
-    }
+            val excludeFinanceTypes = mutableListOf<FinanceType>()
 
-    private fun addTypeFilter(
-        dialogBinding: DialogFilterFinancesBinding,
-        filter: String,
-        args: MutableList<Any>
-    ): String {
-        var queryWithFilter = filter
+            val incomeCheckbox = dialogBinding.incomeCheckbox
+            val expenseCheckbox = dialogBinding.expenseCheckbox
 
-        val incomeCheckbox = dialogBinding.incomeCheckbox
-        val expenseCheckbox = dialogBinding.expenseCheckbox
+            isIncomeOptionChecked = incomeCheckbox.isChecked
+            isExpenseOptionChecked = expenseCheckbox.isChecked
 
-        isIncomeOptionChecked = incomeCheckbox.isChecked
-        isExpenseOptionChecked = expenseCheckbox.isChecked
-
-        if (!isIncomeOptionChecked || !isExpenseOptionChecked) {
             if (!isIncomeOptionChecked) {
-                queryWithFilter += " AND type != ?"
-                args.add(FinanceType.INCOME.text)
+                excludeFinanceTypes.add(FinanceType.INCOME)
             }
 
             if (!isExpenseOptionChecked) {
-                queryWithFilter += " AND type != ?"
-                args.add(FinanceType.EXPENSE.text)
+                excludeFinanceTypes.add(FinanceType.EXPENSE)
+            }
+
+            val dateTextInputEditText = dialogBinding.dateTextInputEditText
+            val dateString = dateTextInputEditText.text.toString()
+
+            date = if (dateString.trim() != "") {
+                parseDate(dateString)
+            } else {
+                null
+            }
+
+            lifecycleScope.launch {
+                val filteredFinances = financeRepository.filterFinances(
+                    title = title,
+                    excludeCurrencies = excludeCurrencies,
+                    excludeFinanceTypes = excludeFinanceTypes,
+                    date = date
+                )
+                adapter.changeDataset(filteredFinances)
             }
         }
-
-        return queryWithFilter
-    }
-
-    private fun addDateFilter(
-        dialogBinding: DialogFilterFinancesBinding,
-        filter: String,
-        args: MutableList<Any>
-    ): String {
-        val dateTextInputEditText = dialogBinding.dateTextInputEditText
-        val dateString = dateTextInputEditText.text.toString()
-
-        date = null
-
-        if (dateString.trim() != "") {
-            date = parseDate(dateString)
-
-            date?.let { date ->
-                args.add(date.time)
-                return "$filter AND date = ?"
-            }
-        }
-
-        return filter
     }
 
     private fun validateDateFilter(dialogBinding: DialogFilterFinancesBinding): Boolean {

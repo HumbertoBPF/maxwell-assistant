@@ -1,11 +1,13 @@
 package com.example.maxwell.repository
 
 import android.content.Context
-import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.maxwell.database.AppDatabase
+import com.example.maxwell.models.Currency
 import com.example.maxwell.models.Finance
+import com.example.maxwell.models.FinanceType
 import com.example.maxwell.utils.IdlingResource
 import kotlinx.coroutines.flow.onEach
+import java.util.Date
 
 class FinanceRepository(context: Context) {
     private val dao = AppDatabase.instantiate(context).financeDao()
@@ -19,9 +21,14 @@ class FinanceRepository(context: Context) {
         }
     }
 
-    suspend fun filterFinances(query: SimpleSQLiteQuery): List<Finance> {
+    suspend fun filterFinances(
+        title: String,
+        excludeCurrencies: List<Currency>,
+        excludeFinanceTypes: List<FinanceType>,
+        date: Date?
+    ): List<Finance> {
         IdlingResource.increment()
-        val finances = dao.filterFinances(query)
+        val finances = dao.filterFinances(title, excludeCurrencies, excludeFinanceTypes, date)
         IdlingResource.decrement()
         return finances
     }

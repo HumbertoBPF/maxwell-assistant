@@ -161,7 +161,12 @@ class TasksActivity : AppCompatActivity() {
             status = converters.fromStringToStatus(statusString)
 
             lifecycleScope.launch {
-                val filteredTasks = taskRepository.filterTasks(title, dueDate, priority, status)
+                val filteredTasks = taskRepository.filterTasks(
+                    title = title,
+                    dueDate = dueDate,
+                    priority = priority,
+                    status = status
+                )
                 adapter.changeDataset(filteredTasks)
             }
         }
