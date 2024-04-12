@@ -20,6 +20,17 @@ android {
         versionCode 1
         versionName "1.0"
 
+        def awsPropertiesFile = rootProject.file("aws.properties")
+        def secretProperties = new Properties()
+        secretProperties.load(new FileInputStream(awsPropertiesFile))
+
+        buildConfigField "String", "AWS_ACCESS_KEY_ID", "\"${secretProperties.getProperty("AwsAccessKeyId")}\""
+        buildConfigField "String", "AWS_SECRET_ACCESS_KEY", "\"${secretProperties.getProperty("AwsSecretAccessKey")}\""
+        buildConfigField "String", "USER_POOL_ID", "\"${secretProperties.getProperty("UserPoolId")}\""
+        buildConfigField "String", "CLIENT_ID", "\"${secretProperties.getProperty("ClientId")}\""
+        buildConfigField "String", "AUTH_PARAMETER_USERNAME", "\"${secretProperties.getProperty("AuthParameterUsername")}\""
+        buildConfigField "String", "AUTH_PARAMETER_PASSWORD", "\"${secretProperties.getProperty("AuthParameterPassword")}\""
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         ksp {
@@ -71,7 +82,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
     implementation "androidx.test.espresso:espresso-idling-resource:$espresso_version"
+    implementation "aws.sdk.kotlin:cognitoidentityprovider:1.0.0"
     ksp "androidx.room:room-compiler:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     testImplementation "junit:junit:4.13.2"

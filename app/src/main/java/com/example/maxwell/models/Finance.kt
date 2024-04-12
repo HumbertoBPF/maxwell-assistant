@@ -2,14 +2,15 @@ package com.example.maxwell.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
 import java.util.Date
 
 @Entity
-data class Finance(
+open class Finance(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val title: String,
-    val categoryId: Long,
+    @SerializedName("category_id") val categoryId: Long,
     val value: BigDecimal?,
     val currency: Currency?,
     val type: FinanceType?,

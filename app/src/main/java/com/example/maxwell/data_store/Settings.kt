@@ -2,16 +2,20 @@ package com.example.maxwell.data_store
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.maxwell.BuildConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.Calendar
 
 class Settings(private val context: Context) {
     companion object {
         const val USERNAME_KEY = "username_key"
         const val PREFERENCES_KEY = "preferences_key"
+        const val ID_TOKEN = "id_token"
+        const val ID_TOKEN_EXPIRATION = "id_token_expiration"
         private val Context.dataStore by preferencesDataStore(name = BuildConfig.NAME_PREFERENCES_DATA_STORE)
     }
 
@@ -48,6 +52,32 @@ class Settings(private val context: Context) {
             } else {
                 settings[dailySynchronizationTimeKey] = dailySynchronizationTime
             }
+        }
+    }
+
+    fun getIdToken(): Flow<String?> {
+        return context.dataStore.data.map { preferences ->
+            val idTokenKey = stringPreferencesKey(ID_TOKEN)
+            val idToken = preferences[idTokenKey]
+            idToken
+        }
+    }
+
+    fun getIdTokenExpiration(): Flow<Long?> {
+        return context.dataStore.data.map { preferences ->
+            val idTokenKeyExpiration = longPreferencesKey(ID_TOKEN_EXPIRATION)
+            val idTokenExpiration = preferences[idTokenKeyExpiration]
+            idTokenExpiration
+        }
+    }
+
+    suspend fun setIdToken(idToken: String) {
+        val idTokenKey = stringPreferencesKey(ID_TOKEN)
+        val idTokenKeyExpiration = longPreferencesKey(ID_TOKEN_EXPIRATION)
+
+        context.dataStore.edit { settings ->
+            settings[idTokenKey] = idToken
+            settings[idTokenKeyExpiration] = Calendar.getInstance().timeInMillis + 3500 * 1000
         }
     }
 }

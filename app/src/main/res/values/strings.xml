@@ -103,4 +103,12 @@
     <string name="all_subjects">All subjects</string>
     <string name="search_finances_dialog_title">Search finances</string>
     <string name="time_format_instruction">The synchronization time must be in the format \"HH:MM AM\" or \"HH:MM PM\"</string>
+    <string name="export_data_dialog_title">Exporting data</string>
+    <string name="export_data_dialog_message">Please wait</string>
+    <string name="successful_export_dialog_title">Backup updated</string>
+    <string name="successful_export_dialog_message">Your backup was successfully updated!</string>
+    <string name="successful_export_close_button">Close</string>
+    <string name="error_export_dialog_title">Error</string>
+    <string name="error_export_dialog_message">An error happened while trying to backup your data. Please try again.</string>
+    <string name="error_export_close_button">Close</string>
 </resources>

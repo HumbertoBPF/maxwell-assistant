@@ -6,13 +6,18 @@ import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
 import com.example.maxwell.data_store.Settings
 import com.example.maxwell.databinding.ActivitySettingsBinding
+import com.example.maxwell.utils.BackupManager
+import com.example.maxwell.utils.authenticateOnUserPool
 import com.example.maxwell.utils.padWithZeros
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat.CLOCK_12H
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Calendar.HOUR_OF_DAY
 import java.util.Calendar.MINUTE
+
 
 class SettingsActivity : AppCompatActivity() {
     private val binding by lazy {
@@ -39,6 +44,46 @@ class SettingsActivity : AppCompatActivity() {
         fillSettingsFormWithDefaults()
 
         configureDataSynchronizationSection()
+
+        binding.exportDataButton.setOnClickListener {
+            val backupManager = BackupManager(this@SettingsActivity, lifecycleScope)
+
+            val loadingDialog = MaterialAlertDialogBuilder(this@SettingsActivity)
+                .setTitle(R.string.export_data_dialog_title)
+                .setMessage(R.string.export_data_dialog_message)
+                .setView(R.layout.dialog_export_data)
+                .setCancelable(false)
+                .show()
+
+            lifecycleScope.launch(IO) {
+                backupManager.export({
+                    loadingDialog.dismiss()
+
+                    MaterialAlertDialogBuilder(this@SettingsActivity)
+                        .setTitle(R.string.successful_export_dialog_title)
+                        .setMessage(R.string.successful_export_dialog_message)
+                        .setNeutralButton(R.string.successful_export_close_button, null)
+                        .setCancelable(false)
+                        .show()
+                },
+                {
+                    loadingDialog.dismiss()
+
+                    MaterialAlertDialogBuilder(this@SettingsActivity)
+                        .setTitle(R.string.error_export_dialog_title)
+                        .setMessage(R.string.error_export_dialog_message)
+                        .setNeutralButton(R.string.error_export_close_button, null)
+                        .setCancelable(false)
+                        .show()
+                })
+            }
+        }
+
+        binding.importDataButton.setOnClickListener {
+            lifecycleScope.launch(IO) {
+                authenticateOnUserPool()
+            }
+        }
 
         configureSaveButton()
 
