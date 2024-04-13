@@ -64,7 +64,7 @@ class TasksActivity : AppCompatActivity() {
 
     private fun configureRecyclerView() {
         lifecycleScope.launch {
-            taskRepository.getTasks { tasks ->
+            taskRepository.getAll { tasks ->
                 val tasksRecyclerView = binding.tasksRecyclerView
                 adapter.changeDataset(tasks)
                 tasksRecyclerView.adapter = adapter
@@ -161,7 +161,7 @@ class TasksActivity : AppCompatActivity() {
             status = converters.fromStringToStatus(statusString)
 
             lifecycleScope.launch {
-                val filteredTasks = taskRepository.filterTasks(
+                val filteredTasks = taskRepository.filter(
                     title = title,
                     dueDate = dueDate,
                     priority = priority,

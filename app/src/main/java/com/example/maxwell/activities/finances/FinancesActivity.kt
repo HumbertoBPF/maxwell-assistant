@@ -54,7 +54,7 @@ class FinancesActivity : AppCompatActivity() {
 
     private fun configureRecyclerView() {
         lifecycleScope.launch {
-            financeRepository.getFinances { finances ->
+            financeRepository.getAll { finances ->
                 val financesRecyclerView = binding.financesRecyclerView
                 adapter.changeDataset(finances)
                 financesRecyclerView.adapter = adapter
@@ -181,7 +181,7 @@ class FinancesActivity : AppCompatActivity() {
             }
 
             lifecycleScope.launch {
-                val filteredFinances = financeRepository.filterFinances(
+                val filteredFinances = financeRepository.filter(
                     title = title,
                     excludeCurrencies = excludeCurrencies,
                     excludeFinanceTypes = excludeFinanceTypes,

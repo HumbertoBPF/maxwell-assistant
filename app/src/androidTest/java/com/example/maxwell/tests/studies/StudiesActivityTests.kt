@@ -113,7 +113,7 @@ class StudiesActivityTests: StudyTests() {
         val randomStudy = getRandomElement(studies)
 
         val randomSubject = runBlocking {
-            studySubjectDao.getStudySubjectById(randomStudy.id).first()
+            studySubjectDao.getById(randomStudy.id).first()
         }
 
         navigateToTheStudiesActivity()
@@ -187,7 +187,7 @@ class StudiesActivityTests: StudyTests() {
         val randomStudy = getRandomElement(studies)
 
         val randomSubject = runBlocking {
-            studySubjectDao.getStudySubjectById(randomStudy.id).first()
+            studySubjectDao.getById(randomStudy.id).first()
         }
 
         navigateToTheStudiesActivity()

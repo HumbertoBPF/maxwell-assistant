@@ -141,7 +141,7 @@ class EditTaskFormActivityTests: TaskFormActivityTests() {
         )
 
         val updatedTask = runBlocking {
-            taskDao.getTaskById(selectedTask.id).first()
+            taskDao.getById(selectedTask.id).first()
         }
 
         assertEquals(title, updatedTask?.title)

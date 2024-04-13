@@ -83,16 +83,16 @@ class SettingsActivity : AppCompatActivity() {
                     .setCancelable(false)
                     .show()
             },
-                {
-                    loadingDialog.dismiss()
+            {
+                loadingDialog.dismiss()
 
-                    MaterialAlertDialogBuilder(this@SettingsActivity)
-                        .setTitle(R.string.error_export_dialog_title)
-                        .setMessage(R.string.error_export_dialog_message)
-                        .setNeutralButton(R.string.error_export_close_button, null)
-                        .setCancelable(false)
-                        .show()
-                })
+                MaterialAlertDialogBuilder(this@SettingsActivity)
+                    .setTitle(R.string.error_export_dialog_title)
+                    .setMessage(R.string.error_export_dialog_message)
+                    .setNeutralButton(R.string.error_export_close_button, null)
+                    .setCancelable(false)
+                    .show()
+            })
         }
     }
 
@@ -132,16 +132,16 @@ class SettingsActivity : AppCompatActivity() {
                     .setCancelable(false)
                     .show()
             },
-                {
-                    loadingDialog.dismiss()
+            {
+                loadingDialog.dismiss()
 
-                    MaterialAlertDialogBuilder(this@SettingsActivity)
-                        .setTitle(R.string.error_import_dialog_title)
-                        .setMessage(R.string.error_import_dialog_message)
-                        .setNeutralButton(R.string.error_import_dialog_button, null)
-                        .setCancelable(false)
-                        .show()
-                })
+                MaterialAlertDialogBuilder(this@SettingsActivity)
+                    .setTitle(R.string.error_import_dialog_title)
+                    .setMessage(R.string.error_import_dialog_message)
+                    .setNeutralButton(R.string.error_import_dialog_button, null)
+                    .setCancelable(false)
+                    .show()
+            })
         }
     }
 

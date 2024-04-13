@@ -6,14 +6,25 @@ import com.example.maxwell.models.Status
 import com.example.maxwell.models.Study
 import com.example.maxwell.models.StudySubject
 import com.example.maxwell.utils.IdlingResource
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import java.util.Date
 
 class StudyRepository(context: Context) {
     private val dao = AppDatabase.instantiate(context).studyDao()
 
-    suspend fun getStudies(onPostExecute: (List<Study>) -> Unit) {
-        dao.getStudies().onEach {
+    suspend fun getForBackup(lastBackupTimestamp: Long, onPostExecute: (List<Study>) -> Unit) {
+        dao.getForBackup(lastBackupTimestamp).onEach {
+            IdlingResource.increment()
+        }.first { studies ->
+            onPostExecute(studies)
+            IdlingResource.decrement()
+            true
+        }
+    }
+
+    suspend fun getAll(onPostExecute: (List<Study>) -> Unit) {
+        dao.getAll().onEach {
             IdlingResource.increment()
         }.collect { studies ->
             onPostExecute(studies)
@@ -21,8 +32,8 @@ class StudyRepository(context: Context) {
         }
     }
 
-    suspend fun getStudyById(id: Long, onPostExecute: (Study?) -> Unit) {
-        dao.getStudyById(id).onEach {
+    suspend fun getById(id: Long, onPostExecute: (Study?) -> Unit) {
+        dao.getById(id).onEach {
             IdlingResource.increment()
         }.collect { study ->
             onPostExecute(study)
@@ -30,14 +41,14 @@ class StudyRepository(context: Context) {
         }
     }
 
-    suspend fun filterStudies(
+    suspend fun filter(
         title: String,
         status: Status?,
         startingDate: Date?,
         studySubject: StudySubject?
     ): List<Study> {
         IdlingResource.increment()
-        val filteredStudies = dao.filterStudies(title, status, startingDate, studySubject)
+        val filteredStudies = dao.filter(title, status, startingDate, studySubject)
         IdlingResource.decrement()
         return filteredStudies
     }
@@ -50,7 +61,14 @@ class StudyRepository(context: Context) {
 
     suspend fun delete(study: Study) {
         IdlingResource.increment()
-        dao.delete(study)
+        study.setToDeleted()
+        dao.insert(study)
+        IdlingResource.decrement()
+    }
+
+    suspend fun deleteAfterBackup() {
+        IdlingResource.increment()
+        dao.deleteAfterBackup()
         IdlingResource.decrement()
     }
 }

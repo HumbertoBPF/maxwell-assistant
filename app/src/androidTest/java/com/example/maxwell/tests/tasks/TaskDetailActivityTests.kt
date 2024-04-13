@@ -61,7 +61,7 @@ class TaskDetailActivityTests: TaskTests() {
             ))
 
         val task = runBlocking {
-            taskDao.getTaskById(selectedTask.id).first()
+            taskDao.getById(selectedTask.id).first()
         }
 
         assertNull(task)

@@ -41,7 +41,7 @@ class TaskFormActivity : FormActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            taskRepository.getTaskById(id) {taskFromDb ->
+            taskRepository.getById(id) { taskFromDb ->
                 task = taskFromDb
 
                 configureAppBar()

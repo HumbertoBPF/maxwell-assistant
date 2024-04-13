@@ -8,4 +8,4 @@ import androidx.room.PrimaryKey
 data class FinanceCategory(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val name: String
-)
+): BaseEntity()

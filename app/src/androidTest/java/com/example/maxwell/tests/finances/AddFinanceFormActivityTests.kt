@@ -157,7 +157,7 @@ class AddFinanceFormActivityTests: FinanceFormActivityTests() {
             ))
 
         val finances = runBlocking {
-            financeDao.filterFinances(SimpleSQLiteQuery("SELECT * FROM Finance;"))
+            financeDao.filter(SimpleSQLiteQuery("SELECT * FROM Finance;"))
         }
 
         assertEquals(1, finances.size)

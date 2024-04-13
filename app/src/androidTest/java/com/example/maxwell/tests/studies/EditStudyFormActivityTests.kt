@@ -82,7 +82,7 @@ class EditStudyFormActivityTests: StudyFormActivityTests() {
             ))
 
         val subject = runBlocking {
-            studySubjectDao.getStudySubjectById(selectedStudy.subjectId).first()
+            studySubjectDao.getById(selectedStudy.subjectId).first()
         }
 
         onView(withId(R.id.subject_text_input_auto_complete))
@@ -160,7 +160,7 @@ class EditStudyFormActivityTests: StudyFormActivityTests() {
         )
 
         val updatedStudy = runBlocking {
-            studyDao.getStudyById(selectedStudy.id).first()
+            studyDao.getById(selectedStudy.id).first()
         }
 
         assertEquals(title, updatedStudy?.title)

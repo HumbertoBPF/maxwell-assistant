@@ -20,10 +20,10 @@ import com.example.maxwell.models.Task
 
 @Database(
     entities = [Task::class, Study::class, Finance::class, FinanceCategory::class, StudySubject::class],
-    version = 2,
-    autoMigrations = [AutoMigration (from = 1, to = 2)],
+    version = 3,
+    autoMigrations = [AutoMigration (from = 1, to = 2), AutoMigration (from = 2, to = 3)],
     exportSchema = true,
-    )
+)
 @TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun taskDao(): TaskDao

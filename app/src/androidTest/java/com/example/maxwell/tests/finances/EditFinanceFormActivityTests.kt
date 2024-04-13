@@ -65,7 +65,7 @@ class EditFinanceFormActivityTests: FinanceFormActivityTests() {
             ))
 
         val financeCategory = runBlocking {
-            financeCategoryDao.getFinanceCategoryById(selectedFinance.categoryId).first()
+            financeCategoryDao.getById(selectedFinance.categoryId).first()
         }
 
         onView(withId(R.id.category_text_input_auto_complete))
@@ -146,7 +146,7 @@ class EditFinanceFormActivityTests: FinanceFormActivityTests() {
         )
 
         val updatedFinance = runBlocking {
-            financeDao.getFinanceById(selectedFinance.id).first()
+            financeDao.getById(selectedFinance.id).first()
         }
 
         assertEquals(title, updatedFinance?.title)

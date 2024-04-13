@@ -58,7 +58,7 @@ open class FinanceTests: UITests() {
             )
 
         val category = runBlocking {
-            financeCategoryDao.getFinanceCategoryById(finance.categoryId).first()
+            financeCategoryDao.getById(finance.categoryId).first()
         }
 
         Espresso.onView(ViewMatchers.withId(R.id.category_text_view))

@@ -8,4 +8,4 @@ import androidx.room.PrimaryKey
 data class StudySubject(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val name: String
-)
+): BaseEntity()

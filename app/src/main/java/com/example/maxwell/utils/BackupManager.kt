@@ -1,6 +1,7 @@
 package com.example.maxwell.utils
 
 import android.content.Context
+import com.example.maxwell.data_store.Settings
 import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.repository.FinanceCategoryRepository
 import com.example.maxwell.repository.FinanceRepository
@@ -14,10 +15,13 @@ import com.example.maxwell.services.models.ImportApiRequestBody
 import com.example.maxwell.services.models.ImportApiResponseBody
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Calendar
+import kotlin.math.ceil
 
 class BackupManager(
     val context: Context,
@@ -47,7 +51,13 @@ class BackupManager(
         StudySubjectRepository(context)
     }
 
+    private val settings by lazy {
+        Settings(context)
+    }
+
     private var idToken: String? = null
+
+    private var lastBackupTimestamp: Long = 0
 
     private var onSuccess: () -> Unit = {}
 
@@ -59,6 +69,7 @@ class BackupManager(
         const val FINANCE_TABLE = "Finance"
         const val STUDY_TABLE = "Study"
         const val TASK_TABLE = "Task"
+        const val BATCH_SIZE = 5.0
     }
 
     suspend fun createBackup(onSuccess: () -> Unit, onFailure: () -> Unit) {
@@ -68,14 +79,23 @@ class BackupManager(
             this.onFailure = onFailure
 
             lifecycleScope.launch {
-                exportFinances()
+                settings.getLastBackupTimestamp().first {lastBackupTimestamp ->
+                    if (lastBackupTimestamp != null) {
+                        this@BackupManager.lastBackupTimestamp = lastBackupTimestamp
+                    }
+
+                    lifecycleScope.launch {
+                        exportFinances()
+                    }
+                    true
+                }
             }
         }
     }
 
     private suspend fun exportFinances() {
-        financeRepository.getFinances { finances ->
-            callExportApi(FINANCE_TABLE, finances) {
+        financeRepository.getForBackup(this.lastBackupTimestamp) { finances ->
+            exportBatch(FINANCE_TABLE, finances, 1) {
                 lifecycleScope.launch {
                     exportFinanceCategories()
                 }
@@ -84,8 +104,8 @@ class BackupManager(
     }
 
     private suspend fun exportFinanceCategories() {
-        financeCategoryRepository.getFinanceCategories { financeCategories ->
-            callExportApi(FINANCE_CATEGORY_TABLE, financeCategories) {
+        financeCategoryRepository.getForBackup(this.lastBackupTimestamp) { financeCategories ->
+            exportBatch(FINANCE_CATEGORY_TABLE, financeCategories, 1) {
                 lifecycleScope.launch {
                     exportTasks()
                 }
@@ -94,8 +114,8 @@ class BackupManager(
     }
 
     private suspend fun exportTasks() {
-        taskRepository.getTasks { tasks ->
-            callExportApi(TASK_TABLE, tasks) {
+        taskRepository.getForBackup(this.lastBackupTimestamp) { tasks ->
+            exportBatch(TASK_TABLE, tasks, 1) {
                 lifecycleScope.launch {
                     exportStudies()
                 }
@@ -104,8 +124,8 @@ class BackupManager(
     }
 
     private suspend fun exportStudies() {
-        studyRepository.getStudies { studies ->
-            callExportApi(STUDY_SUBJECT_TABLE, studies) {
+        studyRepository.getForBackup(this.lastBackupTimestamp) { studies ->
+            exportBatch(STUDY_TABLE, studies, 1) {
                 lifecycleScope.launch {
                     exportStudySubjects()
                 }
@@ -114,13 +134,68 @@ class BackupManager(
     }
 
     private suspend fun exportStudySubjects() {
-        studySubjectRepository.getStudySubjects { studySubjects ->
-            callExportApi(STUDY_TABLE, studySubjects) {
+        studySubjectRepository.getForBackup(this.lastBackupTimestamp) { studySubjects ->
+            exportBatch(STUDY_SUBJECT_TABLE, studySubjects, 1) {
                 lifecycleScope.launch {
+                    val currentTimestamp = Calendar.getInstance().timeInMillis
+                    settings.setLastBackupTimestamp(currentTimestamp)
+                    cleanUpAfterBackup()
                     onSuccess()
                 }
             }
         }
+    }
+
+    private fun <E : Any> exportBatch(
+        table: String,
+        items: List<E>,
+        indexBatch: Int,
+        onNextStep: () -> Unit
+    ) {
+        val nbBatches = ceil(items.size / BATCH_SIZE).toInt()
+
+        if (nbBatches == 0) {
+            onNextStep()
+            return
+        }
+
+        val batch = getBatch(indexBatch, items)
+
+        callExportApi(table, batch) {
+            if (indexBatch == nbBatches) {
+                onNextStep()
+                return@callExportApi
+            }
+
+            exportBatch(table, items, indexBatch + 1, onNextStep)
+        }
+    }
+
+    private fun <E : Any> getBatch(
+        indexBatch: Int,
+        items: List<E>
+    ): MutableList<E> {
+        val batch = mutableListOf<E>()
+
+        for (j in 0..4) {
+            val index = 5 * (indexBatch - 1) + j
+
+            if (index >= items.size) {
+                break
+            }
+
+            batch.add(items[index])
+        }
+
+        return batch
+    }
+
+    private suspend fun cleanUpAfterBackup() {
+        financeRepository.deleteAfterBackup()
+        studyRepository.deleteAfterBackup()
+        taskRepository.deleteAfterBackup()
+        financeCategoryRepository.deleteAfterBackup()
+        studySubjectRepository.deleteAfterBackup()
     }
 
     private fun callExportApi(

@@ -27,7 +27,7 @@ class TaskDetailActivity : AppCompatActivity() {
         val id = intent.getLongExtra("id", 0)
 
         lifecycleScope.launch {
-            taskRepository.getTaskById(id) {task ->
+            taskRepository.getById(id) { task ->
                 if (task == null) {
                     finish()
                 } else {

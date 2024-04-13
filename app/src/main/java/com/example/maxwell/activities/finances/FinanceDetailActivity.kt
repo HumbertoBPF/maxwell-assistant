@@ -34,7 +34,7 @@ class FinanceDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            financeRepository.getFinanceById(id) {finance ->
+            financeRepository.getById(id) { finance ->
                 if (finance == null) {
                     finish()
                 } else {
@@ -79,7 +79,7 @@ class FinanceDetailActivity : AppCompatActivity() {
         titleTextView.text = finance.title
 
         lifecycleScope.launch {
-            financeCategoryRepository.getFinanceCategoryById(finance.categoryId) { financeCategory ->
+            financeCategoryRepository.getById(finance.categoryId) { financeCategory ->
                 val categoryTextView = binding.categoryTextView
                 categoryTextView.text = financeCategory?.name
             }

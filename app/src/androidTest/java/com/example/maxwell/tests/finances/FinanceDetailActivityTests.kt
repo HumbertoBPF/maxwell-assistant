@@ -65,7 +65,7 @@ class FinanceDetailActivityTests: FinanceTests() {
             ))
 
         val finance = runBlocking {
-            financeDao.getFinanceById(selectedFinance.id).first()
+            financeDao.getById(selectedFinance.id).first()
         }
 
         assertNull(finance)

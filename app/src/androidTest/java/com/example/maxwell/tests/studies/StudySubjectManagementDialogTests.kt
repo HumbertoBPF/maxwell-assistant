@@ -95,7 +95,7 @@ class StudySubjectManagementDialogTests: StudyTests() {
             ))
         // Checking if a new study subject was created in the database
         val newStudySubject = runBlocking {
-            studySubjectDao.getStudySubjectByName(newStudySubjectName)
+            studySubjectDao.getByName(newStudySubjectName)
         }
 
         assertEquals(newStudySubjectName, newStudySubject?.name)
@@ -137,7 +137,7 @@ class StudySubjectManagementDialogTests: StudyTests() {
             )))
 
         val studySubject = runBlocking {
-            studySubjectDao.getStudySubjectById(randomStudySubject.id).first()
+            studySubjectDao.getById(randomStudySubject.id).first()
         }
 
         assertNull(studySubject)

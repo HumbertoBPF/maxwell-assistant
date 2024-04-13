@@ -1,7 +1,6 @@
 package com.example.maxwell.database.daos
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -16,27 +15,31 @@ import java.util.Date
 
 @Dao
 abstract class StudyDao {
+    @Query("SELECT * FROM Study WHERE timestampModified >= :lastBackupTimestamp")
+    abstract fun getForBackup(lastBackupTimestamp: Long): Flow<List<Study>>
+
     @Query("""
-        SELECT original.id, original.title, original.duration, original.description, original.subjectId, original.links, original.status, grouped.startingDate FROM 
+        SELECT original.id, original.title, original.duration, original.description, original.subjectId, original.links, original.status, grouped.startingDate, original.deleted, original.timestampModified FROM 
         (SELECT * FROM Study ORDER BY startingDate DESC) AS original 
         LEFT JOIN (SELECT * FROM Study GROUP BY startingDate) AS grouped
         ON original.id = grouped.id
+        WHERE original.deleted = 0
     """)
-    abstract fun getStudies(): Flow<List<Study>>
+    abstract fun getAll(): Flow<List<Study>>
 
     @RawQuery
-    abstract suspend fun filterStudies(query: SupportSQLiteQuery): List<Study>
+    abstract suspend fun filter(query: SupportSQLiteQuery): List<Study>
 
     @Query("SELECT * FROM Study WHERE id=:id")
-    abstract fun getStudyById(id: Long): Flow<Study?>
+    abstract fun getById(id: Long): Flow<Study?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(vararg study: Study)
 
-    @Delete
-    abstract suspend fun delete(study: Study)
+    @Query("DELETE FROM Study WHERE deleted = 1")
+    abstract suspend fun deleteAfterBackup()
 
-    suspend fun filterStudies(
+    suspend fun filter(
         title: String,
         status: Status?,
         startingDate: Date?,
@@ -50,16 +53,17 @@ abstract class StudyDao {
         filter = addStudySubjectFilter(studySubject, filter , args)
 
         filter = """
-            SELECT original.id, original.title, original.duration, original.description, original.subjectId, original.links, original.status, grouped.startingDate FROM 
+            SELECT original.id, original.title, original.duration, original.description, original.subjectId, original.links, original.status, grouped.startingDate, original.deleted, original.timestampModified FROM 
             (SELECT * FROM Study WHERE $filter ORDER BY startingDate DESC) AS original 
             LEFT JOIN (SELECT * FROM Study WHERE $filter GROUP BY startingDate) AS grouped
-            ON original.id = grouped.id;
+            ON original.id = grouped.id
+            WHERE original.deleted = 0;
         """.trimIndent()
         args.addAll(args)
 
         val query = SimpleSQLiteQuery(filter, args.toTypedArray())
 
-        return filterStudies(query)
+        return filter(query)
     }
 
     private fun addStatusFilter(

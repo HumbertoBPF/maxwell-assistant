@@ -65,7 +65,7 @@ class StudyDetailActivityTests: StudyTests() {
             ))
 
         val study = runBlocking {
-            studyDao.getStudyById(selectedStudy.id).first()
+            studyDao.getById(selectedStudy.id).first()
         }
 
         assertNull(study)

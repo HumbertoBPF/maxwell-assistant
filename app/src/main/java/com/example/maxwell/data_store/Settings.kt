@@ -16,6 +16,7 @@ class Settings(private val context: Context) {
         const val PREFERENCES_KEY = "preferences_key"
         const val ID_TOKEN = "id_token"
         const val ID_TOKEN_EXPIRATION = "id_token_expiration"
+        const val LAST_BACKUP_TIMESTAMP = "last_backup"
         private val Context.dataStore by preferencesDataStore(name = BuildConfig.NAME_PREFERENCES_DATA_STORE)
     }
 
@@ -78,6 +79,22 @@ class Settings(private val context: Context) {
         context.dataStore.edit { settings ->
             settings[idTokenKey] = idToken
             settings[idTokenKeyExpiration] = Calendar.getInstance().timeInMillis + 3500 * 1000
+        }
+    }
+
+    fun getLastBackupTimestamp(): Flow<Long?> {
+        return context.dataStore.data.map { preferences ->
+            val lastBackupTimestampPreferenceKey = longPreferencesKey(LAST_BACKUP_TIMESTAMP)
+            val lastBackupTimestamp = preferences[lastBackupTimestampPreferenceKey]
+            lastBackupTimestamp
+        }
+    }
+
+    suspend fun setLastBackupTimestamp(lastBackupTimestamp: Long) {
+        val lastBackupTimestampPreferenceKey = longPreferencesKey(LAST_BACKUP_TIMESTAMP)
+
+        context.dataStore.edit { settings ->
+            settings[lastBackupTimestampPreferenceKey] = lastBackupTimestamp
         }
     }
 }

@@ -8,6 +8,7 @@ import aws.sdk.kotlin.services.cognitoidentityprovider.model.AdminInitiateAuthRe
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.AuthFlowType
 import com.example.maxwell.BuildConfig
 import com.example.maxwell.data_store.Settings
+import kotlinx.coroutines.flow.first
 import java.util.Calendar
 
 fun getStaticCredentialsProvider() : StaticCredentialsProvider = StaticCredentialsProvider {
@@ -18,7 +19,7 @@ fun getStaticCredentialsProvider() : StaticCredentialsProvider = StaticCredentia
 suspend fun getIdToken(context: Context, onPost: (idToken: String?) -> Unit) {
     val settings = Settings(context)
 
-    settings.getIdTokenExpiration().collect { idTokenExpiration ->
+    settings.getIdTokenExpiration().first { idTokenExpiration ->
         val currentTimeMillis = Calendar.getInstance().timeInMillis
 
         if (idTokenExpiration == null || currentTimeMillis >= idTokenExpiration) {
@@ -29,12 +30,14 @@ suspend fun getIdToken(context: Context, onPost: (idToken: String?) -> Unit) {
             }
 
             onPost(idToken)
-            return@collect
+            return@first true
         }
 
-        settings.getIdToken().collect {idToken ->
+        settings.getIdToken().first {idToken ->
             onPost(idToken)
+            true
         }
+        true
     }
 }
 

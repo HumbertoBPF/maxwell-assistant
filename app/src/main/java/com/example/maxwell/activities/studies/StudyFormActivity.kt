@@ -51,7 +51,7 @@ class StudyFormActivity : FormActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            studyRepository.getStudyById(id) { studyFromDb ->
+            studyRepository.getById(id) { studyFromDb ->
                 study = studyFromDb
 
                 configureAppBar()
@@ -123,7 +123,7 @@ class StudyFormActivity : FormActivity() {
         }
 
         lifecycleScope.launch {
-            studySubjectRepository.getStudySubjects { studySubjects ->
+            studySubjectRepository.getAll { studySubjects ->
                 val studySubjectOptions = studySubjects
                     .map { studySubject -> studySubject.name }.toTypedArray()
                 subjectAutoComplete?.setSimpleItems(studySubjectOptions)
@@ -133,7 +133,7 @@ class StudyFormActivity : FormActivity() {
         lifecycleScope.launch {
             val subjectId = study?.subjectId ?: 0
 
-            studySubjectRepository.getStudySubjectById(subjectId) { studySubject ->
+            studySubjectRepository.getById(subjectId) { studySubject ->
                 subjectAutoComplete?.setText(studySubject?.name, false)
             }
         }
@@ -153,7 +153,7 @@ class StudyFormActivity : FormActivity() {
         lifecycleScope.launch {
             val studySubjectsChipGroup = dialogBinding.studySubjectsChipGroup
 
-            studySubjectRepository.getStudySubjects { studySubjects ->
+            studySubjectRepository.getAll { studySubjects ->
                 studySubjectsChipGroup.removeAllViews()
 
                 studySubjects.forEach { studySubject ->
@@ -211,7 +211,7 @@ class StudyFormActivity : FormActivity() {
             return false
         }
 
-        val nameAvailable = studySubjectRepository.getStudySubjectByName(name) == null
+        val nameAvailable = studySubjectRepository.getByName(name) == null
 
         if (!nameAvailable) {
             nameTextInputLayout.isErrorEnabled = true
@@ -284,7 +284,7 @@ class StudyFormActivity : FormActivity() {
                     val subjectTextInputAutoComplete = binding.subjectTextInputAutoComplete
                     val subjectString = subjectTextInputAutoComplete.text.toString()
 
-                    val subject = studySubjectRepository.getStudySubjectByName(subjectString)
+                    val subject = studySubjectRepository.getByName(subjectString)
 
                     subject?.let {
                         val study = getStudyFromFormInputs(subject)

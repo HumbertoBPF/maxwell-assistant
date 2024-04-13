@@ -1,7 +1,6 @@
 package com.example.maxwell.database.daos
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
@@ -16,29 +15,31 @@ import java.util.Date
 
 @Dao
 abstract class TaskDao {
-    @Query(
-        """
-        SELECT original.id, original.title, original.duration, grouped.dueDate, original.priority, original.status FROM 
+    @Query("SELECT * FROM Task WHERE timestampModified >= :lastBackupTimestamp")
+    abstract fun getForBackup(lastBackupTimestamp: Long): Flow<List<Task>>
+
+    @Query("""
+        SELECT original.id, original.title, original.duration, grouped.dueDate, original.priority, original.status, original.deleted, original.timestampModified FROM 
         (SELECT * FROM Task ORDER BY dueDate DESC) AS original 
         LEFT JOIN (SELECT * FROM Task GROUP BY dueDate) AS grouped
         ON original.id = grouped.id
-        """
-    )
-    abstract fun getTasks(): Flow<List<Task>>
+        WHERE original.deleted = 0
+    """)
+    abstract fun getAll(): Flow<List<Task>>
 
     @RawQuery
-    abstract suspend fun filterTasks(query: SupportSQLiteQuery): List<Task>
+    abstract suspend fun filter(query: SupportSQLiteQuery): List<Task>
 
     @Query("SELECT * FROM task WHERE id=:id")
-    abstract fun getTaskById(id: Long): Flow<Task?>
+    abstract fun getById(id: Long): Flow<Task?>
 
     @Insert(onConflict = REPLACE)
     abstract suspend fun insert(vararg task: Task)
 
-    @Delete
-    abstract suspend fun delete(task: Task)
+    @Query("DELETE FROM Task WHERE deleted = 1")
+    abstract suspend fun deleteAfterBackup()
 
-    suspend fun filterTasks(
+    suspend fun filter(
         title: String,
         dueDate: Date?,
         priority: Priority?,
@@ -52,16 +53,17 @@ abstract class TaskDao {
         filter = addStatusFilter(status, filter, args)
 
         filter = """
-            SELECT original.id, original.title, original.duration, grouped.dueDate, original.priority, original.status FROM 
+            SELECT original.id, original.title, original.duration, grouped.dueDate, original.priority, original.status, original.deleted, original.timestampModified FROM 
             (SELECT * FROM Task WHERE $filter ORDER BY dueDate DESC) AS original 
             LEFT JOIN (SELECT * FROM Task WHERE $filter GROUP BY dueDate) AS grouped 
-            ON original.id = grouped.id;
+            ON original.id = grouped.id
+            WHERE original.deleted = 0;
         """.trimIndent()
         args.addAll(args)
 
         val query = SimpleSQLiteQuery(filter, args.toTypedArray())
 
-        return filterTasks(query)
+        return filter(query)
     }
 
     private fun addDueDateFilter(

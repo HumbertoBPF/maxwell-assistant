@@ -95,7 +95,7 @@ class FinanceCategoryManagementDialogTests: FinanceTests() {
             ))
         // Checking if a new finance category was created in the database
         val newFinanceCategory = runBlocking {
-            financeCategoryDao.getFinanceCategoryByName(newFinanceCategoryName)
+            financeCategoryDao.getByName(newFinanceCategoryName)
         }
 
         assertEquals(newFinanceCategoryName, newFinanceCategory?.name)
@@ -137,7 +137,7 @@ class FinanceCategoryManagementDialogTests: FinanceTests() {
             )))
 
         val financeCategory = runBlocking {
-            financeCategoryDao.getFinanceCategoryById(randomFinanceCategory.id).first()
+            financeCategoryDao.getById(randomFinanceCategory.id).first()
         }
 
         assertNull(financeCategory)

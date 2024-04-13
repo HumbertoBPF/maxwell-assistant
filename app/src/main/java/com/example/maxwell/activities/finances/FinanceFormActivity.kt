@@ -48,7 +48,7 @@ class FinanceFormActivity : FormActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            financeRepository.getFinanceById(id) {financeFromDb ->
+            financeRepository.getById(id) { financeFromDb ->
                 finance = financeFromDb
 
                 configureTitleTextInput()
@@ -84,7 +84,7 @@ class FinanceFormActivity : FormActivity() {
         val categoryAutoComplete = categoryInputTextAutoComplete as? MaterialAutoCompleteTextView
 
         lifecycleScope.launch {
-            financeCategoryRepository.getFinanceCategories { financeCategories ->
+            financeCategoryRepository.getAll { financeCategories ->
                 val financeCategoryOptions = financeCategories
                     .map { category -> category.name }.toTypedArray()
                 categoryAutoComplete?.setSimpleItems(financeCategoryOptions)
@@ -94,7 +94,7 @@ class FinanceFormActivity : FormActivity() {
         lifecycleScope.launch {
             val categoryId = finance?.categoryId ?: 0
 
-            financeCategoryRepository.getFinanceCategoryById(categoryId) { financeCategory ->
+            financeCategoryRepository.getById(categoryId) { financeCategory ->
                 categoryAutoComplete?.setText(financeCategory?.name, false)
             }
         }
@@ -114,7 +114,7 @@ class FinanceFormActivity : FormActivity() {
         lifecycleScope.launch {
             val financeCategoryChipGroup = dialogBinding.financeCategoriesChipGroup
 
-            financeCategoryRepository.getFinanceCategories {financeCategories ->
+            financeCategoryRepository.getAll { financeCategories ->
                 financeCategoryChipGroup.removeAllViews()
 
                 financeCategories.forEach { financeCategory ->
@@ -172,7 +172,7 @@ class FinanceFormActivity : FormActivity() {
             return false
         }
 
-        val nameAvailable = financeCategoryRepository.getFinanceCategoryByName(name) == null
+        val nameAvailable = financeCategoryRepository.getByName(name) == null
 
         if (!nameAvailable) {
             nameTextInputLayout.isErrorEnabled = true
@@ -252,7 +252,7 @@ class FinanceFormActivity : FormActivity() {
                     val categoryTextInputAutoComplete = binding.categoryTextInputAutoComplete
                     val categoryString = categoryTextInputAutoComplete.text.toString()
 
-                    val category = financeCategoryRepository.getFinanceCategoryByName(categoryString)
+                    val category = financeCategoryRepository.getByName(categoryString)
 
                     category?.let {
                         val finance = getFinanceFromInputs(category)

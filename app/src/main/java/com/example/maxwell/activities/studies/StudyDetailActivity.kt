@@ -32,7 +32,7 @@ class StudyDetailActivity : AppCompatActivity() {
         val id = intent.getLongExtra("id", 0)
 
         lifecycleScope.launch {
-            studyRepository.getStudyById(id) { study ->
+            studyRepository.getById(id) { study ->
                 if (study == null) {
                     finish()
                 } else {
@@ -88,7 +88,7 @@ class StudyDetailActivity : AppCompatActivity() {
         durationTextView.text = "${study.duration} h"
 
         lifecycleScope.launch {
-            studySubjectRepository.getStudySubjectById(study.subjectId) { studySubject ->
+            studySubjectRepository.getById(study.subjectId) { studySubject ->
                 val subjectTextView = binding.subjectTextView
                 subjectTextView.text = studySubject?.name
             }

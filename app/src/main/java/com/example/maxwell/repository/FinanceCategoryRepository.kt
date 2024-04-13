@@ -4,13 +4,24 @@ import android.content.Context
 import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.models.FinanceCategory
 import com.example.maxwell.utils.IdlingResource
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 
 class FinanceCategoryRepository(context: Context) {
     private val dao = AppDatabase.instantiate(context).financeCategoryDao()
 
-    suspend fun getFinanceCategories(onPostExecute: (List<FinanceCategory>) -> Unit) {
-        dao.getFinanceCategories().onEach {
+    suspend fun getForBackup(lastBackupTimestamp: Long, onPostExecute: (List<FinanceCategory>) -> Unit) {
+        dao.getForBackup(lastBackupTimestamp).onEach {
+            IdlingResource.increment()
+        }.first { finances ->
+            onPostExecute(finances)
+            IdlingResource.decrement()
+            true
+        }
+    }
+
+    suspend fun getAll(onPostExecute: (List<FinanceCategory>) -> Unit) {
+        dao.getAll().onEach {
             IdlingResource.increment()
         }.collect { finances ->
             onPostExecute(finances)
@@ -18,8 +29,8 @@ class FinanceCategoryRepository(context: Context) {
         }
     }
 
-    suspend fun getFinanceCategoryById(id: Long, onPostExecute: (FinanceCategory?) -> Unit) {
-        dao.getFinanceCategoryById(id).onEach {
+    suspend fun getById(id: Long, onPostExecute: (FinanceCategory?) -> Unit) {
+        dao.getById(id).onEach {
             IdlingResource.increment()
         }.collect { finance ->
             onPostExecute(finance)
@@ -27,9 +38,9 @@ class FinanceCategoryRepository(context: Context) {
         }
     }
 
-    suspend fun getFinanceCategoryByName(name: String): FinanceCategory? {
+    suspend fun getByName(name: String): FinanceCategory? {
         IdlingResource.increment()
-        val financeCategory = dao.getFinanceCategoryByName(name)
+        val financeCategory = dao.getByName(name)
         IdlingResource.decrement()
         return financeCategory
     }
@@ -42,7 +53,14 @@ class FinanceCategoryRepository(context: Context) {
 
     suspend fun delete(financeCategory: FinanceCategory) {
         IdlingResource.increment()
-        dao.delete(financeCategory)
+        financeCategory.setToDeleted()
+        dao.insert(financeCategory)
+        IdlingResource.decrement()
+    }
+
+    suspend fun deleteAfterBackup() {
+        IdlingResource.increment()
+        dao.deleteAfterBackup()
         IdlingResource.decrement()
     }
 }

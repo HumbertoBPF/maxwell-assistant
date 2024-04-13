@@ -1,7 +1,6 @@
 package com.example.maxwell.database.daos
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
@@ -16,27 +15,31 @@ import java.util.Date
 
 @Dao
 abstract class FinanceDao {
+    @Query("SELECT * FROM Finance WHERE timestampModified >= :lastBackupTimestamp")
+    abstract fun getForBackup(lastBackupTimestamp: Long): Flow<List<Finance>>
+
     @Query("""
-        SELECT original.id, original.title, original.categoryId, original.value, original.currency, original.type, grouped.date FROM 
+        SELECT original.id, original.title, original.categoryId, original.value, original.currency, original.type, grouped.date, original.deleted, original.timestampModified FROM 
         (SELECT * FROM Finance ORDER BY date DESC) AS original 
         LEFT JOIN (SELECT * FROM Finance GROUP BY date) AS grouped
         ON original.id = grouped.id
+        WHERE original.deleted = 0
     """)
-    abstract fun getFinances(): Flow<List<Finance>>
+    abstract fun getAll(): Flow<List<Finance>>
 
     @RawQuery
-    abstract suspend fun filterFinances(query: SupportSQLiteQuery): List<Finance>
+    abstract suspend fun filter(query: SupportSQLiteQuery): List<Finance>
 
     @Query("SELECT * FROM Finance WHERE id=:id")
-    abstract fun getFinanceById(id: Long): Flow<Finance?>
+    abstract fun getById(id: Long): Flow<Finance?>
 
     @Insert(onConflict = REPLACE)
     abstract suspend fun insert(vararg finance: Finance)
 
-    @Delete
-    abstract suspend fun delete(finance: Finance)
+    @Query("DELETE FROM Finance WHERE deleted = 1")
+    abstract suspend fun deleteAfterBackup()
 
-    suspend fun filterFinances(
+    suspend fun filter(
         title: String,
         excludeCurrencies: List<Currency>,
         excludeFinanceTypes: List<FinanceType>,
@@ -50,16 +53,17 @@ abstract class FinanceDao {
         filter = addDateFilter(date, filter, args)
 
         filter = """
-            SELECT original.id, original.title, original.categoryId, original.value, original.currency, original.type, grouped.date FROM 
+            SELECT original.id, original.title, original.categoryId, original.value, original.currency, original.type, grouped.date, original.deleted, original.timestampModified FROM 
             (SELECT * FROM Finance WHERE $filter ORDER BY date DESC) AS original 
             LEFT JOIN (SELECT * FROM Finance WHERE $filter GROUP BY date) AS grouped
-            ON original.id = grouped.id;
+            ON original.id = grouped.id
+            WHERE original.deleted = 0;
         """.trimIndent()
         args.addAll(args)
 
         val query = SimpleSQLiteQuery(filter, args.toTypedArray())
 
-        return filterFinances(query)
+        return filter(query)
     }
 
     private fun addCurrencyFilter(

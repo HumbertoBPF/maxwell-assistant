@@ -108,7 +108,7 @@ class AddTaskFormActivityTests: TaskFormActivityTests() {
         ))
 
         val tasks = runBlocking {
-            taskDao.filterTasks(SimpleSQLiteQuery("SELECT * FROM Task;"))
+            taskDao.filter(SimpleSQLiteQuery("SELECT * FROM Task;"))
         }
 
         assertEquals(tasks.size, 1)

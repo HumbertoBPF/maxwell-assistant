@@ -126,7 +126,7 @@ class AddStudyFormActivityTests: StudyFormActivityTests() {
             ))
 
         val studies = runBlocking {
-            studyDao.filterStudies(SimpleSQLiteQuery("SELECT * FROM Study;"))
+            studyDao.filter(SimpleSQLiteQuery("SELECT * FROM Study;"))
         }
 
         assertEquals(studies.size, 1)

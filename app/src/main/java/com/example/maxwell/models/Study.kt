@@ -18,4 +18,4 @@ data class Study (
     val status: Status?,
     @SerializedName("starting_date")
     val startingDate: Date?,
-)
+): BaseEntity()

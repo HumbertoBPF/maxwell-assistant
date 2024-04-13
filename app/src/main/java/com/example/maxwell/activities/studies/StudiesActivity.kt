@@ -60,7 +60,7 @@ class StudiesActivity : AppCompatActivity() {
 
     private fun configureRecyclerView() {
         lifecycleScope.launch {
-            studyRepository.getStudies { studies ->
+            studyRepository.getAll { studies ->
                 val studiesRecyclerView = binding.studiesRecyclerView
                 adapter.changeDataset(studies)
                 studiesRecyclerView.adapter = adapter
@@ -110,7 +110,7 @@ class StudiesActivity : AppCompatActivity() {
         titleTextInputEditText.setText(title)
 
         lifecycleScope.launch {
-            studySubjectRepository.getStudySubjects { studySubjects ->
+            studySubjectRepository.getAll { studySubjects ->
                 val subjectTextInputAutoComplete =
                     dialogBinding.subjectTextInputAutoComplete as? MaterialAutoCompleteTextView
                 val studySubjectOptionsFromDb =
@@ -177,10 +177,10 @@ class StudiesActivity : AppCompatActivity() {
                     null
                 }
 
-                studySubject = studySubjectRepository.getStudySubjectByName(studySubjectName)
+                studySubject = studySubjectRepository.getByName(studySubjectName)
 
                 lifecycleScope.launch {
-                    val filteredStudies = studyRepository.filterStudies(
+                    val filteredStudies = studyRepository.filter(
                         title = title,
                         status = status,
                         startingDate = startingDate,

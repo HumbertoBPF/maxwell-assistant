@@ -85,7 +85,7 @@ open class StudyTests: UITests() {
             )
 
         val expectedStudySubject = runBlocking {
-            studySubjectDao.getStudySubjectById(study.subjectId).first()
+            studySubjectDao.getById(study.subjectId).first()
         }
 
         Espresso.onView(ViewMatchers.withId(R.id.subject_text_view))
