@@ -34,9 +34,9 @@ class StudySubjectRepository(context: Context) {
         return studySubject
     }
 
-    suspend fun insert(studySubject: StudySubject) {
+    suspend fun insert(vararg studySubject: StudySubject) {
         IdlingResource.increment()
-        dao.insert(studySubject)
+        dao.insert(*studySubject)
         IdlingResource.decrement()
     }
 

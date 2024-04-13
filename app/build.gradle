@@ -30,6 +30,7 @@ android {
         buildConfigField "String", "CLIENT_ID", "\"${secretProperties.getProperty("ClientId")}\""
         buildConfigField "String", "AUTH_PARAMETER_USERNAME", "\"${secretProperties.getProperty("AuthParameterUsername")}\""
         buildConfigField "String", "AUTH_PARAMETER_PASSWORD", "\"${secretProperties.getProperty("AuthParameterPassword")}\""
+        buildConfigField "String", "API_URL", "\"${secretProperties.getProperty("apiUrl")}\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

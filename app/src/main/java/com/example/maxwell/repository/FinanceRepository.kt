@@ -42,9 +42,9 @@ class FinanceRepository(context: Context) {
         }
     }
 
-    suspend fun insert(finance: Finance) {
+    suspend fun insert(vararg finance: Finance) {
         IdlingResource.increment()
-        dao.insert(finance)
+        dao.insert(*finance)
         IdlingResource.decrement()
     }
 

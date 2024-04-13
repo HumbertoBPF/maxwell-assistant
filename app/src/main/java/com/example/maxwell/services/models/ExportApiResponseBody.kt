@@ -1,4 +1,4 @@
 package com.example.maxwell.services.models
 
-class ExportApiResponse {
+class ExportApiResponseBody {
 }

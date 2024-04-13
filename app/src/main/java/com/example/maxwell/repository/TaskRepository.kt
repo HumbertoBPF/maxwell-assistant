@@ -44,9 +44,9 @@ class TaskRepository(context: Context) {
         }
     }
 
-    suspend fun insert(task: Task) {
+    suspend fun insert(vararg task: Task) {
         IdlingResource.increment()
-        dao.insert(task)
+        dao.insert(*task)
         IdlingResource.decrement()
     }
 

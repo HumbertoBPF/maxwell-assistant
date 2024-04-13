@@ -56,7 +56,6 @@ suspend fun authenticateOnUserPool(): String? {
         credentialsProvider = getStaticCredentialsProvider()
     }.use { identityProviderClient ->
         val response = identityProviderClient.adminInitiateAuth(authRequest)
-        Log.i("HELLO","Authentication Result is ${response.authenticationResult}")
         return response.authenticationResult?.idToken
     }
 }

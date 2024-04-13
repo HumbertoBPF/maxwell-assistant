@@ -1,7 +1,7 @@
 package com.example.maxwell.utils
 
 import android.content.Context
-import android.util.Log
+import com.example.maxwell.database.AppDatabase
 import com.example.maxwell.repository.FinanceCategoryRepository
 import com.example.maxwell.repository.FinanceRepository
 import com.example.maxwell.repository.StudyRepository
@@ -9,8 +9,11 @@ import com.example.maxwell.repository.StudySubjectRepository
 import com.example.maxwell.repository.TaskRepository
 import com.example.maxwell.services.MaxwellServiceHelper
 import com.example.maxwell.services.models.ExportApiRequestBody
-import com.example.maxwell.services.models.ExportApiResponse
+import com.example.maxwell.services.models.ExportApiResponseBody
+import com.example.maxwell.services.models.ImportApiRequestBody
+import com.example.maxwell.services.models.ImportApiResponseBody
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -50,9 +53,16 @@ class BackupManager(
 
     private var onFailure: () -> Unit = {}
 
-    suspend fun export(onSuccess: () -> Unit, onFailure: () -> Unit) {
+    companion object {
+        const val FINANCE_CATEGORY_TABLE = "FinanceCategory"
+        const val STUDY_SUBJECT_TABLE = "StudySubject"
+        const val FINANCE_TABLE = "Finance"
+        const val STUDY_TABLE = "Study"
+        const val TASK_TABLE = "Task"
+    }
+
+    suspend fun createBackup(onSuccess: () -> Unit, onFailure: () -> Unit) {
         getIdToken(context) {idToken ->
-            Log.i("HELLO", "idToken $idToken")
             this.idToken = idToken
             this.onSuccess = onSuccess
             this.onFailure = onFailure
@@ -65,7 +75,7 @@ class BackupManager(
 
     private suspend fun exportFinances() {
         financeRepository.getFinances { finances ->
-            export("Finance", finances) {
+            callExportApi(FINANCE_TABLE, finances) {
                 lifecycleScope.launch {
                     exportFinanceCategories()
                 }
@@ -75,7 +85,7 @@ class BackupManager(
 
     private suspend fun exportFinanceCategories() {
         financeCategoryRepository.getFinanceCategories { financeCategories ->
-            export("FinanceCategory", financeCategories) {
+            callExportApi(FINANCE_CATEGORY_TABLE, financeCategories) {
                 lifecycleScope.launch {
                     exportTasks()
                 }
@@ -85,7 +95,7 @@ class BackupManager(
 
     private suspend fun exportTasks() {
         taskRepository.getTasks { tasks ->
-            export("Task", tasks) {
+            callExportApi(TASK_TABLE, tasks) {
                 lifecycleScope.launch {
                     exportStudies()
                 }
@@ -95,7 +105,7 @@ class BackupManager(
 
     private suspend fun exportStudies() {
         studyRepository.getStudies { studies ->
-            export("Study", studies) {
+            callExportApi(STUDY_SUBJECT_TABLE, studies) {
                 lifecycleScope.launch {
                     exportStudySubjects()
                 }
@@ -105,7 +115,7 @@ class BackupManager(
 
     private suspend fun exportStudySubjects() {
         studySubjectRepository.getStudySubjects { studySubjects ->
-            export("StudySubject", studySubjects) {
+            callExportApi(STUDY_TABLE, studySubjects) {
                 lifecycleScope.launch {
                     onSuccess()
                 }
@@ -113,7 +123,7 @@ class BackupManager(
         }
     }
 
-    private fun export(
+    private fun callExportApi(
         table: String,
         entities: List<Any>,
         onNextStep: () -> Unit
@@ -121,10 +131,10 @@ class BackupManager(
         val requestBody = ExportApiRequestBody(table, entities)
         val exportCall = serviceHelper.export("Bearer $idToken", requestBody)
 
-        exportCall.enqueue(object : Callback<ExportApiResponse?> {
+        exportCall.enqueue(object : Callback<ExportApiResponseBody?> {
             override fun onResponse(
-                call: Call<ExportApiResponse?>,
-                response: Response<ExportApiResponse?>
+                call: Call<ExportApiResponseBody?>,
+                response: Response<ExportApiResponseBody?>
             ) {
                 if (response.isSuccessful) {
                     onNextStep()
@@ -134,7 +144,118 @@ class BackupManager(
                 onFailure()
             }
 
-            override fun onFailure(call: Call<ExportApiResponse?>, t: Throwable) {
+            override fun onFailure(call: Call<ExportApiResponseBody?>, t: Throwable) {
+                onFailure()
+            }
+        })
+    }
+
+    suspend fun restoreBackup(onSuccess: () -> Unit, onFailure: () -> Unit) {
+        getIdToken(context) {idToken ->
+            this.idToken = idToken
+            this.onSuccess = onSuccess
+            this.onFailure = onFailure
+
+            lifecycleScope.launch(IO) {
+                AppDatabase.instantiate(context).clearAllTables()
+                importFinanceCategories()
+            }
+        }
+    }
+
+    private fun importFinanceCategories() {
+        val requestBody = ImportApiRequestBody(FINANCE_CATEGORY_TABLE, null)
+        val importCall = serviceHelper.importFinanceCategories("Bearer $idToken", requestBody)
+        callImportApi(importCall, {items ->
+            lifecycleScope.launch {
+                financeCategoryRepository.insert(*items.toTypedArray())
+            }
+        }, {
+            importStudySubjects()
+        })
+    }
+
+    private fun importStudySubjects() {
+        val requestBody = ImportApiRequestBody(STUDY_SUBJECT_TABLE, null)
+        val importCall = serviceHelper.importStudySubjects("Bearer $idToken", requestBody)
+        callImportApi(importCall, {items ->
+            lifecycleScope.launch {
+                studySubjectRepository.insert(*items.toTypedArray())
+            }
+        }, {
+            importFinances()
+        })
+    }
+
+    private fun importFinances() {
+        val requestBody = ImportApiRequestBody(FINANCE_TABLE, null)
+        val importCall = serviceHelper.importFinances("Bearer $idToken", requestBody)
+        callImportApi(importCall, {items ->
+            lifecycleScope.launch {
+                financeRepository.insert(*items.toTypedArray())
+            }
+        },  {
+            importStudies()
+        })
+    }
+
+    private fun importStudies() {
+        val requestBody = ImportApiRequestBody(STUDY_TABLE, null)
+        val importCall = serviceHelper.importStudies("Bearer $idToken", requestBody)
+        callImportApi(importCall, {items ->
+            lifecycleScope.launch {
+                studyRepository.insert(*items.toTypedArray())
+            }
+        }, {
+            importTasks()
+        })
+    }
+
+    private fun importTasks() {
+        val requestBody = ImportApiRequestBody(TASK_TABLE, null)
+        val importCall = serviceHelper.importTasks("Bearer $idToken", requestBody)
+        callImportApi(importCall, {items ->
+            lifecycleScope.launch {
+                taskRepository.insert(*items.toTypedArray())
+            }
+        }, {
+            onSuccess()
+        })
+    }
+
+    private fun <E> callImportApi(
+        importCall: Call<ImportApiResponseBody<E>>,
+        onSave: (List<E>) -> Unit,
+        onNextStep: () -> Unit
+    ) {
+        importCall.enqueue(object : Callback<ImportApiResponseBody<E>?> {
+            override fun onResponse(
+                call: Call<ImportApiResponseBody<E>?>,
+                response: Response<ImportApiResponseBody<E>?>
+            ) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+
+                    if (responseBody != null) {
+                        val items = responseBody.items
+                        val lastEvaluatedKey = responseBody.lastEvaluatedKey
+
+                        onSave(items)
+
+                        if (lastEvaluatedKey != null) {
+                            callImportApi(importCall, onSave, onNextStep)
+                            return
+                        }
+                    }
+
+                    onNextStep()
+                    return
+                }
+
+                onFailure()
+            }
+
+            override fun onFailure(call: Call<ImportApiResponseBody<E>?>, t: Throwable) {
                 onFailure()
             }
         })

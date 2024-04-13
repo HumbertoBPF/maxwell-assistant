@@ -34,9 +34,9 @@ class FinanceCategoryRepository(context: Context) {
         return financeCategory
     }
 
-    suspend fun insert(financeCategory: FinanceCategory) {
+    suspend fun insert(vararg financeCategory: FinanceCategory) {
         IdlingResource.increment()
-        dao.insert(financeCategory)
+        dao.insert(*financeCategory)
         IdlingResource.decrement()
     }
 

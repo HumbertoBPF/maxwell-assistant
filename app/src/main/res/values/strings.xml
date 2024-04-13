@@ -111,4 +111,16 @@
     <string name="error_export_dialog_title">Error</string>
     <string name="error_export_dialog_message">An error happened while trying to backup your data. Please try again.</string>
     <string name="error_export_close_button">Close</string>
+    <string name="import_data_dialog_title">Importing data</string>
+    <string name="import_data_dialog_message">Please wait</string>
+    <string name="successful_import_dialog_title">Backup restored</string>
+    <string name="successful_import_dialog_message">Your backup was successfully restored</string>
+    <string name="successful_import_dialog_button">Close</string>
+    <string name="error_import_dialog_title">Error</string>
+    <string name="error_import_dialog_message">An error happened while trying to import your data. Please try again.</string>
+    <string name="error_import_dialog_button">Close</string>
+    <string name="confirm_restore_backup_dialog_title">Are you sure?</string>
+    <string name="confirm_restore_backup_dialog_message">You are about to restore your last backup. All local data not present in it will be lost!</string>
+    <string name="confirm_restore_backup_dialog_positive_button">Proceed</string>
+    <string name="confirm_restore_backup_dialog_negative_button">Cancel</string>
 </resources>

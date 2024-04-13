@@ -1,13 +1,13 @@
 package com.example.maxwell.activities
 
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.maxwell.R
 import com.example.maxwell.data_store.Settings
 import com.example.maxwell.databinding.ActivitySettingsBinding
 import com.example.maxwell.utils.BackupManager
-import com.example.maxwell.utils.authenticateOnUserPool
 import com.example.maxwell.utils.padWithZeros
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -38,6 +38,10 @@ class SettingsActivity : AppCompatActivity() {
             .setTitleText(getString(R.string.synchronization_time_picker_label))
     }
 
+    private val backupManager by lazy {
+        BackupManager(this@SettingsActivity, lifecycleScope)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
@@ -45,9 +49,17 @@ class SettingsActivity : AppCompatActivity() {
 
         configureDataSynchronizationSection()
 
-        binding.exportDataButton.setOnClickListener {
-            val backupManager = BackupManager(this@SettingsActivity, lifecycleScope)
+        configureExportButton()
 
+        configureImportButton()
+
+        configureSaveButton()
+
+        setContentView(binding.root)
+    }
+
+    private fun configureExportButton() {
+        binding.exportDataButton.setOnClickListener {
             val loadingDialog = MaterialAlertDialogBuilder(this@SettingsActivity)
                 .setTitle(R.string.export_data_dialog_title)
                 .setMessage(R.string.export_data_dialog_message)
@@ -55,17 +67,22 @@ class SettingsActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .show()
 
-            lifecycleScope.launch(IO) {
-                backupManager.export({
-                    loadingDialog.dismiss()
+            createBackup(loadingDialog)
+        }
+    }
 
-                    MaterialAlertDialogBuilder(this@SettingsActivity)
-                        .setTitle(R.string.successful_export_dialog_title)
-                        .setMessage(R.string.successful_export_dialog_message)
-                        .setNeutralButton(R.string.successful_export_close_button, null)
-                        .setCancelable(false)
-                        .show()
-                },
+    private fun createBackup(loadingDialog: AlertDialog) {
+        lifecycleScope.launch(IO) {
+            backupManager.createBackup({
+                loadingDialog.dismiss()
+
+                MaterialAlertDialogBuilder(this@SettingsActivity)
+                    .setTitle(R.string.successful_export_dialog_title)
+                    .setMessage(R.string.successful_export_dialog_message)
+                    .setNeutralButton(R.string.successful_export_close_button, null)
+                    .setCancelable(false)
+                    .show()
+            },
                 {
                     loadingDialog.dismiss()
 
@@ -76,18 +93,56 @@ class SettingsActivity : AppCompatActivity() {
                         .setCancelable(false)
                         .show()
                 })
-            }
         }
+    }
 
+    private fun configureImportButton() {
         binding.importDataButton.setOnClickListener {
-            lifecycleScope.launch(IO) {
-                authenticateOnUserPool()
-            }
+            MaterialAlertDialogBuilder(this@SettingsActivity)
+                .setTitle(R.string.confirm_restore_backup_dialog_title)
+                .setMessage(R.string.confirm_restore_backup_dialog_message)
+                .setPositiveButton(R.string.confirm_restore_backup_dialog_positive_button) { dialog, _ ->
+                    dialog.dismiss()
+
+                    val loadingDialog = MaterialAlertDialogBuilder(this@SettingsActivity)
+                        .setTitle(R.string.import_data_dialog_title)
+                        .setMessage(R.string.import_data_dialog_message)
+                        .setView(R.layout.dialog_export_data)
+                        .setCancelable(false)
+                        .show()
+
+                    restoreBackup(loadingDialog)
+                }
+                .setNegativeButton(R.string.confirm_restore_backup_dialog_negative_button) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
         }
+    }
 
-        configureSaveButton()
+    private fun restoreBackup(loadingDialog: AlertDialog) {
+        lifecycleScope.launch(IO) {
+            backupManager.restoreBackup({
+                loadingDialog.dismiss()
 
-        setContentView(binding.root)
+                MaterialAlertDialogBuilder(this@SettingsActivity)
+                    .setTitle(R.string.successful_import_dialog_title)
+                    .setMessage(R.string.successful_import_dialog_message)
+                    .setNeutralButton(R.string.successful_import_dialog_button, null)
+                    .setCancelable(false)
+                    .show()
+            },
+                {
+                    loadingDialog.dismiss()
+
+                    MaterialAlertDialogBuilder(this@SettingsActivity)
+                        .setTitle(R.string.error_import_dialog_title)
+                        .setMessage(R.string.error_import_dialog_message)
+                        .setNeutralButton(R.string.error_import_dialog_button, null)
+                        .setCancelable(false)
+                        .show()
+                })
+        }
     }
 
     private fun fillSettingsFormWithDefaults() {
