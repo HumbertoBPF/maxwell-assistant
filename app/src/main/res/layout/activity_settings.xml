@@ -80,10 +80,10 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/username_text_input"
-                android:text="@string/data_synchronization_label"
+                android:text="@string/backups_label"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 />
 
             <com.google.android.material.materialswitch.MaterialSwitch
@@ -94,37 +94,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="8dp"
-                android:text="@string/daily_synchronizations_label"/>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="?attr/textInputFilledStyle"
-                android:id="@+id/synchronization_time_text_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/daily_synchronization_switch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="8dp"
-                app:startIconDrawable="@drawable/ic_time"
-                android:hint="@string/synchronization_time_hint"
-                app:helperText="@string/synchronization_time_helper_text">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/synchronization_time_text_input_edit_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
-
-            </com.google.android.material.textfield.TextInputLayout>
+                android:text="@string/daily_backup_label"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/synchronization_buttons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/synchronization_time_text_input"
+                app:layout_constraintTop_toBottomOf="@id/daily_synchronization_switch"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="16dp">
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <Button
                     style="@style/Widget.Material3.Button.OutlinedButton.Icon"
@@ -155,6 +133,16 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/last_backup_timestamp_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/synchronization_buttons"
+                tools:text="Last synchronization timestamp"
+                android:layout_marginTop="8dp"/>
+
             <Button
                 style="?attr/materialButtonOutlinedStyle"
                 android:id="@+id/save_button"
@@ -165,7 +153,7 @@
                 app:strokeColor="@color/save_color"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/synchronization_buttons"
+                app:layout_constraintTop_toBottomOf="@id/last_backup_timestamp_text_view"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintVertical_bias="1.0"
                 android:layout_marginTop="8dp"

@@ -1,6 +1,7 @@
 package com.example.maxwell.data_store
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -13,7 +14,7 @@ import java.util.Calendar
 class Settings(private val context: Context) {
     companion object {
         const val USERNAME_KEY = "username_key"
-        const val PREFERENCES_KEY = "preferences_key"
+        const val DAILY_SYNC_ENABLED_KEY = "daily_sync_enabled"
         const val ID_TOKEN = "id_token"
         const val ID_TOKEN_EXPIRATION = "id_token_expiration"
         const val LAST_BACKUP_TIMESTAMP = "last_backup"
@@ -36,22 +37,22 @@ class Settings(private val context: Context) {
         }
     }
 
-    fun getDailySynchronizationTime(): Flow<String?> {
+    fun isDailySyncEnabled(): Flow<Boolean?> {
         return context.dataStore.data.map { preferences ->
-            val dailySynchronizationTimeKey = stringPreferencesKey(PREFERENCES_KEY)
-            val dailySynchronizationTime = preferences[dailySynchronizationTimeKey]
-            dailySynchronizationTime
+            val dailySyncEnabledKey = booleanPreferencesKey(DAILY_SYNC_ENABLED_KEY)
+            val dailySyncEnabled = preferences[dailySyncEnabledKey]
+            dailySyncEnabled
         }
     }
 
-    suspend fun setDailySynchronizationTime(dailySynchronizationTime: String?) {
-        val dailySynchronizationTimeKey = stringPreferencesKey(PREFERENCES_KEY)
+    suspend fun setDailySyncEnabled(dailySyncEnabled: Boolean?) {
+        val dailySyncEnabledKey = booleanPreferencesKey(DAILY_SYNC_ENABLED_KEY)
 
         context.dataStore.edit { settings ->
-            if (dailySynchronizationTime == null) {
-                settings.remove(dailySynchronizationTimeKey)
+            if (dailySyncEnabled == null) {
+                settings.remove(dailySyncEnabledKey)
             } else {
-                settings[dailySynchronizationTimeKey] = dailySynchronizationTime
+                settings[dailySyncEnabledKey] = dailySyncEnabled
             }
         }
     }

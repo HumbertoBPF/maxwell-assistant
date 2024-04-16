@@ -59,9 +59,9 @@ class BackupManager(
 
     private var lastBackupTimestamp: Long = 0
 
-    private var onSuccess: () -> Unit = {}
+    private var onSuccess: () -> Any = {}
 
-    private var onFailure: () -> Unit = {}
+    private var onFailure: () -> Any = {}
 
     companion object {
         const val FINANCE_CATEGORY_TABLE = "FinanceCategory"

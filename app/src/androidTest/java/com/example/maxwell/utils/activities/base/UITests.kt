@@ -36,7 +36,7 @@ abstract class UITests {
     open fun setUp() {
         runBlocking {
             settings.setUsername("")
-            settings.setDailySynchronizationTime(null)
+            settings.setDailySyncEnabled(null)
         }
 
         db.clearAllTables()

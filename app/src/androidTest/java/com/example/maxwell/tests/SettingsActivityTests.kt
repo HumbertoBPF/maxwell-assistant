@@ -35,7 +35,7 @@ class SettingsActivityTests: UITests() {
 
         onView(withId(R.id.daily_synchronization_switch))
             .check(matches(
-                allOf(isDisplayed(), isNotChecked(), withText(R.string.daily_synchronizations_label))
+                allOf(isDisplayed(), isNotChecked(), withText(R.string.daily_backup_label))
             ))
 
         onView(withId(R.id.synchronization_time_text_input_edit_text))
@@ -192,7 +192,7 @@ class SettingsActivityTests: UITests() {
 
     private fun assertSynchronizationTimeSetting(expectedValue: String?) {
         val synchronizationTimeSetting = runBlocking {
-            settings.getDailySynchronizationTime().first()
+            settings.isDailySyncEnabled().first()
         }
         assertEquals(expectedValue, synchronizationTimeSetting)
     }

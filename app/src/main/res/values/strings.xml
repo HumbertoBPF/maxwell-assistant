@@ -8,8 +8,8 @@
     <string name="username_input_hint">Username</string>
     <string name="username_input_helper_text">This is how your name will be displayed on the app</string>
     <string name="personal_data_label">Personal data</string>
-    <string name="data_synchronization_label">Data synchronization</string>
-    <string name="daily_synchronizations_label">Daily synchronizations</string>
+    <string name="backups_label">Backups</string>
+    <string name="daily_backup_label">Enable daily backup</string>
     <string name="synchronization_time_hint">Select a time</string>
     <string name="synchronization_time_helper_text">Synchronizations will be tried everyday at this time</string>
     <string name="export_data_button_text">Export data</string>
@@ -123,4 +123,5 @@
     <string name="confirm_restore_backup_dialog_message">You are about to restore your last backup. All local data not present in it will be lost!</string>
     <string name="confirm_restore_backup_dialog_positive_button">Proceed</string>
     <string name="confirm_restore_backup_dialog_negative_button">Cancel</string>
+    <string name="last_backup_timestamp">Last backup: %1$s</string>
 </resources>
