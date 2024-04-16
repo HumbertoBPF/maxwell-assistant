@@ -25,9 +25,11 @@ import com.example.maxwell.utils.parseDate
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
+import java.util.Calendar
 
 class AddFinanceFormActivityTests: FinanceFormActivityTests() {
     private val financeCategories = getFinanceCategoriesForTests()
@@ -125,6 +127,8 @@ class AddFinanceFormActivityTests: FinanceFormActivityTests() {
 
     @Test
     fun shouldAddNewFinance() {
+        val startTimestamp = Calendar.getInstance().timeInMillis
+
         navigateToAddFinanceScreen()
 
         fillFinanceForm(
@@ -137,6 +141,8 @@ class AddFinanceFormActivityTests: FinanceFormActivityTests() {
         )
 
         onView(withId(R.id.save_button)).perform(click())
+
+        val endTimestamp = Calendar.getInstance().timeInMillis
 
         onView(withId(R.id.finances_recycler_view))
             .check(matches(
@@ -170,6 +176,8 @@ class AddFinanceFormActivityTests: FinanceFormActivityTests() {
         assertEquals(currency, newFinance.currency)
         assertEquals(financeType, newFinance.type)
         assertEquals(parseDate(date), newFinance.date)
+        assertTrue(newFinance.timestampModified in startTimestamp..endTimestamp)
+        assertEquals(false, newFinance.deleted)
     }
 
     @Test

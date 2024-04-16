@@ -45,15 +45,6 @@ abstract class UITests {
         idlingRegistry.register(idlingResource)
     }
 
-    protected fun fillTimePickerInput(id: Int, value: String) {
-        onView(withId(id)).perform(click())
-
-        onView(withId(com.google.android.material.R.id.material_timepicker_cancel_button))
-            .perform(click())
-
-        onView(withId(id)).perform(typeText(value), closeSoftKeyboard())
-    }
-
     protected fun fillDatePickerInput(id: Int, value: String) {
         onView(withId(id)).perform(click())
 

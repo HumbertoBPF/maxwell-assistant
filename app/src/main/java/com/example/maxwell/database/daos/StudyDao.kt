@@ -24,13 +24,14 @@ abstract class StudyDao {
         LEFT JOIN (SELECT * FROM Study GROUP BY startingDate) AS grouped
         ON original.id = grouped.id
         WHERE original.deleted = 0
+        ORDER BY original.startingDate DESC
     """)
     abstract fun getAll(): Flow<List<Study>>
 
     @RawQuery
     abstract suspend fun filter(query: SupportSQLiteQuery): List<Study>
 
-    @Query("SELECT * FROM Study WHERE id=:id")
+    @Query("SELECT * FROM Study WHERE id=:id AND deleted = 0")
     abstract fun getById(id: Long): Flow<Study?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -57,7 +58,8 @@ abstract class StudyDao {
             (SELECT * FROM Study WHERE $filter ORDER BY startingDate DESC) AS original 
             LEFT JOIN (SELECT * FROM Study WHERE $filter GROUP BY startingDate) AS grouped
             ON original.id = grouped.id
-            WHERE original.deleted = 0;
+            WHERE original.deleted = 0
+            ORDER BY original.startingDate DESC;
         """.trimIndent()
         args.addAll(args)
 

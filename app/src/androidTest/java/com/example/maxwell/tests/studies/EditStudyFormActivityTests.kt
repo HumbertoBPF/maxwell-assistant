@@ -23,9 +23,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
+import java.util.Calendar
 
 class EditStudyFormActivityTests: StudyFormActivityTests() {
     private val studies = getStudiesForTests()
@@ -133,6 +135,8 @@ class EditStudyFormActivityTests: StudyFormActivityTests() {
 
     @Test
     fun shouldUpdateTheSelectedStudy() {
+        val startTimestamp = Calendar.getInstance().timeInMillis
+
         navigateToEditStudyFormActivity()
 
         fillStudyForm(
@@ -146,6 +150,8 @@ class EditStudyFormActivityTests: StudyFormActivityTests() {
         )
 
         onView(withId(R.id.save_button)).perform(click())
+
+        val endTimestamp = Calendar.getInstance().timeInMillis
 
         assertStudyDetails(
             Study(
@@ -170,6 +176,8 @@ class EditStudyFormActivityTests: StudyFormActivityTests() {
         assertEquals(parseDate(startingDate), updatedStudy?.startingDate)
         assertEquals(status, updatedStudy?.status)
         assertEquals(subject.id, updatedStudy?.subjectId)
+        assertTrue(updatedStudy?.timestampModified in startTimestamp..endTimestamp)
+        assertEquals(false, updatedStudy?.deleted)
     }
 
     @Test

@@ -24,13 +24,14 @@ abstract class TaskDao {
         LEFT JOIN (SELECT * FROM Task GROUP BY dueDate) AS grouped
         ON original.id = grouped.id
         WHERE original.deleted = 0
+        ORDER BY original.dueDate DESC
     """)
     abstract fun getAll(): Flow<List<Task>>
 
     @RawQuery
     abstract suspend fun filter(query: SupportSQLiteQuery): List<Task>
 
-    @Query("SELECT * FROM task WHERE id=:id")
+    @Query("SELECT * FROM task WHERE id=:id AND deleted = 0")
     abstract fun getById(id: Long): Flow<Task?>
 
     @Insert(onConflict = REPLACE)
@@ -57,7 +58,8 @@ abstract class TaskDao {
             (SELECT * FROM Task WHERE $filter ORDER BY dueDate DESC) AS original 
             LEFT JOIN (SELECT * FROM Task WHERE $filter GROUP BY dueDate) AS grouped 
             ON original.id = grouped.id
-            WHERE original.deleted = 0;
+            WHERE original.deleted = 0
+            ORDER BY original.dueDate DESC;
         """.trimIndent()
         args.addAll(args)
 

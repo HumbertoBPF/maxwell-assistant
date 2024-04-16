@@ -24,13 +24,14 @@ abstract class FinanceDao {
         LEFT JOIN (SELECT * FROM Finance GROUP BY date) AS grouped
         ON original.id = grouped.id
         WHERE original.deleted = 0
+        ORDER BY original.date DESC
     """)
     abstract fun getAll(): Flow<List<Finance>>
 
     @RawQuery
     abstract suspend fun filter(query: SupportSQLiteQuery): List<Finance>
 
-    @Query("SELECT * FROM Finance WHERE id=:id")
+    @Query("SELECT * FROM Finance WHERE id=:id AND deleted = 0")
     abstract fun getById(id: Long): Flow<Finance?>
 
     @Insert(onConflict = REPLACE)
@@ -57,7 +58,8 @@ abstract class FinanceDao {
             (SELECT * FROM Finance WHERE $filter ORDER BY date DESC) AS original 
             LEFT JOIN (SELECT * FROM Finance WHERE $filter GROUP BY date) AS grouped
             ON original.id = grouped.id
-            WHERE original.deleted = 0;
+            WHERE original.deleted = 0
+            ORDER BY original.date DESC;
         """.trimIndent()
         args.addAll(args)
 

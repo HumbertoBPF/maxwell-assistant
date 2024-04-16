@@ -23,8 +23,10 @@ import com.example.maxwell.utils.parseDate
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.math.BigDecimal
+import java.util.Calendar
 import java.util.Calendar.DECEMBER
 
 class AddTaskFormActivityTests: TaskFormActivityTests() {
@@ -77,6 +79,8 @@ class AddTaskFormActivityTests: TaskFormActivityTests() {
 
     @Test
     fun shouldAddNewTask() {
+        val startTimestamp = Calendar.getInstance().timeInMillis
+
         navigateToTheAddTaskScreen()
 
         fillTaskForm(
@@ -89,6 +93,8 @@ class AddTaskFormActivityTests: TaskFormActivityTests() {
         )
 
         onView(withId(R.id.save_button)).perform(click())
+
+        val endTimestamp = Calendar.getInstance().timeInMillis
 
         onView(withId(R.id.tasks_recycler_view)).check(matches(
             allOf(
@@ -121,6 +127,8 @@ class AddTaskFormActivityTests: TaskFormActivityTests() {
         assertEquals(getCalendar(2023, DECEMBER, 2).time, task.dueDate)
         assertEquals(priority, task.priority)
         assertEquals(status, task.status)
+        assertTrue(task.timestampModified in startTimestamp..endTimestamp)
+        assertEquals(false, task.deleted)
     }
 
     @Test

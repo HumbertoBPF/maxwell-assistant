@@ -22,9 +22,11 @@ import com.example.maxwell.utils.parseDate
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
+import java.util.Calendar
 
 class AddStudyFormActivityTests: StudyFormActivityTests() {
     private val studySubjects = getStudySubjectsForTests()
@@ -92,6 +94,8 @@ class AddStudyFormActivityTests: StudyFormActivityTests() {
 
     @Test
     fun shouldAddNewStudy() {
+        val startTimestamp = Calendar.getInstance().timeInMillis
+
         navigateToAddStudyScreen()
 
         fillStudyForm(
@@ -105,6 +109,8 @@ class AddStudyFormActivityTests: StudyFormActivityTests() {
         )
 
         onView(withId(R.id.save_button)).perform(click())
+
+        val endTimestamp = Calendar.getInstance().timeInMillis
 
         onView(withId(R.id.studies_recycler_view))
             .check(matches(
@@ -140,6 +146,8 @@ class AddStudyFormActivityTests: StudyFormActivityTests() {
         assertEquals(links, newStudy.links)
         assertEquals(status, newStudy.status)
         assertEquals(parseDate(startingDate), newStudy.startingDate)
+        assertTrue(newStudy.timestampModified in startTimestamp..endTimestamp)
+        assertEquals(false, newStudy.deleted)
     }
 
     @Test

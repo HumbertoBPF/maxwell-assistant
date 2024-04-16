@@ -24,8 +24,10 @@ import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.util.Calendar
 
 class StudySubjectManagementDialogTests: StudyTests() {
     private val studySubjects = getStudySubjectsForTests()
@@ -75,6 +77,7 @@ class StudySubjectManagementDialogTests: StudyTests() {
     @Test
     fun shouldAddStudySubject() {
         val newStudySubjectName = "New Study Subject Name"
+        val startTimestamp = Calendar.getInstance().timeInMillis
 
         navigateToTheStudyForm()
 
@@ -84,6 +87,9 @@ class StudySubjectManagementDialogTests: StudyTests() {
             .perform(typeText(newStudySubjectName), closeSoftKeyboard())
 
         onView(withText(R.string.study_subject_dialog_positive_button)).perform(click())
+
+        val endTimestamp = Calendar.getInstance().timeInMillis
+
         // Checking if the created study subject was added to the list displayed on the dialog
         onView(withText(newStudySubjectName)).perform(scrollTo())
 
@@ -99,6 +105,8 @@ class StudySubjectManagementDialogTests: StudyTests() {
         }
 
         assertEquals(newStudySubjectName, newStudySubject?.name)
+        assertTrue(newStudySubject?.timestampModified in startTimestamp..endTimestamp)
+        assertEquals(false, newStudySubject?.deleted)
     }
 
     @Test

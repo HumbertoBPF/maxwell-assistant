@@ -24,8 +24,10 @@ import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.util.Calendar
 
 class FinanceCategoryManagementDialogTests: FinanceTests() {
     private val financeCategories = getFinanceCategoriesForTests()
@@ -75,6 +77,7 @@ class FinanceCategoryManagementDialogTests: FinanceTests() {
     @Test
     fun shouldAddFinanceCategory() {
         val newFinanceCategoryName = "New Finance Category Name"
+        val startTimestamp = Calendar.getInstance().timeInMillis
 
         navigateToTheFinanceForm()
 
@@ -84,6 +87,9 @@ class FinanceCategoryManagementDialogTests: FinanceTests() {
             .perform(typeText(newFinanceCategoryName), closeSoftKeyboard())
 
         onView(withText(R.string.finance_category_dialog_positive_button)).perform(click())
+
+        val endTimestamp = Calendar.getInstance().timeInMillis
+
         // Checking if the created finance category was added to the list displayed on the dialog
         onView(withText(newFinanceCategoryName)).perform(scrollTo())
 
@@ -99,6 +105,8 @@ class FinanceCategoryManagementDialogTests: FinanceTests() {
         }
 
         assertEquals(newFinanceCategoryName, newFinanceCategory?.name)
+        assertTrue(newFinanceCategory?.timestampModified in startTimestamp..endTimestamp)
+        assertEquals(false, newFinanceCategory?.deleted)
     }
 
     @Test

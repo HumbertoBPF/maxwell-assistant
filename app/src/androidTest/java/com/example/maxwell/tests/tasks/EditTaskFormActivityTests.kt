@@ -23,9 +23,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
+import java.util.Calendar
 
 class EditTaskFormActivityTests: TaskFormActivityTests() {
     private val tasks = getTasksForTests()
@@ -116,6 +118,8 @@ class EditTaskFormActivityTests: TaskFormActivityTests() {
 
     @Test
     fun shouldUpdateTheSelectedTask() {
+        val startTimestamp = Calendar.getInstance().timeInMillis
+
         navigateToEditTaskFormActivity()
 
         fillTaskForm(
@@ -128,6 +132,8 @@ class EditTaskFormActivityTests: TaskFormActivityTests() {
         )
 
         onView(withId(R.id.save_button)).perform(click())
+
+        val endTimestamp = Calendar.getInstance().timeInMillis
 
         assertTaskDetails(
             Task(
@@ -150,6 +156,8 @@ class EditTaskFormActivityTests: TaskFormActivityTests() {
         assertEquals(parseDate(dueDate), updatedTask?.dueDate)
         assertEquals(priority, updatedTask?.priority)
         assertEquals(status, updatedTask?.status)
+        assertTrue(updatedTask?.timestampModified in startTimestamp..endTimestamp)
+        assertEquals(false, updatedTask?.deleted)
     }
 
     @Test
