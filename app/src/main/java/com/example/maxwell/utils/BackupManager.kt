@@ -73,6 +73,8 @@ class BackupManager(
     }
 
     suspend fun createBackup(onSuccess: () -> Unit, onFailure: () -> Unit) {
+        IdlingResource.increment()
+
         getIdToken(context) {idToken ->
             this.idToken = idToken
             this.onSuccess = onSuccess
@@ -140,6 +142,7 @@ class BackupManager(
                     val currentTimestamp = Calendar.getInstance().timeInMillis
                     settings.setLastBackupTimestamp(currentTimestamp)
                     cleanUpAfterBackup()
+                    IdlingResource.decrement()
                     onSuccess()
                 }
             }
@@ -217,15 +220,19 @@ class BackupManager(
                 }
 
                 onFailure()
+                IdlingResource.decrement()
             }
 
             override fun onFailure(call: Call<ExportApiResponseBody?>, t: Throwable) {
                 onFailure()
+                IdlingResource.decrement()
             }
         })
     }
 
     suspend fun restoreBackup(onSuccess: () -> Unit, onFailure: () -> Unit) {
+        IdlingResource.increment()
+
         getIdToken(context) {idToken ->
             this.idToken = idToken
             this.onSuccess = onSuccess
@@ -295,6 +302,7 @@ class BackupManager(
             }
         }, {
             onSuccess()
+            IdlingResource.decrement()
         })
     }
 
@@ -328,10 +336,12 @@ class BackupManager(
                 }
 
                 onFailure()
+                IdlingResource.decrement()
             }
 
             override fun onFailure(call: Call<ImportApiResponseBody<E>?>, t: Throwable) {
                 onFailure()
+                IdlingResource.decrement()
             }
         })
     }

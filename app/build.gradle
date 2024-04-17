@@ -30,7 +30,6 @@ android {
         buildConfigField "String", "CLIENT_ID", "\"${secretProperties.getProperty("ClientId")}\""
         buildConfigField "String", "AUTH_PARAMETER_USERNAME", "\"${secretProperties.getProperty("AuthParameterUsername")}\""
         buildConfigField "String", "AUTH_PARAMETER_PASSWORD", "\"${secretProperties.getProperty("AuthParameterPassword")}\""
-        buildConfigField "String", "API_URL", "\"${secretProperties.getProperty("apiUrl")}\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -43,20 +42,27 @@ android {
     testBuildType = "uiTest"
 
     buildTypes {
+        def awsPropertiesFile = rootProject.file("aws.properties")
+        def secretProperties = new Properties()
+        secretProperties.load(new FileInputStream(awsPropertiesFile))
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "DATABASE_NAME", "\"maxwell_release.db\"")
             buildConfigField("String", "NAME_PREFERENCES_DATA_STORE", "\"settings_release\"")
+            buildConfigField "String", "API_URL", "\"${secretProperties.getProperty("apiUrl")}\""
         }
         debug {
             buildConfigField("String", "DATABASE_NAME", "\"maxwell.db\"")
             buildConfigField("String", "NAME_PREFERENCES_DATA_STORE", "\"settings\"")
+            buildConfigField "String", "API_URL", "\"${secretProperties.getProperty("apiUrl")}\""
         }
         uiTest {
             initWith(buildTypes.debug)
             buildConfigField("String", "DATABASE_NAME", "\"maxwell_test.db\"")
             buildConfigField("String", "NAME_PREFERENCES_DATA_STORE", "\"settings_test\"")
+            buildConfigField "String", "API_URL", "\"${secretProperties.getProperty("testApiUrl")}\""
         }
     }
     compileOptions {
